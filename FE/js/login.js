@@ -104,19 +104,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Simulate login verification
     setTimeout(() => {
+      const normalizedUsername = username.toLocaleLowerCase('vi-VN');
+      const isOperator = normalizedUsername === 'operator';
+      const isTechnician = ['technician', 'technical', 'nhân viên kỹ thuật', 'nhanvienkythuat'].includes(normalizedUsername);
+      const role = isOperator ? 'Operator' : isTechnician ? 'Technician' : 'Administrator';
+
       // Store session data
       sessionStorage.setItem('smartlight_user_session', JSON.stringify({
         username: username,
         loginTime: new Date().toISOString(),
-        role: 'Administrator'
+        role: role
       }));
 
       showAlert('Đăng nhập thành công! Đang chuyển hướng vào hệ thống...', 'success');
       btnText.textContent = 'Thành công';
 
-      // Redirect to main dashboard
+      // Route the demo roles to their first available screen.
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = isOperator ? 'activity-log.html' : isTechnician ? 'alerts.html' : 'index.html';
       }, 800);
     }, 900);
   });

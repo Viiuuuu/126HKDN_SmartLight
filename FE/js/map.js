@@ -233,9 +233,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  let selectedDevice = null;
+
   function displayDeviceDetail(id) {
     const data = deviceDatabase[id];
     if (!data) return;
+    selectedDevice = data;
 
     if (deviceDetailCard) {
       deviceDetailCard.classList.remove('hidden');
@@ -400,7 +403,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------------------
   if (btnInspectDetail) {
     btnInspectDetail.addEventListener('click', () => {
-      showToast('Đang mở báo cáo thông số viễn trắc chi tiết...', 'success');
+      if (!selectedDevice) {
+        showToast('Vui lòng chọn thiết bị trên bản đồ trước.', 'warning');
+        return;
+      }
+
+      const params = new URLSearchParams({
+        id: selectedDevice.id,
+        type: selectedDevice.type,
+        district: selectedDevice.district,
+        route: selectedDevice.route,
+        location: selectedDevice.location,
+        status: selectedDevice.status,
+        power: selectedDevice.power,
+        dim: selectedDevice.dim
+      });
+      window.location.href = `device-detail.html?${params.toString()}`;
     });
   }
 

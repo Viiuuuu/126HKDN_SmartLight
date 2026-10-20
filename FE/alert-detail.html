@@ -89,9 +89,10 @@
   </script>
   
   <link rel="stylesheet" href="css/alert-detail.css">
+  <script src="js/alert-access.js"></script>
 </head>
 
-<body class="h-full text-slate-800 flex overflow-hidden bg-slate-50">
+<body class="alert-page h-full text-slate-800 flex overflow-hidden bg-slate-50">
 
   <div class="dashboard-wrapper w-full flex">
     
@@ -274,7 +275,7 @@
               </a>
             </li>
             <li>
-              <a href="#reports" class="nav-link" data-nav="reports">
+              <a href="reports.html" class="nav-link" data-nav="reports">
                 <span class="nav-icon">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
@@ -362,8 +363,8 @@
               <span class="material-symbols-outlined text-[18px] text-white">person</span>
             </div>
             <div class="text-left hidden sm:block">
-              <div class="text-xs font-bold text-slate-800 leading-tight group-hover:text-primary transition">Nguyễn Văn Minh</div>
-              <div class="text-[11px] text-slate-400 font-medium">Quản trị hệ thống</div>
+              <div class="text-xs font-bold text-slate-800 leading-tight group-hover:text-primary transition" id="alertUserName">Nguyễn Văn Minh</div>
+              <div class="text-[11px] text-slate-400 font-medium" id="alertUserRole">Nhân viên vận hành</div>
             </div>
             <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 transition">expand_more</span>
           </div>
@@ -385,7 +386,7 @@
               <span class="text-slate-300">/</span>
               <a href="alerts.html" class="text-slate-400 hover:text-primary transition-colors">Cảnh báo sự cố</a>
               <span class="text-slate-300">/</span>
-              <span class="text-slate-800 font-bold font-mono">ALR-20241024-001</span>
+              <span class="text-slate-800 font-bold font-mono" id="alertBreadcrumbId">ALR-20241024-001</span>
             </div>
           </div>
 
@@ -409,12 +410,12 @@
             </div>
             <div class="flex flex-col">
               <div class="flex flex-wrap items-center gap-2">
-                <h1 class="text-lg font-bold text-slate-900">ALR-20241024-001: Quá dòng trên Tuyến 01</h1>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-primary">
+                <h1 class="text-lg font-bold text-slate-900" id="alertDetailTitle">ALR-20241024-001: Quá dòng trên Tuyến 01</h1>
+                <span id="alertDetailCategory" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-primary">
                   <span class="material-symbols-outlined text-[14px] mr-1">engineering</span>
                   Sự cố Kỹ thuật
                 </span>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-error-container text-error">
+                <span id="alertDetailSeverity" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-error-container text-error">
                   Mức độ Cao
                 </span>
                 <span id="detailCurrentStatusBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
@@ -424,12 +425,12 @@
               <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-slate-500 font-medium">
                 <span class="flex items-center gap-1">
                   <span class="material-symbols-outlined text-[16px] text-slate-400">electric_meter</span>
-                  Tủ điều khiển A1 (Q. Ba Đình)
+                  <span id="alertDetailLocation">Tủ điều khiển A1 (Q. Ba Đình)</span>
                 </span>
                 <span class="text-slate-300">•</span>
                 <span class="flex items-center gap-1">
                   <span class="material-symbols-outlined text-[16px] text-slate-400">schedule</span>
-                  09:15 24/10/2024 (IoT Sensor)
+                  <span id="alertDetailTime">09:15 24/10/2024 (IoT Sensor)</span>
                 </span>
               </div>
             </div>
@@ -455,7 +456,7 @@
                   <h2 class="text-sm font-bold text-slate-900">Tóm tắt sự cố & Hướng xử lý</h2>
                   <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-sky-50 text-primary text-[11px] font-bold">
                     <span class="material-symbols-outlined text-[14px]">hardware</span>
-                    Nhóm nghiệp vụ: Sự cố Kỹ thuật (Đội Kỹ thuật điện & Thiết bị)
+                    <span id="alertDetailGroup">Nhóm nghiệp vụ: Sự cố Kỹ thuật (Đội Kỹ thuật điện & Thiết bị)</span>
                   </span>
                 </div>
                 <span class="px-2.5 py-0.5 rounded-full bg-error-container text-error text-[11px] font-bold shrink-0">
@@ -467,9 +468,9 @@
                 <div class="p-3.5 rounded-xl bg-error-container/30 border border-error-container/60 flex flex-col gap-1.5">
                   <span class="text-xs text-error font-bold flex items-center gap-1">
                     <span class="material-symbols-outlined text-[16px]">bolt</span>
-                    Dòng điện vượt ngưỡng an toàn
+                    <span id="alertIssueTitle">Dòng điện vượt ngưỡng an toàn</span>
                   </span>
-                  <p class="text-xs text-slate-600 leading-relaxed">
+                  <p id="alertIssueDescription" class="text-xs text-slate-600 leading-relaxed">
                     Dòng pha A đo được <strong class="text-error font-bold">32.0 A</strong> (định mức: 25 A, vượt +28%). Pha B & Pha C bình thường. Khả năng rò điện hoặc ngắn mạch đầu nhánh lộ 01.
                   </p>
                 </div>
@@ -479,7 +480,7 @@
                     <span class="material-symbols-outlined text-[16px]">health_and_safety</span>
                     Khuyến nghị kỹ thuật
                   </span>
-                  <p class="text-xs text-slate-600 leading-relaxed">
+                  <p id="alertRecommendation" class="text-xs text-slate-600 leading-relaxed">
                     Cắt điện lộ 01 từ xa nếu dòng tiếp tục vượt 35 A. Kỹ thuật viên hiện trường đo điện trở cách điện và kiểm tra mối nối trước khi cấp lại tải.
                   </p>
                 </div>
@@ -487,7 +488,7 @@
             </div>
 
             <!-- Card 2: Minimalist Telemetry Grid -->
-            <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col gap-3">
+            <div id="alertTelemetryCard" class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col gap-3">
               <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary text-[20px]">speed</span>
@@ -593,11 +594,11 @@
                       <span class="material-symbols-outlined text-[20px]">electric_meter</span>
                     </div>
                     <div class="flex flex-col">
-                      <span class="text-xs font-bold text-slate-900 font-mono">Tủ điều khiển A1</span>
-                      <span class="text-[11px] text-slate-500">Ngã tư Kim Mã - Liễu Giai • GW-BD-01</span>
+                      <span class="text-xs font-bold text-slate-900 font-mono" id="alertCabinetName">Tủ điều khiển A1</span>
+                      <span class="text-[11px] text-slate-500" id="alertCabinetArea">Ngã tư Kim Mã - Liễu Giai • GW-BD-01</span>
                     </div>
                   </div>
-                  <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold shrink-0">
+                  <span id="alertCabinetStatus" class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold shrink-0">
                     Online
                   </span>
                 </div>
@@ -608,7 +609,7 @@
                       <span class="material-symbols-outlined text-[20px]">alt_route</span>
                     </div>
                     <div class="flex flex-col">
-                      <span class="text-xs font-bold text-slate-900">Tuyến đèn TL-01</span>
+                      <span class="text-xs font-bold text-slate-900" id="alertRouteName">Tuyến đèn TL-01</span>
                       <span class="text-[11px] text-slate-500">2.4 km • LED 150W Smart Dimming</span>
                     </div>
                   </div>
@@ -793,7 +794,7 @@
         </div>
         <h3 class="text-sm font-bold text-slate-900 mb-1">Xác nhận hoàn thành & đóng sự cố</h3>
         <p class="text-xs text-slate-500 leading-relaxed mb-4">
-          Bạn có chắc chắn muốn kết thúc xử lý cho sự cố <strong class="text-slate-800">ALR-20241024-001</strong>? Trạng thái sẽ được cập nhật thành "Đã xử lý" và lưu vào nhật ký lưu trữ.
+          Bạn có chắc chắn muốn kết thúc xử lý cho sự cố <strong class="text-slate-800" id="closeIncidentAlertId">ALR-20241024-001</strong>? Trạng thái sẽ được cập nhật thành "Đã xử lý" và lưu vào nhật ký lưu trữ.
         </p>
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Kết luận nguyên nhân & biện pháp đã thực hiện</label>

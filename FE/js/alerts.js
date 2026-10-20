@@ -1,6 +1,6 @@
 // ==================== JAVASCRIPT LOGIC FOR ALERTS ====================
 
-// Master Alerts Data (10 items)
+// Master Alerts Data (18 items)
 const alertItems = [
   {
     stt: 1,
@@ -151,10 +151,142 @@ const alertItems = [
     status: "Đang xử lý",
     headline: "Dòng điện tiệm cận ngưỡng ngắt bảo vệ",
     description: "Dòng điện pha C tiệm cận ngưỡng ngắt bảo vệ. KTV đang đo dòng tại các cột đèn dọc tuyến để cô lập điểm rò rỉ."
+  },
+  {
+    stt: 11,
+    id: "ALR-20241024-011",
+    time: "00:40 24/10/2024",
+    type: "Nhiệt độ cao",
+    category: "tech",
+    categoryLabel: "Sự cố Kỹ thuật",
+    param: "Nhiệt độ (58 °C)",
+    location: "Tủ A1 - Tuyến 01",
+    district: "Quận Ba Đình",
+    severity: "Trung bình",
+    status: "Đang xử lý",
+    headline: "Nhiệt độ tủ tăng sau giờ cao điểm",
+    description: "Nhiệt độ trong tủ tăng cao sau giờ cao điểm. Nhân viên kỹ thuật đang kiểm tra thông gió và tải thiết bị."
+  },
+  {
+    stt: 12,
+    id: "ALR-20241024-012",
+    time: "00:35 24/10/2024",
+    type: "Mất kết nối tủ",
+    category: "ops",
+    categoryLabel: "Sự cố Vận hành",
+    param: "Offline",
+    location: "Tủ C3 - Tuyến 02",
+    district: "Quận Đống Đa",
+    severity: "Thấp",
+    status: "Đã xử lý",
+    headline: "Tín hiệu kết nối tủ C3 gián đoạn",
+    description: "Tín hiệu kết nối gián đoạn trong thời gian ngắn và đã tự khôi phục. Đang theo dõi trạng thái đường truyền."
+  },
+  {
+    stt: 13,
+    id: "ALR-20241024-013",
+    time: "00:30 24/10/2024",
+    type: "Mất pha",
+    category: "tech",
+    categoryLabel: "Sự cố Kỹ thuật",
+    param: "Pha C thấp",
+    location: "Tủ D4 - Tuyến 04",
+    district: "Quận Cầu Giấy",
+    severity: "Trung bình",
+    status: "Chưa xử lý",
+    headline: "Điện áp pha C thấp hơn ngưỡng",
+    description: "Điện áp pha C thấp hơn ngưỡng vận hành. Cần kiểm tra đầu nối và nguồn cấp tại tủ."
+  },
+  {
+    stt: 14,
+    id: "ALR-20241024-014",
+    time: "00:25 24/10/2024",
+    type: "Mở cửa tủ",
+    category: "ops",
+    categoryLabel: "Sự cố Vận hành",
+    param: "Trạng thái (Mở)",
+    location: "Tủ B2 - Tuyến 03",
+    district: "Quận Hoàn Kiếm",
+    severity: "Thấp",
+    status: "Đã xử lý",
+    headline: "Cửa tủ B2 mở ngoài lịch bảo trì",
+    description: "Cảm biến cửa ghi nhận trạng thái mở ngoài lịch. Đội vận hành đã xác minh và đóng cửa tủ."
+  },
+  {
+    stt: 15,
+    id: "ALR-20241024-015",
+    time: "00:20 24/10/2024",
+    type: "Quá áp",
+    category: "tech",
+    categoryLabel: "Sự cố Kỹ thuật",
+    param: "Điện áp (253 V)",
+    location: "Tủ A1 - Tuyến 01",
+    district: "Quận Ba Đình",
+    severity: "Trung bình",
+    status: "Đang xử lý",
+    headline: "Điện áp đầu ra vượt mức vận hành",
+    description: "Điện áp đầu ra tăng vượt mức khuyến nghị trong thời gian ngắn. Kỹ thuật viên đang kiểm tra bộ ổn áp."
+  },
+  {
+    stt: 16,
+    id: "ALR-20241024-016",
+    time: "00:15 24/10/2024",
+    type: "Ắc quy điện áp thấp",
+    category: "ops",
+    categoryLabel: "Sự cố Vận hành",
+    param: "Điện áp (11.2 V)",
+    location: "Tủ C3 - Tuyến 02",
+    district: "Quận Đống Đa",
+    severity: "Thấp",
+    status: "Đã xử lý",
+    headline: "Điện áp bộ lưu điện dự phòng thấp",
+    description: "Bộ lưu điện dự phòng có mức điện áp thấp. Đội vận hành đã kiểm tra nguồn sạc và tiếp tục theo dõi."
+  },
+  {
+    stt: 17,
+    id: "ALR-20241024-017",
+    time: "00:10 24/10/2024",
+    type: "Đứt rơle cáp",
+    category: "tech",
+    categoryLabel: "Sự cố Kỹ thuật",
+    param: "Lỗi tiếp điểm",
+    location: "Tủ D4 - Tuyến 04",
+    district: "Quận Cầu Giấy",
+    severity: "Trung bình",
+    status: "Chưa xử lý",
+    headline: "Tiếp điểm rơle có dấu hiệu không ổn định",
+    description: "Trạng thái tiếp điểm rơle không ổn định. Cần kiểm tra, vệ sinh tiếp điểm và siết lại đầu cáp."
+  },
+  {
+    stt: 18,
+    id: "ALR-20241024-018",
+    time: "00:05 24/10/2024",
+    type: "Mất điện lưới",
+    category: "ops",
+    categoryLabel: "Sự cố Vận hành",
+    param: "Điện áp (0 V)",
+    location: "Tủ B2 - Tuyến 03",
+    district: "Quận Hoàn Kiếm",
+    severity: "Thấp",
+    status: "Đang xử lý",
+    headline: "Mất nguồn cấp trong thời gian ngắn",
+    description: "Nguồn cấp tại tủ mất trong thời gian ngắn và đã được khôi phục. Đang tiếp tục giám sát nguồn lưới."
   }
 ];
 
 let currentSelectedId = "ALR-20241024-001";
+const pageSize = 10;
+let currentPage = 1;
+
+try {
+  const statusOverrides = JSON.parse(sessionStorage.getItem('smartlight_alert_status_overrides') || '{}');
+  const validStatuses = new Set(['Chưa xử lý', 'Đang xử lý', 'Đã xử lý']);
+  alertItems.forEach(item => {
+    if (validStatuses.has(statusOverrides[item.id])) item.status = statusOverrides[item.id];
+  });
+} catch (error) {
+  console.error('Không thể đọc trạng thái cảnh báo đã cập nhật.', error);
+}
 
 // Toast Generator
 function showToast(message, type = 'success') {
@@ -180,6 +312,41 @@ function showToast(message, type = 'success') {
     toast.classList.add('opacity-0', 'translate-y-2');
     setTimeout(() => toast.remove(), 300);
   }, 3500);
+}
+
+function renderPagination(totalPages) {
+  const container = document.getElementById('alertPagination');
+  if (!container) return;
+
+  container.replaceChildren();
+  const addButton = (label, page, { disabled = false, active = false, ariaLabel = label } = {}) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = active
+      ? 'w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-white font-bold text-xs shadow-sm'
+      : 'w-8 h-8 rounded-lg flex items-center justify-center bg-white border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50 disabled:opacity-40';
+    button.disabled = disabled;
+    button.setAttribute('aria-label', ariaLabel);
+    if (active) button.setAttribute('aria-current', 'page');
+    button.innerHTML = label;
+    button.addEventListener('click', () => {
+      currentPage = page;
+      renderTable();
+    });
+    container.appendChild(button);
+  };
+
+  addButton('<span class="material-symbols-outlined text-[18px]">chevron_left</span>', currentPage - 1, {
+    disabled: currentPage <= 1,
+    ariaLabel: 'Trang trước'
+  });
+  for (let page = 1; page <= totalPages; page += 1) {
+    addButton(String(page), page, { active: page === currentPage, ariaLabel: `Trang ${page}` });
+  }
+  addButton('<span class="material-symbols-outlined text-[18px]">chevron_right</span>', currentPage + 1, {
+    disabled: currentPage >= totalPages,
+    ariaLabel: 'Trang sau'
+  });
 }
 
 // Render Table Rows
@@ -213,10 +380,38 @@ function renderTable() {
     return true;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  currentPage = Math.min(currentPage, totalPages);
+  const firstIndex = (currentPage - 1) * pageSize;
+  const pageItems = filtered.slice(firstIndex, firstIndex + pageSize);
   const countEl = document.getElementById('tableRecordCount');
   const showingEl = document.getElementById('paginationShowing');
+  const totalEl = document.getElementById('paginationTotal');
   if (countEl) countEl.textContent = `${filtered.length} bản ghi`;
-  if (showingEl) showingEl.textContent = filtered.length > 0 ? `1 - ${filtered.length}` : '0';
+  if (showingEl) showingEl.textContent = filtered.length ? `${firstIndex + 1} - ${firstIndex + pageItems.length}` : '0';
+  if (totalEl) totalEl.textContent = String(filtered.length);
+
+  const countBySeverity = (severity) => alertItems.filter(item => item.severity === severity).length;
+  const statTotal = document.getElementById('statTotalCount');
+  const statHigh = document.getElementById('statHighCount');
+  const statMedium = document.getElementById('statMediumCount');
+  const statLow = document.getElementById('statLowCount');
+  if (statTotal) statTotal.textContent = String(alertItems.length);
+  if (statHigh) statHigh.textContent = String(countBySeverity('Cao'));
+  if (statMedium) statMedium.textContent = String(countBySeverity('Trung bình'));
+  if (statLow) statLow.textContent = String(countBySeverity('Thấp'));
+  const openCount = document.getElementById('alertOpenCount');
+  if (openCount) openCount.textContent = `${alertItems.length} đang ghi nhận`;
+  const urgentCount = document.getElementById('alertUrgentCount');
+  if (urgentCount) urgentCount.textContent = `${countBySeverity('Cao')} Khẩn`;
+  const mediumCount = document.getElementById('alertMediumCount');
+  if (mediumCount) mediumCount.textContent = `${countBySeverity('Trung bình')} Vừa`;
+  const lowCount = document.getElementById('alertLowCount');
+  if (lowCount) lowCount.textContent = `${countBySeverity('Thấp')} Thấp`;
+  const sidebarAlertCount = document.getElementById('sidebarAlertCount');
+  if (sidebarAlertCount) sidebarAlertCount.textContent = String(alertItems.filter(item => item.status !== 'Đã xử lý').length);
+
+  renderPagination(totalPages);
 
   if (filtered.length === 0) {
     tbody.innerHTML = `
@@ -230,7 +425,7 @@ function renderTable() {
     return;
   }
 
-  tbody.innerHTML = filtered.map(item => {
+  tbody.innerHTML = pageItems.map(item => {
     // Severity Badge Styling
     let sevBadge = '';
     if (item.severity === 'Cao') {
@@ -257,7 +452,7 @@ function renderTable() {
       : `<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-amber-50 text-amber-800 text-[11px] font-semibold"><span class="material-symbols-outlined text-[12px]">settings</span>Vận hành</span>`;
 
     return `
-      <tr class="cursor-pointer hover:bg-slate-50/80 transition-colors" onclick="window.location.href='alert-detail.html?id=${item.id}'">
+      <tr class="cursor-pointer hover:bg-slate-50/80 transition-colors" onclick="openAlertDetail('${item.id}')">
         <td class="py-3.5 px-4 text-center font-bold text-slate-400 font-mono text-[11px]">${item.stt}</td>
         <td class="py-3.5 px-4 font-medium whitespace-nowrap text-slate-800">
           <div class="flex items-center gap-1.5 font-mono">
@@ -280,7 +475,7 @@ function renderTable() {
         <td class="py-3.5 px-4 text-center">${statusBadge}</td>
         <td class="py-3.5 px-4 text-center" onclick="event.stopPropagation()">
           <div class="flex items-center justify-center gap-1.5">
-            <a href="alert-detail.html?id=${item.id}" class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-white shadow-sm hover:bg-primary-container transition" title="Xem chi tiết sự cố">
+            <a href="alert-detail.html?id=${item.id}" onclick="event.preventDefault(); openAlertDetail('${item.id}')" class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-white shadow-sm hover:bg-primary-container transition" title="Xem chi tiết sự cố">
               <span class="material-symbols-outlined text-[16px]">visibility</span>
             </a>
             <button onclick="quickActionMore('${item.id}')" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition" title="Thao tác nhanh">
@@ -293,6 +488,20 @@ function renderTable() {
   }).join('');
 }
 
+function openAlertDetail(id) {
+  const selectedAlert = alertItems.find(item => item.id === id);
+  if (!selectedAlert) {
+    showToast('Không tìm thấy cảnh báo cần mở.', 'error');
+    return;
+  }
+  try {
+    sessionStorage.setItem('smartlight_selected_alert', JSON.stringify(selectedAlert));
+  } catch (error) {
+    console.error('Không thể lưu cảnh báo đang xem.', error);
+  }
+  window.location.href = `alert-detail.html?id=${encodeURIComponent(id)}`;
+}
+
 // Quick action trigger
 function quickActionMore(id) {
   showToast(`Đang mở menu thao tác nhanh cho ${id}`);
@@ -300,10 +509,16 @@ function quickActionMore(id) {
 
 // Filter Listeners
 ['filterGroup', 'filterType', 'filterSeverity', 'filterStatus'].forEach(id => {
-  document.getElementById(id)?.addEventListener('change', renderTable);
+  document.getElementById(id)?.addEventListener('change', () => {
+    currentPage = 1;
+    renderTable();
+  });
 });
 
-document.getElementById('searchInput')?.addEventListener('input', renderTable);
+document.getElementById('searchInput')?.addEventListener('input', () => {
+  currentPage = 1;
+  renderTable();
+});
 
 // Refresh Action
 document.getElementById('btnRefreshAlerts')?.addEventListener('click', () => {

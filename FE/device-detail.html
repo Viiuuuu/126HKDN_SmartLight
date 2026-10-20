@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chi tiết thông tin thiết bị | SmartLight</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/device-detail.css">
+</head>
+<body class="device-detail-page">
+  <div class="dashboard-wrapper">
+    <aside class="sidebar" id="sidebar">
+      <a class="sidebar-brand" href="index.html">
+        <span class="brand-logo-wrap"><img src="images/logo.png" alt="" class="brand-logo-img"></span>
+        <span class="brand-text"><span class="brand-name">SmartLight</span><span class="brand-sub">MUNICIPAL IOT</span></span>
+        <button class="btn-close-sidebar" id="btnCloseSidebar" type="button" aria-label="Đóng menu">×</button>
+      </a>
+      <nav class="sidebar-nav" aria-label="Điều hướng chính">
+        <div class="nav-group">
+          <div class="nav-group-title">Giám sát &amp; điều hành</div>
+          <ul class="nav-list">
+            <li><a class="nav-link" href="index.html"><span class="nav-icon material-symbols-outlined">dashboard</span><span class="nav-label">Dashboard (Tổng quan)</span></a></li>
+            <li><a class="nav-link active" href="map.html"><span class="nav-icon material-symbols-outlined">map</span><span class="nav-label">Bản đồ giám sát</span></a></li>
+            <li><a class="nav-link" href="control.html"><span class="nav-icon material-symbols-outlined">tune</span><span class="nav-label">Điều khiển chiếu sáng</span></a></li>
+            <li><a class="nav-link" href="schedules.html"><span class="nav-icon material-symbols-outlined">calendar_month</span><span class="nav-label">Lịch vận hành</span></a></li>
+            <li><a class="nav-link" href="alerts.html"><span class="nav-icon material-symbols-outlined">warning</span><span class="nav-label">Cảnh báo sự cố</span><span class="nav-badge">12</span></a></li>
+          </ul>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group-title">Hạ tầng chiếu sáng</div>
+          <ul class="nav-list">
+            <li><a class="nav-link" href="areas.html"><span class="nav-icon material-symbols-outlined">location_city</span><span class="nav-label">Khu vực chiếu sáng</span></a></li>
+            <li><a class="nav-link" href="cabinets.html"><span class="nav-icon material-symbols-outlined">electrical_services</span><span class="nav-label">Tủ chiếu sáng</span></a></li>
+            <li><a class="nav-link" href="routes.html"><span class="nav-icon material-symbols-outlined">alt_route</span><span class="nav-label">Tuyến chiếu sáng</span></a></li>
+            <li><a class="nav-link" href="lights.html"><span class="nav-icon material-symbols-outlined">lightbulb</span><span class="nav-label">Điểm đèn</span></a></li>
+          </ul>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group-title">Quản trị &amp; báo cáo</div>
+          <ul class="nav-list">
+            <li><a class="nav-link" href="#"><span class="nav-icon material-symbols-outlined">group</span><span class="nav-label">Quản lý người dùng</span></a></li>
+            <li><a class="nav-link" href="#"><span class="nav-icon material-symbols-outlined">shield</span><span class="nav-label">Phân quyền</span></a></li>
+            <li><a class="nav-link" href="reports.html"><span class="nav-icon material-symbols-outlined">bar_chart</span><span class="nav-label">Báo cáo &amp; thống kê</span></a></li>
+            <li><a class="nav-link" href="#"><span class="nav-icon material-symbols-outlined">history</span><span class="nav-label">Nhật ký hệ thống</span></a></li>
+          </ul>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="iot-gateway-card">
+          <span class="gateway-icon material-symbols-outlined">cloud</span>
+          <span class="gateway-info"><span class="gateway-title">IoT Central Gateway</span><span class="gateway-status">Đang kết nối: <strong>99.8%</strong></span></span>
+          <span class="gateway-dot"></span>
+        </div>
+      </div>
+    </aside>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <div class="main-container">
+      <header class="detail-topbar">
+        <div class="detail-topbar-search">
+          <button class="mobile-menu-btn" id="btnToggleMobileSidebar" type="button" aria-label="Mở menu"><span class="material-symbols-outlined">menu</span></button>
+          <label class="global-search"><span class="material-symbols-outlined">search</span><input type="search" placeholder="Tìm nhanh trạm, tủ điện, điểm đèn, sự cố (Ctrl+K)..."></label>
+        </div>
+        <div class="topbar-user">
+          <span class="topbar-date" id="liveClockDisplay"></span>
+          <a class="notification-link" href="alerts.html" aria-label="Cảnh báo"><span class="material-symbols-outlined">notifications</span><i></i></a>
+          <span class="user-name">Nguyễn Văn Minh<small>Quản trị hệ thống</small></span>
+          <span class="user-avatar material-symbols-outlined">person</span>
+        </div>
+      </header>
+
+      <main class="device-content">
+        <div class="detail-toolbar">
+          <a class="toolbar-button" href="map.html"><span class="material-symbols-outlined">arrow_back</span> Quay lại bản đồ</a>
+          <span class="toolbar-chip"><span class="material-symbols-outlined">lightbulb</span> <span id="toolbarDevice">Điểm đèn</span></span>
+          <span class="toolbar-chip"><span class="material-symbols-outlined">electrical_services</span> Trạm nguồn: <b id="toolbarCabinet">TCS-HC-01</b></span>
+          <span class="toolbar-spacer"></span>
+          <a class="toolbar-button toolbar-soft" href="map.html"><span class="material-symbols-outlined">location_on</span> Xem trên bản đồ</a>
+          <button class="toolbar-button toolbar-primary" id="btnQuickControl" type="button"><span class="material-symbols-outlined">tune</span> Điều khiển tức thời</button>
+        </div>
+
+        <section class="device-hero card">
+          <div class="device-identity">
+            <span class="device-icon material-symbols-outlined">lightbulb</span>
+            <div class="device-heading">
+              <div class="device-title-row">
+                <h1 id="deviceId">LD-0002</h1>
+                <span class="status-pill" id="deviceStatus"><i></i><span>Đang sáng · 70%</span></span>
+                <span class="mesh-tag">MESH NODE 02</span>
+              </div>
+              <p><span class="material-symbols-outlined">location_on</span><span id="deviceLocation">48 Lê Duẩn, Phường Hải Châu I, Quận Hải Châu, TP. Đà Nẵng</span><span class="hero-divider">•</span>Trạm nguồn: <span id="deviceSource">TCS-HC-01 (Lộ 2)</span></p>
+            </div>
+          </div>
+          <div class="radio-status"><span>CHUẨN RF<strong><span class="material-symbols-outlined">signal_cellular_alt</span> -78 dBm</strong></span><span>LẦN ĐỒNG BỘ<strong id="syncTime">--:--:--</strong></span></div>
+        </section>
+
+        <section class="telemetry-section" aria-labelledby="telemetryTitle">
+          <div class="section-title"><span class="material-symbols-outlined">insights</span><h2 id="telemetryTitle">Số liệu đo lường hiện tại (Telemetry)</h2><span class="live-update"><i></i> Dữ liệu mô phỏng · 5s/lần</span></div>
+          <div class="telemetry-grid">
+            <article class="metric-card card"><div class="metric-heading">Điện áp pha<span class="metric-icon blue material-symbols-outlined">bolt</span></div><div class="metric-value">224.6 <small>V</small></div><div class="metric-foot"><span>Chuẩn 220 V ±10%</span><span class="metric-state state-blue">Bình thường</span></div></article>
+            <article class="metric-card card"><div class="metric-heading">Dòng điện<span class="metric-icon blue material-symbols-outlined">electric_bolt</span></div><div class="metric-value" id="telemetryCurrent">0.37 <small>A</small></div><div class="metric-foot"><span>Định mức 0.55 A</span><span class="metric-state state-blue">Đạt chuẩn</span></div></article>
+            <article class="metric-card card"><div class="metric-heading">Công suất tiêu thụ<span class="metric-icon orange material-symbols-outlined">monitoring</span></div><div class="metric-value" id="telemetryPower">84.0 <small>W</small></div><div class="metric-foot"><span id="ratedPower">Tối đa 120 W</span><span class="metric-state state-orange" id="dimmingState">Dimming 70%</span></div></article>
+            <article class="metric-card card"><div class="metric-heading">Nhiệt độ cụm LED<span class="metric-icon navy material-symbols-outlined">device_thermostat</span></div><div class="metric-value">41.5 <small>°C</small></div><div class="metric-foot"><span>Ngưỡng &lt; 75 °C</span><span class="metric-state state-green">Mát mẻ</span></div></article>
+          </div>
+        </section>
+
+        <section class="detail-grid">
+          <article class="info-card card">
+            <div class="card-heading"><h2><span class="material-symbols-outlined">assignment</span> Thông tin thiết bị &amp; Lắp đặt</h2><span class="system-id">ID-Hệ thống: #10892</span></div>
+            <dl class="device-specs">
+              <div><dt>Mã định danh:</dt><dd class="spec-code" id="specDeviceId">LD-0002</dd></div>
+              <div><dt>Loại thiết bị:</dt><dd id="specType">Điểm đèn LED 120W (Smart Mesh)</dd></div>
+              <div><dt>Khu vực quản trị:</dt><dd id="specDistrict">Quận Hải Châu, TP. Đà Nẵng</dd></div>
+              <div><dt>Tuyến chiếu sáng:</dt><dd class="spec-code" id="specRoute">TL-01 (Lê Duẩn)</dd></div>
+              <div><dt>Tủ điều khiển kết nối:</dt><dd class="spec-code" id="specCabinet">TCS-HC-01 (Tủ Hải Châu 01)</dd></div>
+              <div><dt>Mã node RF / Chuẩn điều khiển:</dt><dd>Node 02 · Dimming 0–10V / DALI-2</dd></div>
+              <div><dt>Thông số bóng đèn:</dt><dd id="specLamp">LED Lumileds · 120 W · CCT 4000K Neutral</dd></div>
+              <div><dt>Địa chỉ lắp đặt:</dt><dd id="specLocation">48 Lê Duẩn, P. Hải Châu I, Q. Hải Châu</dd></div>
+              <div><dt>Ngày kích hoạt:</dt><dd>12/03/2023 <span class="spec-muted">· Hạn bảo hành: 12/03/2028 (5 năm)</span></dd></div>
+            </dl>
+          </article>
+
+          <article class="network-card card">
+            <div class="card-heading"><h2><span class="material-symbols-outlined">hub</span> Trạng thái vận hành &amp; Mạng Mesh</h2><span class="online-badge"><i></i> Trực tuyến</span></div>
+            <div class="network-specs">
+              <div><span>Kết nối Node &amp; Tín hiệu:</span><strong><span class="material-symbols-outlined">wifi</span> Ổn định · RSSI -78 dBm (SNR: 9.2 dB)</strong></div>
+              <div><span>Trạng thái vận hành:</span><strong class="state-online" id="networkStatus"><i></i> Đang sáng bình thường</strong></div>
+              <div class="brightness-row"><span>Mức sáng hiện tại:</span><div class="brightness-meter"><span><i id="brightnessBar"></i></span><b id="brightnessLabel">70% (Dimming)</b></div></div>
+              <div><span>Chế độ vận hành:</span><strong class="spec-code">Tự động (Theo lịch mùa hè v3.2)</strong></div>
+              <div><span>Hỗ trợ điều chỉnh sáng:</span><strong>Có thể điều tải 0% - 100%</strong></div>
+              <div><span>Lần cập nhật cuối:</span><strong id="lastUpdateTime">--:--:-- GMT+7</strong></div>
+              <div><span>Địa chỉ MAC / UUID:</span><strong class="mono-value">Dữ liệu mô phỏng</strong></div>
+            </div>
+            <div class="quick-control" id="quickControl">
+              <span class="material-symbols-outlined">light_mode</span><strong>Điều khiển nhanh tới đèn</strong>
+              <div class="quick-presets" role="group" aria-label="Chọn mức sáng">
+                <button type="button" data-brightness="100">Bật 100%</button><button type="button" data-brightness="70">Mức 70%</button><button type="button" data-brightness="0" class="off-preset">Tắt 0%</button>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="history-card card">
+          <div class="history-tabs" role="tablist" aria-label="Lịch sử thiết bị">
+            <button class="history-tab active" type="button" role="tab" aria-selected="true" data-tab="chartPanel"><span class="material-symbols-outlined">show_chart</span> Biểu đồ thông số</button>
+            <button class="history-tab" type="button" role="tab" aria-selected="false" data-tab="alertPanel"><span class="material-symbols-outlined">warning</span> Cảnh báo &amp; Sự cố <span class="alert-count">3</span></button>
+            <button class="history-tab" type="button" role="tab" aria-selected="false" data-tab="commandPanel"><span class="material-symbols-outlined">history</span> Lịch sử lệnh điều khiển</button>
+          </div>
+          <div class="tab-panel" id="chartPanel" role="tabpanel">
+            <div class="chart-toolbar">
+              <span class="chart-select">Công suất tiêu thụ (W) <span class="material-symbols-outlined">expand_more</span></span>
+              <div class="range-switch" role="group" aria-label="Khoảng thời gian"><button class="active" type="button" data-period="24 giờ">Hôm nay (24h)</button><button type="button" data-period="7 ngày">7 ngày</button><button type="button" data-period="30 ngày">30 ngày</button></div>
+              <button class="download-button" id="btnDownloadChart" type="button" aria-label="Tải biểu đồ"><span class="material-symbols-outlined">download</span></button>
+            </div>
+            <div class="chart-legend"><span><i class="legend-dot"></i><strong>Công suất thực tế (W)</strong></span><span class="legend-muted"><i></i> Ngưỡng định mức tối đa (<b id="chartRatedPower">120</b>W)</span><span class="chart-current">Cao nhất: <b id="chartPeak">84.2 W</b><span>Thấp nhất (Ban ngày): <b>0.0 W</b></span></span></div>
+            <div class="chart-wrap">
+              <div class="chart-y-labels"><span id="chartMax">120</span><span>80</span><span>40</span><span>0</span></div>
+              <svg class="power-chart" viewBox="0 0 900 220" role="img" aria-label="Biểu đồ công suất mô phỏng trong ngày">
+                <defs><linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#3156a5" stop-opacity=".22"/><stop offset="100%" stop-color="#3156a5" stop-opacity=".02"/></linearGradient></defs>
+                <g class="chart-grid"><line x1="0" y1="25" x2="900" y2="25"/><line x1="0" y1="80" x2="900" y2="80"/><line x1="0" y1="135" x2="900" y2="135"/><line x1="0" y1="190" x2="900" y2="190"/></g>
+                <line class="limit-line" x1="0" y1="53" x2="900" y2="53"/>
+                <path class="chart-area" d="M0 96 C55 96 75 96 120 96 C165 96 165 188 225 190 L610 190 C665 190 670 98 720 97 C780 96 820 96 900 96 L900 190 L0 190 Z"/>
+                <path class="chart-line" d="M0 96 C55 96 75 96 120 96 C165 96 165 188 225 190 L610 190 C665 190 670 98 720 97 C780 96 820 96 900 96"/>
+                <circle class="chart-point" cx="120" cy="96" r="5"/><circle class="chart-point" cx="225" cy="190" r="5"/><circle class="chart-point current-point" cx="720" cy="97" r="6"/>
+              </svg>
+              <div class="chart-tooltip"><small id="chartCurrentTime">Hiện tại</small><strong id="chartTooltipValue">84.0 W · 70%</strong></div>
+              <div class="chart-x-labels"><span>00:00</span><span>03:00</span><span>06:00</span><span>09:00</span><span>12:00</span><span>15:00</span><span>18:00</span><span>21:00</span><span>23:59</span></div>
+            </div>
+            <div class="chart-note"><span class="material-symbols-outlined">info</span> Dữ liệu biểu đồ và telemetry là mô phỏng. Lịch tiết kiệm năng lượng có thể cấu hình tại mục Lịch vận hành.<a href="schedules.html">Xem lịch vận hành →</a></div>
+          </div>
+          <div class="tab-panel simple-panel" id="alertPanel" role="tabpanel" hidden><span class="panel-empty-icon material-symbols-outlined">verified</span><div><strong>Không có sự cố đang hoạt động</strong><p>Cảnh báo trên thiết bị được theo dõi tại màn hình Cảnh báo sự cố.</p></div><a href="alerts.html">Mở danh sách cảnh báo</a></div>
+          <div class="tab-panel simple-panel" id="commandPanel" role="tabpanel" hidden><div class="command-row"><span class="command-icon material-symbols-outlined">schedule</span><span><strong>Trạng thái thiết bị theo dữ liệu bản đồ</strong><small id="commandStatus">Đã cập nhật · Mô phỏng</small></span><b class="command-result">Thông tin</b></div><div class="command-row"><span class="command-icon material-symbols-outlined">lightbulb</span><span><strong>Điều khiển hiển thị không gửi lệnh thiết bị thật</strong><small>Môi trường demo</small></span><b class="command-result">Mô phỏng</b></div></div>
+          <p class="demo-disclaimer">Thông số telemetry, mạng Mesh, lịch sử và thao tác điều khiển trên trang này là dữ liệu mô phỏng phục vụ trình diễn.</p>
+        </section>
+      </main>
+    </div>
+  </div>
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+  <script src="js/device-detail.js"></script>
+</body>
+</html>
