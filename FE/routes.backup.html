@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartLight - Tuyến Chiếu Sáng Đô Thị</title>
+  <meta name="description" content="Quản lý và điều phối các lộ/tuyến đèn đô thị theo khu vực và tủ điều khiển SmartLight Municipal IoT - EVNCPC.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/control.css">
+  <style>
+    .routes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+    .route-card {
+      background: #ffffff;
+      border: 1px solid #edf2f7;
+      border-radius: var(--radius-xl);
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .route-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+    }
+    .route-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .route-code-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .route-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #e2efff;
+      color: #074476;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .route-icon-box.warning {
+      background: #ffdad6;
+      color: #845144;
+    }
+    .route-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0;
+    }
+    .route-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .route-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 12px;
+    }
+    .route-metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .route-metric-item small {
+      font-size: 11px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .route-metric-item strong {
+      font-size: 14px;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+    .route-progress-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .route-progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .route-actions-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 14px;
+    }
+    .btn-route-ctrl {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #074476;
+      color: #ffffff;
+      transition: background 0.15s ease;
+    }
+    .btn-route-ctrl:hover {
+      background: #10497a;
+    }
+    .btn-route-map {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #e2efff;
+      color: #074476;
+      transition: background 0.15s ease;
+    }
+    .btn-route-map:hover {
+      background: #cee5fb;
+    }
+    .filter-bar-routes {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: #ffffff;
+      padding: 14px 18px;
+      border-radius: var(--radius-xl);
+      border: 1px solid #edf2f7;
+      margin-top: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo-wrap">
+          <img src="images/logo.png" alt="SmartLight EVNCPC Logo" class="brand-logo-img">
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-name">SmartLight</h1>
+          <span class="brand-sub">MUNICIPAL IOT</span>
+        </div>
+        <button class="btn-close-sidebar" id="btnCloseSidebar" aria-label="Đóng menu">✕</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- Section 1: GIÁM SÁT & ĐIỀU HÀNH -->
+        <div class="nav-group">
+          <div class="nav-group-title">GIÁM SÁT & ĐIỀU HÀNH</div>
+          <ul class="nav-list">
+            <li>
+              <a href="index.html" class="nav-link" data-nav="dashboard">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                  </svg>
+                </span>
+                <span class="nav-label">Dashboard (Tổng quan)</span>
+              </a>
+            </li>
+            <li>
+              <a href="map.html" class="nav-link" data-nav="map">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Bản đồ giám sát</span>
+              </a>
+            </li>
+            <li>
+              <a href="control.html" class="nav-link" data-nav="control">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Điều khiển chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="schedules.html" class="nav-link" data-nav="schedule">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Lịch vận hành</span>
+              </a>
+            </li>
+            <li>
+              <a href="alerts.html" class="nav-link" data-nav="alerts">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Cảnh báo sự cố</span>
+                <span class="badge-alert-count">12</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 2: HẠ TẦNG CHIẾU SÁNG -->
+        <div class="nav-group">
+          <div class="nav-group-title">HẠ TẦNG CHIẾU SÁNG</div>
+          <ul class="nav-list">
+            <li>
+              <a href="areas.html" class="nav-link" data-nav="areas">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/>
+                  </svg>
+                </span>
+                <span class="nav-label">Khu vực chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="cabinets.html" class="nav-link" data-nav="cabinets">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v5l3 3"></path>
+                    <path d="M9 12h6"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Tủ chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="routes.html" class="nav-link active" data-nav="routes">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="6" cy="19" r="3"></circle>
+                    <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>
+                    <circle cx="18" cy="5" r="3"></circle>
+                  </svg>
+                </span>
+                <span class="nav-label">Tuyến chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="#lights" class="nav-link" data-nav="lights">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                    <path d="M9 18h6"/>
+                    <path d="M10 22h4"/>
+                  </svg>
+                </span>
+                <span class="nav-label">Điểm đèn</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 3: QUẢN TRỊ & BÁO CÁO -->
+        <div class="nav-group">
+          <div class="nav-group-title">QUẢN TRỊ & BÁO CÁO</div>
+          <ul class="nav-list">
+            <li>
+              <a href="#users" class="nav-link" data-nav="users">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Quản lý người dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="#roles" class="nav-link" data-nav="roles">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Phân quyền</span>
+              </a>
+            </li>
+            <li>
+              <a href="#reports" class="nav-link" data-nav="reports">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Báo cáo & thống kê</span>
+              </a>
+            </li>
+            <li>
+              <a href="#logs" class="nav-link" data-nav="logs">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </span>
+                <span class="nav-label">Nhật ký hệ thống</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="iot-gateway-card">
+          <div class="gateway-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+            </svg>
+          </div>
+          <div class="gateway-info">
+            <span class="gateway-title">IoT Central Gateway</span>
+            <span class="gateway-status">Đang kết nối: <strong id="gatewayPingValue">99.8%</strong></span>
+          </div>
+          <div class="gateway-dot"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div class="main-container">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="btnToggleMobileSidebar" aria-label="Mở menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          
+          <div class="search-box">
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <input 
+              type="text" 
+              class="search-input" 
+              id="routeSearchInput" 
+              placeholder="Tìm nhanh tuyến chiếu sáng, lộ đèn, quận huyện (Ctrl+K)..." 
+              autocomplete="off"
+            >
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="system-time-display">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="topbarLiveClock">Thứ Năm, 24/10/2024 • 19:42:15 GMT+7</span>
+          </div>
+
+          <div class="user-profile-wrapper">
+            <button class="user-profile-btn" id="btnUserProfile" aria-label="Hồ sơ người dùng">
+              <div class="user-avatar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="user-meta">
+                <span class="user-name">Nguyễn Văn Minh</span>
+                <span class="user-role">Quản trị hệ thống</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <!-- Page Title & Header Actions -->
+        <section class="control-header-row">
+          <div class="header-title-box">
+            <div class="control-title-wrap">
+              <h2 class="page-main-title">Tuyến Chiếu Sáng Đô Thị</h2>
+              <span class="online-pill-badge">
+                <span class="pulse-dot-blue"></span>
+                <span>86 Tuyến hoạt động</span>
+              </span>
+            </div>
+            <p class="page-subtitle">Quản lý và điều phối các lộ/tuyến đèn đô thị theo khu vực, trạm biến áp và tủ điều khiển</p>
+          </div>
+
+          <div class="session-pill-box">
+            <a href="control.html" class="btn-route-ctrl" style="padding: 6px 14px; font-size: 13px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="20" y1="21" x2="20" y2="16"></line></svg>
+              <span>Vào trung tâm điều khiển</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- KPI Metric Row -->
+        <section class="kpi-grid" style="margin-bottom: 20px;">
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Tổng số tuyến</span>
+              <div class="kpi-icon-badge badge-blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="19" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path><circle cx="18" cy="5" r="3"></circle></svg>
+              </div>
+            </div>
+            <div class="kpi-value-row"><span class="kpi-value">86</span></div>
+            <div class="kpi-trend-row trend-blue"><span class="trend-bold">100% phủ sóng GIS</span></div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Hoạt động bình thường</span>
+              <div class="kpi-icon-badge badge-blue" style="background: #e2efff; color: #074476;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+            </div>
+            <div class="kpi-value-row"><span class="kpi-value">82</span></div>
+            <div class="kpi-trend-row trend-blue"><span class="trend-bold">95.3%</span> <span class="trend-sub">tuyến ổn định</span></div>
+          </div>
+
+          <div class="kpi-card kpi-card-alert">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Cảnh báo điện áp / sụt pha</span>
+              <div class="kpi-icon-badge badge-amber">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+              </div>
+            </div>
+            <div class="kpi-value-row"><span class="kpi-value value-amber">3</span></div>
+            <div class="kpi-trend-row trend-amber"><span class="trend-bold">TL-05, TL-09, TL-14</span></div>
+          </div>
+
+          <div class="kpi-card kpi-card-alert">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Mất kết nối vi sai</span>
+              <div class="kpi-icon-badge badge-danger">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path></svg>
+              </div>
+            </div>
+            <div class="kpi-value-row"><span class="kpi-value value-danger">1</span></div>
+            <div class="kpi-trend-row trend-danger"><span class="trend-bold">TL-12 (Quận Sơn Trà)</span></div>
+          </div>
+        </section>
+
+        <!-- Filters -->
+        <div class="filter-bar-routes">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Quận / Huyện:</label>
+            <select class="ctrl-select" id="districtFilter" style="width: 220px;">
+              <option value="all">Tất cả quận huyện</option>
+              <option value="hoankiem" selected>Quận Hoàn Kiếm (16 tuyến)</option>
+              <option value="haichau">Quận Hải Châu (24 tuyến)</option>
+              <option value="sontra">Quận Sơn Trà (18 tuyến)</option>
+              <option value="nguhanhson">Quận Ngũ Hành Sơn (14 tuyến)</option>
+            </select>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Trạng thái:</label>
+            <select class="ctrl-select" id="statusFilter" style="width: 180px;">
+              <option value="all" selected>Tất cả trạng thái</option>
+              <option value="online">Bình thường (82)</option>
+              <option value="warning">Cảnh báo (3)</option>
+              <option value="offline">Mất kết nối (1)</option>
+            </select>
+          </div>
+
+          <div style="margin-left: auto; font-size: 13px; color: var(--text-muted);">
+            Đang hiển thị: <strong style="color: var(--text-main);">6 tuyến tiêu biểu</strong>
+          </div>
+        </div>
+
+        <!-- Routes Grid -->
+        <div class="routes-grid">
+          <!-- Route 1: TL-05 (Cảnh báo) -->
+          <div class="route-card" style="border-top: 4px solid #ea580c;">
+            <div class="route-card-header">
+              <div class="route-code-badge">
+                <div class="route-icon-box warning">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="19" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path><circle cx="18" cy="5" r="3"></circle></svg>
+                </div>
+                <div>
+                  <h3 class="route-title">Tuyến TL-05</h3>
+                  <span class="route-sub">Tràng Tiền – Hàng Bài – Lý Thường Kiệt</span>
+                </div>
+              </div>
+              <span class="badge-status badge-warning">Cảnh báo sụt áp</span>
+            </div>
+
+            <div class="route-metrics-grid">
+              <div class="route-metric-item">
+                <small>Số điểm đèn</small>
+                <strong>185 đèn</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Điện áp pha</small>
+                <strong style="color: #ea580c;">185 V</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Công suất</small>
+                <strong>3.4 kW</strong>
+              </div>
+            </div>
+
+            <div class="route-progress-row">
+              <div class="route-progress-labels">
+                <span>Mức sáng trung bình: <strong>80%</strong></span>
+                <span>Tủ: <strong>CS-03 (KV01)</strong></span>
+              </div>
+              <div class="progress-dim-bar" style="width: 100%; height: 7px;">
+                <div class="progress-dim-fill" style="width: 80%; background-color: #074476;"></div>
+              </div>
+            </div>
+
+            <div class="route-actions-bar">
+              <a href="control.html" class="btn-route-ctrl">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="20" y1="21" x2="20" y2="16"></line></svg>
+                <span>Điều khiển</span>
+              </a>
+              <a href="map.html" class="btn-route-map">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon></svg>
+                <span>Xem bản đồ</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Route 2: TL-02 (Bình thường) -->
+          <div class="route-card" style="border-top: 4px solid #074476;">
+            <div class="route-card-header">
+              <div class="route-code-badge">
+                <div class="route-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="19" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path><circle cx="18" cy="5" r="3"></circle></svg>
+                </div>
+                <div>
+                  <h3 class="route-title">Tuyến TL-02</h3>
+                  <span class="route-sub">Trần Phú – Bạch Đằng ven sông</span>
+                </div>
+              </div>
+              <span class="badge-status badge-active" style="background: #e2efff; color: #074476;">Hoạt động</span>
+            </div>
+
+            <div class="route-metrics-grid">
+              <div class="route-metric-item">
+                <small>Số điểm đèn</small>
+                <strong>94 đèn</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Điện áp pha</small>
+                <strong style="color: #074476;">222 V</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Công suất</small>
+                <strong>2.1 kW</strong>
+              </div>
+            </div>
+
+            <div class="route-progress-row">
+              <div class="route-progress-labels">
+                <span>Mức sáng trung bình: <strong>100%</strong></span>
+                <span>Tủ: <strong>CS-01 (KV01)</strong></span>
+              </div>
+              <div class="progress-dim-bar" style="width: 100%; height: 7px;">
+                <div class="progress-dim-fill" style="width: 100%; background-color: #074476;"></div>
+              </div>
+            </div>
+
+            <div class="route-actions-bar">
+              <a href="control.html" class="btn-route-ctrl">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="20" y1="21" x2="20" y2="16"></line></svg>
+                <span>Điều khiển</span>
+              </a>
+              <a href="map.html" class="btn-route-map">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon></svg>
+                <span>Xem bản đồ</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Route 3: TL-03 (Bình thường) -->
+          <div class="route-card" style="border-top: 4px solid #074476;">
+            <div class="route-card-header">
+              <div class="route-code-badge">
+                <div class="route-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="19" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path><circle cx="18" cy="5" r="3"></circle></svg>
+                </div>
+                <div>
+                  <h3 class="route-title">Tuyến TL-03</h3>
+                  <span class="route-sub">Nguyễn Văn Linh – Cầu Rồng</span>
+                </div>
+              </div>
+              <span class="badge-status badge-active" style="background: #e2efff; color: #074476;">Hoạt động</span>
+            </div>
+
+            <div class="route-metrics-grid">
+              <div class="route-metric-item">
+                <small>Số điểm đèn</small>
+                <strong>142 đèn</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Điện áp pha</small>
+                <strong style="color: #074476;">219 V</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Công suất</small>
+                <strong>3.0 kW</strong>
+              </div>
+            </div>
+
+            <div class="route-progress-row">
+              <div class="route-progress-labels">
+                <span>Mức sáng trung bình: <strong>75%</strong></span>
+                <span>Tủ: <strong>CS-02 (KV02)</strong></span>
+              </div>
+              <div class="progress-dim-bar" style="width: 100%; height: 7px;">
+                <div class="progress-dim-fill" style="width: 75%; background-color: #074476;"></div>
+              </div>
+            </div>
+
+            <div class="route-actions-bar">
+              <a href="control.html" class="btn-route-ctrl">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="20" y1="21" x2="20" y2="16"></line></svg>
+                <span>Điều khiển</span>
+              </a>
+              <a href="map.html" class="btn-route-map">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon></svg>
+                <span>Xem bản đồ</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Route 4: TL-08 (Bình thường) -->
+          <div class="route-card" style="border-top: 4px solid #074476;">
+            <div class="route-card-header">
+              <div class="route-code-badge">
+                <div class="route-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="19" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path><circle cx="18" cy="5" r="3"></circle></svg>
+                </div>
+                <div>
+                  <h3 class="route-title">Tuyến TL-08</h3>
+                  <span class="route-sub">Điện Biên Phủ – Ngô Quyền</span>
+                </div>
+              </div>
+              <span class="badge-status badge-active" style="background: #e2efff; color: #074476;">Hoạt động</span>
+            </div>
+
+            <div class="route-metrics-grid">
+              <div class="route-metric-item">
+                <small>Số điểm đèn</small>
+                <strong>88 đèn</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Điện áp pha</small>
+                <strong style="color: #074476;">220 V</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Công suất</small>
+                <strong>1.8 kW</strong>
+              </div>
+            </div>
+
+            <div class="route-progress-row">
+              <div class="route-progress-labels">
+                <span>Mức sáng trung bình: <strong>90%</strong></span>
+                <span>Tủ: <strong>CS-04 (KV03)</strong></span>
+              </div>
+              <div class="progress-dim-bar" style="width: 100%; height: 7px;">
+                <div class="progress-dim-fill" style="width: 90%; background-color: #074476;"></div>
+              </div>
+            </div>
+
+            <div class="route-actions-bar">
+              <a href="control.html" class="btn-route-ctrl">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="20" y1="21" x2="20" y2="16"></line></svg>
+                <span>Điều khiển</span>
+              </a>
+              <a href="map.html" class="btn-route-map">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon></svg>
+                <span>Xem bản đồ</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Route 5: TL-01 (Bình thường) -->
+          <div class="route-card" style="border-top: 4px solid #074476;">
+            <div class="route-card-header">
+              <div class="route-code-badge">
+                <div class="route-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="19" r="3"></circle><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path><circle cx="18" cy="5" r="3"></circle></svg>
+                </div>
+                <div>
+                  <h3 class="route-title">Tuyến TL-01</h3>
+                  <span class="route-sub">Lê Duẩn – Nguyễn Tri Phương</span>
+                </div>
+              </div>
+              <span class="badge-status badge-active" style="background: #e2efff; color: #074476;">Hoạt động</span>
+            </div>
+
+            <div class="route-metrics-grid">
+              <div class="route-metric-item">
+                <small>Số điểm đèn</small>
+                <strong>120 đèn</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Điện áp pha</small>
+                <strong style="color: #074476;">221 V</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Công suất</small>
+                <strong>2.6 kW</strong>
+              </div>
+            </div>
+
+            <div class="route-progress-row">
+              <div class="route-progress-labels">
+                <span>Mức sáng trung bình: <strong>85%</strong></span>
+                <span>Tủ: <strong>CS-01 (KV01)</strong></span>
+              </div>
+              <div class="progress-dim-bar" style="width: 100%; height: 7px;">
+                <div class="progress-dim-fill" style="width: 85%; background-color: #074476;"></div>
+              </div>
+            </div>
+
+            <div class="route-actions-bar">
+              <a href="control.html" class="btn-route-ctrl">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="20" y1="21" x2="20" y2="16"></line></svg>
+                <span>Điều khiển</span>
+              </a>
+              <a href="map.html" class="btn-route-map">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon></svg>
+                <span>Xem bản đồ</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Route 6: TL-12 (Mất kết nối) -->
+          <div class="route-card" style="border-top: 4px solid #ba1a1a;">
+            <div class="route-card-header">
+              <div class="route-code-badge">
+                <div class="route-icon-box warning" style="background: #ffdad6; color: #ba1a1a;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path></svg>
+                </div>
+                <div>
+                  <h3 class="route-title">Tuyến TL-12</h3>
+                  <span class="route-sub">Hoàng Sa – Bán đảo Sơn Trà</span>
+                </div>
+              </div>
+              <span class="badge-status badge-lost">Mất tín hiệu</span>
+            </div>
+
+            <div class="route-metrics-grid">
+              <div class="route-metric-item">
+                <small>Số điểm đèn</small>
+                <strong>76 đèn</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Điện áp pha</small>
+                <strong style="color: #ba1a1a;">0 V</strong>
+              </div>
+              <div class="route-metric-item">
+                <small>Công suất</small>
+                <strong>0.0 kW</strong>
+              </div>
+            </div>
+
+            <div class="route-progress-row">
+              <div class="route-progress-labels">
+                <span>Mức sáng trung bình: <strong>0%</strong></span>
+                <span>Tủ: <strong>CS-07 (KV04)</strong></span>
+              </div>
+              <div class="progress-dim-bar" style="width: 100%; height: 7px;">
+                <div class="progress-dim-fill" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <div class="route-actions-bar">
+              <a href="control.html" class="btn-route-ctrl" style="background: #ba1a1a;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>Kiểm tra lỗi</span>
+              </a>
+              <a href="map.html" class="btn-route-map">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon></svg>
+                <span>Xem bản đồ</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <script>
+    // Live clock
+    const daysOfWeek = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+    function updateClocks() {
+      const now = new Date();
+      const dayName = daysOfWeek[now.getDay()];
+      const date = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const el = document.getElementById('topbarLiveClock');
+      if (el) el.textContent = `${dayName}, ${date}/${month}/${year} • ${hours}:${minutes}:${seconds} GMT+7`;
+    }
+    updateClocks();
+    setInterval(updateClocks, 1000);
+
+    // Filter simulation
+    const search = document.getElementById('routeSearchInput');
+    const cards = document.querySelectorAll('.route-card');
+    if (search) {
+      search.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase();
+        cards.forEach(c => {
+          c.style.display = c.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+      });
+    }
+  </script>
+</body>
+</html>

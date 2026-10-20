@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartLight - Bản Đồ Giám Sát Chiếu Sáng Công Cộng</title>
+  <meta name="description" content="Bản đồ giám sát vị trí địa lý, tọa độ và trạng thái vận hành tức thời của tủ điện và điểm đèn SmartLight Municipal IoT - EVNCPC.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/map.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Brand / Logo -->
+      <div class="sidebar-brand">
+        <div class="brand-logo-wrap">
+          <img src="images/logo.png" alt="SmartLight EVNCPC Logo" class="brand-logo-img">
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-name">SmartLight</h1>
+          <span class="brand-sub">MUNICIPAL IOT</span>
+        </div>
+        <button class="btn-close-sidebar" id="btnCloseSidebar" aria-label="Đóng menu">✕</button>
+      </div>
+
+      <!-- Navigation Menus -->
+      <nav class="sidebar-nav">
+        <!-- Section 1: GIÁM SÁT & ĐIỀU HÀNH -->
+        <div class="nav-group">
+          <div class="nav-group-title">GIÁM SÁT & ĐIỀU HÀNH</div>
+          <ul class="nav-list">
+            <li>
+              <a href="index.html" class="nav-link" data-nav="dashboard">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                  </svg>
+                </span>
+                <span class="nav-label">Dashboard (Tổng quan)</span>
+              </a>
+            </li>
+            <li>
+              <a href="map.html" class="nav-link active" data-nav="map">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Bản đồ giám sát</span>
+              </a>
+            </li>
+            <li>
+              <a href="control.html" class="nav-link" data-nav="control">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Điều khiển chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="schedules.html" class="nav-link" data-nav="schedule">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Lịch vận hành</span>
+              </a>
+            </li>
+            <li>
+              <a href="alerts.html" class="nav-link" data-nav="alerts">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Cảnh báo sự cố</span>
+                <span class="nav-badge">12</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 2: HẠ TẦNG CHIẾU SÁNG -->
+        <div class="nav-group">
+          <div class="nav-group-title">HẠ TẦNG CHIẾU SÁNG</div>
+          <ul class="nav-list">
+            <li>
+              <a href="areas.html" class="nav-link" data-nav="areas">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18"></path>
+                    <path d="M5 21V7l8-4v18"></path>
+                    <path d="M19 21V11l-6-3"></path>
+                    <path d="M9 9v.01"></path>
+                    <path d="M9 12v.01"></path>
+                    <path d="M9 15v.01"></path>
+                    <path d="M9 18v.01"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Khu vực chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="cabinets.html" class="nav-link" data-nav="cabinets">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v5l3 3"></path>
+                    <path d="M9 12h6"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Tủ chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="#routes" class="nav-link" data-nav="routes">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="6" cy="19" r="3"></circle>
+                    <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>
+                    <circle cx="18" cy="5" r="3"></circle>
+                  </svg>
+                </span>
+                <span class="nav-label">Tuyến chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="#lights" class="nav-link" data-nav="lights">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                    <path d="M9 18h6"/>
+                    <path d="M10 22h4"/>
+                  </svg>
+                </span>
+                <span class="nav-label">Điểm đèn</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 3: QUẢN TRỊ & BÁO CÁO -->
+        <div class="nav-group">
+          <div class="nav-group-title">QUẢN TRỊ & BÁO CÁO</div>
+          <ul class="nav-list">
+            <li>
+              <a href="#users" class="nav-link" data-nav="users">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Quản lý người dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="#roles" class="nav-link" data-nav="roles">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Phân quyền</span>
+              </a>
+            </li>
+            <li>
+              <a href="#reports" class="nav-link" data-nav="reports">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Báo cáo & thống kê</span>
+              </a>
+            </li>
+            <li>
+              <a href="#logs" class="nav-link" data-nav="logs">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </span>
+                <span class="nav-label">Nhật ký hệ thống</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Sidebar Bottom IoT Status Card -->
+      <div class="sidebar-footer">
+        <div class="iot-gateway-card">
+          <div class="gateway-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+            </svg>
+          </div>
+          <div class="gateway-info">
+            <span class="gateway-title">IoT Central Gateway</span>
+            <span class="gateway-status">Đang kết nối: <strong id="gatewayPingValue">99.8%</strong></span>
+          </div>
+          <div class="gateway-dot"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div class="main-container">
+      <!-- Top Header Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="btnToggleMobileSidebar" aria-label="Mở menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          
+          <!-- Search Bar -->
+          <div class="search-box">
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <input 
+              type="text" 
+              class="search-input" 
+              id="topSearchInput" 
+              placeholder="Tìm nhanh trạm, tủ điện, lộ đèn, sự cố (Ctrl+K)..." 
+              autocomplete="off"
+            >
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Realtime Clock / Date -->
+          <div class="system-time-display">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="topbarLiveClock">Thứ Năm, 24/10/2024 • 19:42:15 GMT+7</span>
+          </div>
+
+          <!-- Notification Bell -->
+          <div class="notification-wrapper">
+            <button class="btn-icon-topbar" id="btnNotifications" aria-label="Thông báo hệ thống" title="Thông báo hệ thống">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span class="notification-badge-dot"></span>
+            </button>
+
+            <!-- Notification Popover -->
+            <div class="notification-dropdown" id="notificationDropdown">
+              <div class="dropdown-header">
+                <strong>Thông báo mới (3)</strong>
+                <button class="btn-text-subtle" id="btnMarkAllRead">Đọc tất cả</button>
+              </div>
+              <ul class="dropdown-list">
+                <li class="notification-item unread">
+                  <span class="noti-indicator danger"></span>
+                  <div>
+                    <p class="noti-title">Sự cố điện áp Tuyến TL - 05</p>
+                    <small class="noti-time">12 phút trước</small>
+                  </div>
+                </li>
+                <li class="notification-item unread">
+                  <span class="noti-indicator warning"></span>
+                  <div>
+                    <p class="noti-title">Tủ CS - 07 cảnh báo mở cửa</p>
+                    <small class="noti-time">45 phút trước</small>
+                  </div>
+                </li>
+                <li class="notification-item">
+                  <span class="noti-indicator info"></span>
+                  <div>
+                    <p class="noti-title">Đồng bộ dữ liệu IoT Gateway thành công</p>
+                    <small class="noti-time">2 giờ trước</small>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- User Profile Chip -->
+          <div class="user-profile-wrapper">
+            <button class="user-profile-btn" id="btnUserProfile" aria-label="Hồ sơ người dùng">
+              <div class="user-avatar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="user-meta">
+                <span class="user-name">Nguyễn Văn Minh</span>
+                <span class="user-role">Quản trị hệ thống</span>
+              </div>
+              <span class="user-action-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </span>
+            </button>
+
+            <!-- User Menu Dropdown -->
+            <div class="user-dropdown" id="userDropdown">
+              <div class="user-dropdown-info">
+                <strong>Nguyễn Văn Minh</strong>
+                <small>quantri@smartlight.evncpc.vn</small>
+              </div>
+              <hr class="dropdown-divider">
+              <a href="#profile" class="user-menu-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Hồ sơ cá nhân</span>
+              </a>
+              <a href="#settings" class="user-menu-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Cấu hình thiết bị</span>
+              </a>
+              <hr class="dropdown-divider">
+              <a href="login.html" class="user-menu-item logout-link" id="linkLogout">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Đăng xuất</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Body Content -->
+      <main class="page-content">
+        <!-- Page Title & Header Actions with Telemetry Chips -->
+        <section class="map-header-row">
+          <div class="header-title-box">
+            <div class="map-title-wrap">
+              <h2 class="page-main-title">Bản đồ giám sát</h2>
+              <span class="live-pill-badge">TRỰC TIẾP</span>
+            </div>
+            <p class="page-subtitle">Giám sát vị trí, tọa độ địa lý và trạng thái vận hành tức thời của tủ chiếu sáng &amp; điểm đèn đô thị</p>
+          </div>
+
+          <!-- Quick Telemetry Chips -->
+          <div class="telemetry-chips-group">
+            <div class="telemetry-chip">
+              <span class="chip-dot dot-active"></span>
+              <span class="chip-label">Đang phát sáng:</span>
+              <strong class="chip-value" id="valLightsActive">1.092</strong>
+            </div>
+            <div class="telemetry-chip">
+              <span class="chip-dot dot-warning"></span>
+              <span class="chip-label">Cảnh báo:</span>
+              <strong class="chip-value" style="color: #ea580c;" id="valLightsWarning">89</strong>
+            </div>
+            <div class="telemetry-chip">
+              <span class="chip-dot dot-danger"></span>
+              <span class="chip-label">Mất kết nối:</span>
+              <strong class="chip-value" style="color: #dc2626;" id="valLightsLost">70</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== MAP WORKPLACE STAGE ==================== -->
+        <div class="map-canvas-container" id="mapStage">
+          <!-- Background Layer: Da Nang Satellite/Map Visual with Fallback Gradient Vector -->
+          <div class="map-bg-layer" id="mapBgLayer" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC1WqKvNqgJQ6bBKeXwhM-w58l7YthgMXJKJKtXgCImfyQHR7x73K22VGM6GBwCg_uQz4z6LvEQZRBV2iWccOF6PwLtsj13n5nMAOsioLEP7JlBEH1-IxT0F4SOZpvUTU_bT822jyxwqAx2sXUz5n3x9RzP9Caun-2AYMnMLY1f-000eXfK4X09LpxL8UbOe0TJIDgv8-kQ_lQOPrvZSvcUgKGP9quU1hwCt16_sZFM6eMowE7ZgYGi');">
+          </div>
+
+          <!-- Stylized Municipal Lighting Feeder Lines Overlay (SVG) -->
+          <svg class="map-svg-overlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 740">
+            <defs>
+              <linearGradient id="roadGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0.4"/>
+              </linearGradient>
+              <linearGradient id="warningGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fb923c" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#ea580c" stop-opacity="0.5"/>
+              </linearGradient>
+            </defs>
+            <!-- Simulated Municipal Lighting Feeder Lines -->
+            <path d="M 380 180 Q 480 320 550 370 T 680 620" fill="none" stroke="url(#roadGlow)" stroke-width="3.5" stroke-dasharray="6,6" opacity="0.85"/>
+            <path d="M 610 280 C 580 320 550 370 490 680" fill="none" stroke="url(#warningGlow)" stroke-width="2.5" opacity="0.7"/>
+            <path d="M 450 240 L 480 310 L 550 370 L 630 390 L 670 480" fill="none" stroke="#bae6fd" stroke-width="2" opacity="0.6"/>
+          </svg>
+
+          <!-- ==================== MAP NODES ==================== -->
+          <!-- Cabinet Node 1: TCS-04 (Hải Châu) -->
+          <div class="map-node" style="top: 180px; left: 380px;" data-id="TCS-04-HC" title="Tủ chiếu sáng TCS-04 (Hải Châu)">
+            <div class="node-ripple"></div>
+            <div class="cabinet-pin active">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l3 3"></path>
+                <path d="M9 12h6"></path>
+              </svg>
+            </div>
+            <span class="node-hover-label">TCS-04 (Hải Châu)</span>
+          </div>
+
+          <!-- Cabinet Node 2: TCS-09 (Sơn Trà - Warning) -->
+          <div class="map-node" style="top: 280px; left: 610px;" data-id="TCS-09-ST" title="Tủ chiếu sáng TCS-09 (Sơn Trà)">
+            <div class="cabinet-pin warning">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+            <span class="node-hover-label" style="opacity: 1; color: #ea580c;">TCS-09 (Sụt áp pha B)</span>
+          </div>
+
+          <!-- Active Lamp Node (SELECTED: ĐĐ-185V-027 with Warm Coral Halo) -->
+          <div class="map-node selected" style="top: 370px; left: 550px;" data-id="DD-185V-027" title="Điểm đèn ĐĐ-185V-027">
+            <div class="lamp-halo-wrapper">
+              <div class="halo-bloom">
+                <div class="halo-inner-bulb">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7zM9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1z"/>
+                  </svg>
+                </div>
+              </div>
+              <span class="selected-badge-pill">ĐĐ-185V-027</span>
+            </div>
+          </div>
+
+          <!-- Additional Field Lamp Poles -->
+          <div class="map-node" style="top: 240px; left: 450px;" data-id="DD-084-ND" title="Điểm đèn ĐĐ-084-ND">
+            <div class="lamp-pin state-on"></div>
+          </div>
+          <div class="map-node" style="top: 310px; left: 480px;" data-id="DD-091-ND" title="Điểm đèn ĐĐ-091-ND">
+            <div class="lamp-pin state-on"></div>
+          </div>
+          <div class="map-node" style="top: 430px; left: 520px;" data-id="DD-112-TR" title="Điểm đèn ĐĐ-112-TR">
+            <div class="lamp-pin state-warning"></div>
+          </div>
+          <div class="map-node" style="top: 470px; left: 430px;" data-id="DD-201-CL" title="Điểm đèn ĐĐ-201-CL">
+            <div class="lamp-pin state-lost"></div>
+          </div>
+          <div class="map-node" style="top: 390px; left: 630px;" data-id="DD-054-CR" title="Điểm đèn ĐĐ-054-CR">
+            <div class="lamp-pin state-on"></div>
+          </div>
+          <div class="map-node" style="top: 480px; left: 670px;" data-id="DD-062-CR" title="Điểm đèn ĐĐ-062-CR">
+            <div class="lamp-pin state-on"></div>
+          </div>
+          <div class="map-node" style="top: 520px; left: 590px;" data-id="DD-140-TTL" title="Điểm đèn ĐĐ-140-TTL">
+            <div class="lamp-pin state-on"></div>
+          </div>
+
+          <!-- ==================== LEFT FLOATING FILTER PANEL ==================== -->
+          <div class="floating-panel filter-panel" id="filterPanel">
+            <div class="panel-header">
+              <div class="panel-header-title">
+                <div class="header-icon-box">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                  </svg>
+                </div>
+                <span id="panelTitleText">Bộ lọc tìm kiếm</span>
+              </div>
+              <button class="btn-toggle-filter" id="btnToggleFilter" type="button">
+                <span id="collapseText">Thu gọn</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="11 17 6 12 11 7"></polyline>
+                  <polyline points="18 17 13 12 18 7"></polyline>
+                </svg>
+              </button>
+            </div>
+
+            <div class="panel-collapsible-content">
+              <!-- Search Input -->
+              <div class="panel-search-box">
+                <span class="panel-search-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </span>
+                <input type="text" id="filterSearchInput" placeholder="Tìm mã thiết bị, tên đường..." autocomplete="off">
+              </div>
+
+              <!-- District Selector -->
+              <div class="filter-field-group">
+                <div class="field-label">Khu vực quản lý</div>
+                <div class="select-custom-wrapper">
+                  <span class="select-left-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                      <circle cx="12" cy="9" r="2.5"/>
+                    </svg>
+                  </span>
+                  <select id="selectDistrict">
+                    <option value="all">Tất cả khu vực (Đà Nẵng)</option>
+                    <option value="hai-chau" selected>Quận Hải Châu</option>
+                    <option value="son-tra">Quận Sơn Trà</option>
+                    <option value="thanh-khe">Quận Thanh Khê</option>
+                    <option value="ngu-hanh-son">Quận Ngũ Hành Sơn</option>
+                    <option value="cam-le">Quận Cẩm Lệ</option>
+                  </select>
+                  <span class="select-caret">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Device Type Group -->
+              <div class="filter-field-group">
+                <div class="field-label">
+                  <span>Loại thiết bị</span>
+                  <small style="color: var(--text-light); text-transform: none;">2 nhóm</small>
+                </div>
+                <label class="check-item-box">
+                  <div class="check-left-wrap">
+                    <input type="checkbox" id="chkCabinet" checked>
+                    <span>Tủ chiếu sáng</span>
+                  </div>
+                  <span class="check-badge-count">42</span>
+                </label>
+                <label class="check-item-box">
+                  <div class="check-left-wrap">
+                    <input type="checkbox" id="chkLamp" checked>
+                    <span>Điểm đèn LED</span>
+                  </div>
+                  <span class="check-badge-count">1.248</span>
+                </label>
+              </div>
+
+              <!-- Status Group -->
+              <div class="filter-field-group">
+                <div class="field-label">
+                  <span>Trạng thái vận hành</span>
+                  <button type="button" class="btn-text-subtle" id="btnSelectAllStatus" style="font-size: 11px;">Chọn hết</button>
+                </div>
+                <label class="check-item-box">
+                  <div class="check-left-wrap">
+                    <input type="checkbox" id="chkStatusNormal" checked>
+                    <span class="chip-dot dot-active" style="width: 7px; height: 7px;"></span>
+                    <span>Hoạt động bình thường</span>
+                  </div>
+                  <span class="check-badge-count">1.092</span>
+                </label>
+                <label class="check-item-box">
+                  <div class="check-left-wrap">
+                    <input type="checkbox" id="chkStatusWarning" checked>
+                    <span class="chip-dot dot-warning" style="width: 7px; height: 7px;"></span>
+                    <span>Cảnh báo / Sụt áp</span>
+                  </div>
+                  <span class="check-badge-count" style="color: #ea580c; font-weight: 700;">89</span>
+                </label>
+                <label class="check-item-box">
+                  <div class="check-left-wrap">
+                    <input type="checkbox" id="chkStatusLost" checked>
+                    <span class="chip-dot dot-danger" style="width: 7px; height: 7px;"></span>
+                    <span>Mất kết nối / Hỏng</span>
+                  </div>
+                  <span class="check-badge-count" style="color: #dc2626; font-weight: 700;">70</span>
+                </label>
+              </div>
+
+              <!-- Filter Action Buttons -->
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+                <button type="button" class="btn-filter-apply" id="btnApplyFilter">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Áp dụng bộ lọc</span>
+                </button>
+                <button type="button" class="btn-filter-reset" id="btnResetFilter">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                  </svg>
+                  <span>Đặt lại mặc định</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== RIGHT FLOATING DEVICE DETAIL CARD ==================== -->
+          <div class="floating-panel device-detail-panel" id="deviceDetailCard">
+            <div class="panel-header">
+              <div class="panel-header-title">
+                <div class="header-icon-box" style="background-color: #ffedd5; color: #ea580c;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                </div>
+                <span>Thông tin thiết bị</span>
+              </div>
+              <button class="btn-close-detail" id="btnCloseDetailCard" aria-label="Đóng bảng">✕</button>
+            </div>
+
+            <!-- Hero Device Box -->
+            <div class="device-hero-card">
+              <div class="device-hero-left">
+                <div class="device-avatar-icon" id="detailAvatarIcon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7zM9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="device-id-title" id="detailId">ĐĐ-185V-027</h4>
+                  <span class="device-type-sub" id="detailType">Điểm đèn LED thông minh</span>
+                </div>
+              </div>
+              <span class="badge-device-status status-active" id="detailStatusBadge">
+                <span class="chip-dot dot-active" style="width: 6px; height: 6px;"></span>
+                <span id="detailStatusText">Hoạt động</span>
+              </span>
+            </div>
+
+            <!-- Quick Specs Grid -->
+            <div class="quick-specs-grid">
+              <div class="spec-box">
+                <span class="spec-label">Công suất định mức</span>
+                <strong class="spec-val" id="detailPower">120 W</strong>
+              </div>
+              <div class="spec-box">
+                <span class="spec-label">Cường độ / Dim</span>
+                <strong class="spec-val accent-orange" id="detailDimming">100%</strong>
+              </div>
+            </div>
+
+            <!-- Detailed Properties List -->
+            <div class="detail-properties-list">
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                  Mã thiết bị
+                </span>
+                <span class="prop-val" id="metaCode">ĐĐ-185V-027</span>
+              </div>
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/>
+                  </svg>
+                  Khu vực
+                </span>
+                <span class="prop-val" id="metaDistrict">Quận Hải Châu</span>
+              </div>
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="6" cy="19" r="3"></circle>
+                    <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>
+                    <circle cx="18" cy="5" r="3"></circle>
+                  </svg>
+                  Tuyến chiếu sáng
+                </span>
+                <span class="prop-val" id="metaRoute">Tuyến HL-01</span>
+              </div>
+              <div class="prop-row column-layout">
+                <span class="prop-label">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                    <circle cx="12" cy="9" r="2.5"/>
+                  </svg>
+                  Vị trí địa lý
+                </span>
+                <span class="prop-val" id="metaLocation">Đường Bạch Đằng, P. Hải Châu 1, Q. Hải Châu, TP. Đà Nẵng</span>
+              </div>
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  Cập nhật viễn trắc
+                </span>
+                <span class="prop-val">18/12/2024 14:25:10</span>
+              </div>
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>
+                  </svg>
+                  Điện áp pha U
+                </span>
+                <span class="prop-val">224.6 VAC</span>
+              </div>
+            </div>
+
+            <!-- Detail Actions Button Row -->
+            <div class="detail-actions-row">
+              <button type="button" class="btn-detail-action btn-detail-more" id="btnInspectDetail">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <span>Xem chi tiết</span>
+              </button>
+              <button type="button" class="btn-detail-action btn-detail-control" id="btnQuickControl">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y2="3"></line>
+                  <line x1="1" y1="14" x2="7" y2="14"></line>
+                  <line x1="9" y1="8" x2="15" y2="8"></line>
+                  <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+                <span>Điều khiển</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- ==================== MAP CONTROLS (BOTTOM RIGHT) ==================== -->
+          <div class="map-controls-stack">
+            <!-- Zoom In & Out -->
+            <div class="zoom-group">
+              <button class="btn-ctrl-square" id="btnZoomIn" title="Phóng to">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="zoom-divider"></div>
+              <button class="btn-ctrl-square" id="btnZoomOut" title="Thu nhỏ">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+            </div>
+
+            <!-- GPS Center -->
+            <button class="btn-ctrl-standalone" id="btnRecenterGps" title="Về vị trí trung tâm Đà Nẵng">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+              </svg>
+            </button>
+
+            <!-- Map Layer Switcher -->
+            <button class="btn-ctrl-standalone" id="btnToggleLayers" title="Chuyển lớp bản đồ">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+            </button>
+
+            <!-- Satellite Preview Switcher -->
+            <div class="satellite-thumb-box" id="btnSwitchSatellite" title="Bản đồ Vệ tinh">
+              <div class="satellite-thumb-bg" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDnC9sewjzWyxbaRoOCJIZiPWCjcmqTjiqiwsNCnSqQeHf3SCyHVrgRpD1fQKu4jyOwwXFzbnyPWPIKaID_zgz1-Er0VKYQck5MZc66D41XfhDa27-7O7KUciReBlHMS7qZ9y5bIo9xS9_3hkPDq9Wq4pflBRn3Mif33QNRduSXQRZjxTHPvyBtS0anoBwUaFBxPcbmSQlMOyKebmmhY4ejeY_XsbKvhZTscvv_XIZvNPQeN2m5DbHi');"></div>
+              <span class="satellite-label">Vệ tinh</span>
+            </div>
+          </div>
+
+          <!-- ==================== BOTTOM MAP LEGEND ==================== -->
+          <div class="map-legend-bar">
+            <span class="legend-title">Chú giải:</span>
+            <div class="legend-item">
+              <div class="legend-icon-badge" style="background-color: #0f3b60;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 7v5l3 3"></path>
+                </svg>
+              </div>
+              <span>Tủ chiếu sáng</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-icon-badge" style="background-color: #ffedd5; color: #ea580c; border-radius: 50%;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/>
+                </svg>
+              </div>
+              <span>Điểm đèn</span>
+            </div>
+            <div class="legend-item">
+              <span class="chip-dot dot-active" style="width: 8px; height: 8px;"></span>
+              <span>Hoạt động</span>
+            </div>
+            <div class="legend-item">
+              <span class="chip-dot dot-warning" style="width: 8px; height: 8px;"></span>
+              <span>Cảnh báo</span>
+            </div>
+            <div class="legend-item">
+              <span class="chip-dot dot-danger" style="width: 8px; height: 8px;"></span>
+              <span>Mất kết nối</span>
+            </div>
+            <!-- Distance Scale -->
+            <div class="legend-scale-wrapper">
+              <span>0</span>
+              <div class="scale-ruler"></div>
+              <span>2 km</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== BOTTOM 3 TELEMETRY CARDS ==================== -->
+        <section class="bottom-telemetry-grid">
+          <!-- Card 1: Energy Monitoring -->
+          <div class="bottom-telemetry-card">
+            <div>
+              <div class="telemetry-card-header">
+                <span class="telemetry-card-title">Tiêu thụ điện năng hôm nay</span>
+                <div class="telemetry-card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                  </svg>
+                </div>
+              </div>
+              <div class="energy-num-row">
+                <span class="energy-main-val">1.482</span>
+                <span class="energy-unit">kWh</span>
+                <span class="energy-change-chip">-12.4% so với trung bình</span>
+              </div>
+            </div>
+            <div class="energy-progress-bar">
+              <div class="energy-progress-fill" style="width: 68%;"></div>
+            </div>
+          </div>
+
+          <!-- Card 2: Active Schedules -->
+          <div class="bottom-telemetry-card">
+            <div>
+              <div class="telemetry-card-header">
+                <span class="telemetry-card-title">Lịch vận hành ban đêm</span>
+                <div class="telemetry-card-icon peach-tint">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </div>
+              </div>
+              <div class="schedule-info-row">
+                <div class="schedule-block">
+                  <small>Kịch bản hiện thời:</small>
+                  <strong>Chiếu sáng toàn tải (18h–23h)</strong>
+                </div>
+                <div class="schedule-block" style="text-align: right;">
+                  <small>Chuyển mức 50%:</small>
+                  <strong style="color: #ea580c;">Sau 23:00</strong>
+                </div>
+              </div>
+            </div>
+            <div class="schedule-next-time">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>Chu kỳ tự động kế tiếp diễn ra sau 3 giờ 18 phút</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Patrol & Maintenance Status -->
+          <div class="bottom-telemetry-card">
+            <div>
+              <div class="telemetry-card-header">
+                <span class="telemetry-card-title">Đội kỹ thuật trực ca</span>
+                <div class="telemetry-card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="patrol-team-row">
+                <div class="patrol-team-badge">Đ1</div>
+                <div class="patrol-team-meta">
+                  <strong>Đội Hải Châu - Sơn Trà</strong>
+                  <small>Đang xử lý tại TCS-09 (Võ Nguyên Giáp)</small>
+                </div>
+              </div>
+            </div>
+            <div class="patrol-action-row">
+              <span class="patrol-priority">Ưu tiên xử lý: Cấp bách</span>
+              <a class="btn-dispatch-link" id="btnDispatchPatrol">
+                <span>Điều phối đội xe</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Mobile Overlay Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Map JavaScript Script -->
+  <script src="js/map.js"></script>
+</body>
+</html>
