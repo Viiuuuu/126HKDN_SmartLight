@@ -290,7 +290,7 @@ CREATE TABLE CauHinhCanhBao (
     nguongGiaTri DECIMAL(10,2) CHECK (nguongGiaTri > 0),
     -- MAT_KET_NOI/KHONG_PHAN_HOI: so giay; QUA_NHIET: do C
     mucDo TINYINT NOT NULL DEFAULT 1 CHECK (mucDo IN (1,2,3)),
-    dangBat BIT NOT NULL DEFAULT 1,
+    dangBat BIT NOT NULL DEFAULT 1,--ĐANG BẬT
     ngayTao DATETIME NOT NULL DEFAULT GETDATE(),
     ngayCapNhat DATETIME,
     CONSTRAINT CK_CauHinh_Nguong CHECK (nguongGiaTri IS NOT NULL)
@@ -338,3 +338,182 @@ CREATE TABLE NhatKyHeThong (
 GO
 CREATE INDEX IX_NhatKy_ThoiGian ON NhatKyHeThong(thoiGian DESC);
 GO
+-- ============================================================
+-- PHẦN 2: CHÈN DỮ LIỆU
+-- ============================================================
+-- 1. KHU VUC: ten phuong hien hanh theo NQ 1659/NQ-UBTVQH15
+INSERT INTO KhuVuc(maKhuVuc,tenPhuongXa,moTa)
+SELECT v.ma, v.ten, N'Dữ liệu mẫu phục vụ kiểm thử tại thành phố Đà Nẵng'
+FROM (VALUES
+ ('KV001',N'Phường Hải Châu'),
+ ('KV002',N'Phường Hòa Cường'),
+ ('KV003',N'Phường Thanh Khê'),
+ ('KV004',N'Phường An Hải')
+) v(ma,ten)
+WHERE NOT EXISTS (SELECT 1 FROM KhuVuc k WHERE k.maKhuVuc=v.ma);
+
+-- 2. TU CHIEU SANG: toa do MINH HOA GAN DUNG, khong phai so lieu lap dat thuc
+INSERT INTO TuChieuSang
+(maTu,tenTu,diaChi,viDo,kinhDo,trangThaiKetNoi,trangThaiNguon,
+ lanKetNoiCuoi,cheDoVanHanh,maThietBi,moTa,maKhuVuc)
+SELECT v.ma,v.ten,v.diaChi,v.viDo,v.kinhDo,v.ketNoi,v.nguon,
+       CASE WHEN v.ketNoi=1 THEN GETDATE() ELSE NULL END,
+       v.cheDo,v.thietBi,N'Tủ mô phỏng phục vụ đồ án SmartLight',v.khu
+FROM (VALUES
+ ('TC00001',N'Tủ Bạch Đằng 01',N'Đường Bạch Đằng, phường Hải Châu, Đà Nẵng',CAST(16.0675000 AS DECIMAL(10,7)),CAST(108.2235000 AS DECIMAL(10,7)),1,'ON',2,'SIM-TU-001','KV001'),
+ ('TC00002',N'Tủ 2 Tháng 9 01',N'Đường 2 Tháng 9, phường Hòa Cường, Đà Nẵng',CAST(16.0427000 AS DECIMAL(10,7)),CAST(108.2210000 AS DECIMAL(10,7)),1,'ON',2,'SIM-TU-002','KV002'),
+ ('TC00003',N'Tủ Điện Biên Phủ 01',N'Đường Điện Biên Phủ, phường Thanh Khê, Đà Nẵng',CAST(16.0655000 AS DECIMAL(10,7)),CAST(108.1935000 AS DECIMAL(10,7)),0,'UNKNOWN',0,'SIM-TU-003','KV003'),
+ ('TC00004',N'Tủ Võ Nguyên Giáp 01',N'Đường Võ Nguyên Giáp, phường An Hải, Đà Nẵng',CAST(16.0680000 AS DECIMAL(10,7)),CAST(108.2450000 AS DECIMAL(10,7)),1,'ON',1,'SIM-TU-004','KV004')
+) v(ma,ten,diaChi,viDo,kinhDo,ketNoi,nguon,cheDo,thietBi,khu)
+WHERE NOT EXISTS (SELECT 1 FROM TuChieuSang t WHERE t.maTu=v.ma);
+
+-- 3. TUYEN CHIEU SANG: moi tu co the quan ly nhieu tuyen
+INSERT INTO TuyenChieuSang
+(maTuyen,tenTuyen,viTri,trangThaiHoatDong,chieuDai,mucSangHienTai,maTu)
+SELECT v.ma,v.ten,v.viTri,v.trangThai,v.chieuDai,v.mucSang,v.maTu
+FROM (VALUES
+ ('TCS00001',N'Tuyến Bạch Đằng A',N'Đoạn mô phỏng trên đường Bạch Đằng',1,500,100,'TC00001'),
+ ('TCS00002',N'Tuyến Bạch Đằng B',N'Đoạn mô phỏng thứ hai trên đường Bạch Đằng',1,400,70,'TC00001'),
+ ('TCS00003',N'Tuyến 2 Tháng 9',N'Đoạn mô phỏng trên đường 2 Tháng 9',1,600,100,'TC00002'),
+ ('TCS00004',N'Tuyến Điện Biên Phủ',N'Đoạn mô phỏng trên đường Điện Biên Phủ',0,450,NULL,'TC00003'),
+ ('TCS00005',N'Tuyến Võ Nguyên Giáp',N'Đoạn mô phỏng trên đường Võ Nguyên Giáp',1,550,80,'TC00004')
+) v(ma,ten,viTri,trangThai,chieuDai,mucSang,maTu)
+WHERE NOT EXISTS (SELECT 1 FROM TuyenChieuSang t WHERE t.maTuyen=v.ma);
+
+-- 4. DIEM DEN: 2 diem / tuyen tai mot vai tuyen de test nhom va theo doi
+-- Toa do gan dung de demo ban do; du lieu do (dien ap, nhiet do...) la gia lap.
+INSERT INTO DiemDen
+(maDen,tenDen,loaiBongDen,viTri,viDo,kinhDo,congSuat,
+ dienAp,dongDien,congSuatThucTe,nhietDoLed,lanDoCuoi,doSang,trangThaiHoatDong,maTuyen)
+SELECT v.ma,v.ten,N'LED',v.viTri,v.viDo,v.kinhDo,v.cs,
+ v.dienAp,v.dongDien,v.csThucTe,v.nhietDo,
+ CASE WHEN v.dienAp IS NOT NULL THEN GETDATE() ELSE NULL END,
+ v.doSang,v.trangThai,v.maTuyen
+FROM (VALUES
+ ('DEN00001',N'Đèn Bạch Đằng 01',N'Đường Bạch Đằng',CAST(16.0675000 AS DECIMAL(10,7)),CAST(108.2235000 AS DECIMAL(10,7)),120.00,224.60,0.540,96.00,41.50,100,1,'TCS00001'),
+ ('DEN00002',N'Đèn Bạch Đằng 02',N'Đường Bạch Đằng',CAST(16.0680000 AS DECIMAL(10,7)),CAST(108.2237000 AS DECIMAL(10,7)),120.00,223.80,0.510,85.00,40.00,100,1,'TCS00001'),
+ ('DEN00003',N'Đèn Bạch Đằng 03',N'Đường Bạch Đằng',CAST(16.0685000 AS DECIMAL(10,7)),CAST(108.2239000 AS DECIMAL(10,7)),100.00,220.00,0.350,65.00,39.50,70,1,'TCS00002'),
+ ('DEN00004',N'Đèn 2 Tháng 9 01',N'Đường 2 Tháng 9',CAST(16.0427000 AS DECIMAL(10,7)),CAST(108.2210000 AS DECIMAL(10,7)),150.00,230.00,0.650,130.00,42.00,100,1,'TCS00003'),
+ ('DEN00005',N'Đèn 2 Tháng 9 02',N'Đường 2 Tháng 9',CAST(16.0432000 AS DECIMAL(10,7)),CAST(108.2211000 AS DECIMAL(10,7)),150.00,229.00,0.590,115.00,44.00,100,1,'TCS00003'),
+ ('DEN00006',N'Đèn Điện Biên Phủ 01',N'Đường Điện Biên Phủ',CAST(16.0655000 AS DECIMAL(10,7)),CAST(108.1935000 AS DECIMAL(10,7)),100.00,NULL,NULL,NULL,NULL,NULL,0,'TCS00004'),
+ ('DEN00007',N'Đèn Võ Nguyên Giáp 01',N'Đường Võ Nguyên Giáp',CAST(16.0680000 AS DECIMAL(10,7)),CAST(108.2450000 AS DECIMAL(10,7)),120.00,223.00,0.450,90.00,41.00,80,1,'TCS00005'),
+ ('DEN00008',N'Đèn Võ Nguyên Giáp 02',N'Đường Võ Nguyên Giáp',CAST(16.0685000 AS DECIMAL(10,7)),CAST(108.2452000 AS DECIMAL(10,7)),120.00,222.00,0.440,88.00,42.00,80,1,'TCS00005')
+) v(ma,ten,viTri,viDo,kinhDo,cs,dienAp,dongDien,csThucTe,nhietDo,doSang,trangThai,maTuyen)
+WHERE NOT EXISTS (SELECT 1 FROM DiemDen d WHERE d.maDen=v.ma);
+
+-- 5. VAI TRO
+INSERT INTO VaiTro(tenVaiTro,moTa)
+SELECT v.ten,v.moTa FROM (VALUES
+ (N'Quản trị viên',N'Quản lý tài khoản, thiết bị và hệ thống'),
+ (N'Nhân viên vận hành',N'Giám sát và điều khiển chiếu sáng'),
+ (N'Nhân viên kỹ thuật',N'Kiểm tra và xử lý cảnh báo')
+) v(ten,moTa)
+WHERE NOT EXISTS (SELECT 1 FROM VaiTro x WHERE x.tenVaiTro=v.ten);
+
+-- 6. QUYEN HAN: danh muc chuc nang, mac dinh co dong phan quyen = duoc xem
+INSERT INTO QuyenHan(tenQuyenHan,moTa)
+SELECT v.ten,v.moTa FROM (VALUES
+ (N'Quản lý khu vực',N'Tra cứu và cập nhật khu vực'),
+ (N'Quản lý tủ chiếu sáng',N'Tra cứu và cập nhật tủ'),
+ (N'Quản lý tuyến chiếu sáng',N'Tra cứu và cập nhật tuyến'),
+ (N'Quản lý điểm đèn',N'Tra cứu và cập nhật điểm đèn'),
+ (N'Quản lý người dùng',N'Tài khoản và phân quyền'),
+ (N'Giám sát và cảnh báo',N'Xem trạng thái, sự cố và cảnh báo'),
+ (N'Lịch vận hành',N'Tra cứu và thiết lập lịch'),
+ (N'Báo cáo thống kê',N'Xem báo cáo')
+) v(ten,moTa)
+WHERE NOT EXISTS (SELECT 1 FROM QuyenHan q WHERE q.tenQuyenHan=v.ten);
+
+-- 7. VAI TRO - QUYEN HAN (1: duoc them/sua du lieu; 0: chi xem)
+-- Quyen dieu khien thiet bi can duoc kiem soat RIENG trong Backend.
+INSERT INTO VaiTro_QuyenHan(maVaiTro,maQuyenHan,duocCapNhat)
+SELECT r.maVaiTro,q.maQuyenHan,
+ CASE WHEN r.tenVaiTro=N'Quản trị viên' THEN 1
+      WHEN r.tenVaiTro=N'Nhân viên vận hành' AND q.tenQuyenHan=N'Lịch vận hành' THEN 1
+      WHEN r.tenVaiTro=N'Nhân viên kỹ thuật' AND q.tenQuyenHan=N'Giám sát và cảnh báo' THEN 1
+      ELSE 0 END
+FROM VaiTro r CROSS JOIN QuyenHan q
+WHERE (
+ (r.tenVaiTro=N'Quản trị viên')
+ OR (r.tenVaiTro=N'Nhân viên vận hành' AND q.tenQuyenHan IN
+  (N'Quản lý khu vực',N'Quản lý tủ chiếu sáng',N'Quản lý tuyến chiếu sáng',N'Quản lý điểm đèn',N'Giám sát và cảnh báo',N'Lịch vận hành',N'Báo cáo thống kê'))
+ OR (r.tenVaiTro=N'Nhân viên kỹ thuật' AND q.tenQuyenHan IN
+  (N'Quản lý tủ chiếu sáng',N'Quản lý tuyến chiếu sáng',N'Quản lý điểm đèn',N'Giám sát và cảnh báo'))
+)
+AND NOT EXISTS (
+ SELECT 1 FROM VaiTro_QuyenHan x
+ WHERE x.maVaiTro=r.maVaiTro AND x.maQuyenHan=q.maQuyenHan
+);
+
+-- 8. NGUOI DUNG: hash ASP.NET Core Identity V3 (PBKDF2-SHA512, 100.000 vong)
+-- Ba tai khoan demo co cung mat khau SmartLight@2026; doi ngay truoc khi dua len mang.
+DECLARE @Hash VARCHAR(255)='AQAAAAIAAYagAAAAEFJPs71YNE08zPEc51kclvdoBPPghPhfTV2W2F+bpbfSJnlYS21nMKZSTxLR1BcqWg==';
+INSERT INTO NguoiDung
+(maNguoiDung,tenDangNhap,matKhau,hoTen,ngaySinh,email,soDienThoai,maVaiTro,maKhuVuc)
+SELECT v.ma,v.tenDangNhap,@Hash,v.hoTen,CONVERT(DATE,v.ngaySinh),v.email,v.sdt,r.maVaiTro,v.maKhuVuc
+FROM (VALUES
+ ('ND0001','admin_demo',N'Quản trị viên Demo','2000-01-01','admin.demo@smartlight.example','0900000001',N'Quản trị viên',NULL),
+ ('ND0002','vanhanh_demo',N'Nhân viên Vận hành Demo','2001-02-15','vanhanh.demo@smartlight.example','0900000002',N'Nhân viên vận hành','KV001'),
+ ('ND0003','kythuat_demo',N'Nhân viên Kỹ thuật Demo','2001-06-20','kythuat.demo@smartlight.example','0900000003',N'Nhân viên kỹ thuật','KV002')
+) v(ma,tenDangNhap,hoTen,ngaySinh,email,sdt,tenVaiTro,maKhuVuc)
+JOIN VaiTro r ON r.tenVaiTro=v.tenVaiTro
+WHERE NOT EXISTS (SELECT 1 FROM NguoiDung u WHERE u.maNguoiDung=v.ma OR u.tenDangNhap=v.tenDangNhap);
+
+-- 9. DU LIEU GIAM SAT TU: 2 lan do/tủ online, 0 cho tu mat ket noi
+INSERT INTO DuLieuGiamSatTu
+(dienApPha1,dienApPha2,dienApPha3,dongDienPha1,dongDienPha2,dongDienPha3,congSuat,dienNang,thoiGianDo,maTu)
+SELECT v.v1,v.v2,v.v3,v.a1,v.a2,v.a3,v.kw,v.kwh,DATEADD(MINUTE,v.truPhut,GETDATE()),v.maTu
+FROM (VALUES
+ ('TC00001',228.10,229.20,227.50,18.10,18.30,18.20,12.400,148.200,-10),
+ ('TC00001',229.40,228.70,227.40,18.10,18.30,18.20,12.450,148.350,0),
+ ('TC00002',230.10,229.60,231.20,12.30,12.10,12.20,8.250,112.400,-10),
+ ('TC00002',230.00,229.90,231.00,12.40,12.20,12.30,8.300,112.520,0),
+ ('TC00004',227.10,227.50,228.00,9.20,9.10,9.30,6.100,94.600,-10),
+ ('TC00004',227.40,227.70,228.20,9.30,9.20,9.20,6.180,94.700,0)
+) v(maTu,v1,v2,v3,a1,a2,a3,kw,kwh,truPhut)
+WHERE NOT EXISTS (SELECT 1 FROM DuLieuGiamSatTu g WHERE g.maTu=v.maTu);
+
+-- 10. DU LIEU GIAM SAT DEN: 1 ban ghi cho moi den co thong so
+INSERT INTO DuLieuGiamSatDen(maDen,dienAp,dongDien,congSuatThucTe,nhietDoLed,doSang,thoiGianDo)
+SELECT d.maDen,d.dienAp,d.dongDien,d.congSuatThucTe,d.nhietDoLed,d.doSang,GETDATE()
+FROM DiemDen d
+WHERE d.maDen IN ('DEN00001','DEN00002','DEN00003','DEN00004','DEN00005','DEN00007','DEN00008')
+ AND NOT EXISTS (SELECT 1 FROM DuLieuGiamSatDen g WHERE g.maDen=d.maDen);
+
+-- 11. CAU HINH CANH BAO
+INSERT INTO CauHinhCanhBao(tenCanhBao,loaiCanhBao,nguongGiaTri,mucDo,dangBat)
+SELECT v.ten,v.loai,v.nguong,v.mucDo,1
+FROM (VALUES
+ (N'Mất kết nối tủ trên 5 phút','MAT_KET_NOI',300.00,2),
+ (N'Thiết bị không phản hồi sau 30 giây','KHONG_PHAN_HOI',30.00,2),
+ (N'Nhiệt độ LED vượt 75 độ C','QUA_NHIET',75.00,3)
+) v(ten,loai,nguong,mucDo)
+WHERE NOT EXISTS (SELECT 1 FROM CauHinhCanhBao c WHERE c.tenCanhBao=v.ten);
+
+-- 12. LICH VAN HANH: mot lich mau cho tuyen Bạch Đằng A
+INSERT INTO LichVanHanh(tenLich,ngayBatDau,dangApDung,maTuyen,maNguoiTao)
+SELECT N'Lịch đèn Bạch Đằng hàng ngày',CONVERT(DATE,GETDATE()),1,'TCS00001','ND0002'
+WHERE NOT EXISTS (SELECT 1 FROM LichVanHanh WHERE tenLich=N'Lịch đèn Bạch Đằng hàng ngày');
+
+-- 13. CHI TIET LICH: 18:00 bat, 23:00 DIM 70, 05:30 tat
+INSERT INTO ChiTietLichVanHanh(maLich,thuTrongTuan,gioThucHien,hanhDong,mucSang)
+SELECT l.maLich,v.thu,v.gio,v.hanhDong,v.mucSang
+FROM LichVanHanh l
+CROSS JOIN (VALUES
+ (CAST(NULL AS TINYINT),CAST('18:00:00' AS TIME(0)),'BAT',CAST(NULL AS TINYINT)),
+ (CAST(NULL AS TINYINT),CAST('23:00:00' AS TIME(0)),'DIM',CAST(70 AS TINYINT)),
+ (CAST(NULL AS TINYINT),CAST('05:30:00' AS TIME(0)),'TAT',CAST(NULL AS TINYINT))
+) v(thu,gio,hanhDong,mucSang)
+WHERE l.tenLich=N'Lịch đèn Bạch Đằng hàng ngày'
+ AND NOT EXISTS (SELECT 1 FROM ChiTietLichVanHanh x WHERE x.maLich=l.maLich AND x.gioThucHien=v.gio AND x.hanhDong=v.hanhDong);
+
+-- KHONG chen PhienDangNhap/LenhDieuKhien/NhatKyHeThong/CanhBao:
+-- cac bang nay nen do chuc nang dang nhap, dieu khien va canh bao tao ra khi TEST.
+GO
+-- KIEM TRA SO DONG CAC BANG DA CHEN
+SELECT * FROM KhuVuc
+SELECT * FROM TuChieuSang
+SELECT * FROM TuyenChieuSang
+SELECT * FROM DiemDen
+SELECT * FROM NguoiDung
+SELECT * FROM LichVanHanh
