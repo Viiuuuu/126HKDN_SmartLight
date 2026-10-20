@@ -1,0 +1,769 @@
+/* ==========================================================================
+   SmartLight Municipal IoT - Lighting Control Stylesheet (control.css)
+   Clean Modern Control Interface matching Municipal Smart Street Light Specs
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Page Header
+   -------------------------------------------------------------------------- */
+.control-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.control-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.online-pill-badge {
+  background-color: #e0edff;
+  color: #1d4ed8;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pulse-dot-blue {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #1d4ed8;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.25);
+  animation: pulse-ring 2s infinite ease-out;
+}
+
+.session-pill-box {
+  background-color: #ffffff;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+.session-pill-box strong {
+  color: var(--text-main);
+}
+
+/* --------------------------------------------------------------------------
+   3-Column Main Grid Layout
+   -------------------------------------------------------------------------- */
+.control-main-grid {
+  display: grid;
+  grid-template-columns: 3.6fr 5fr 3.4fr;
+  gap: 18px;
+  align-items: start;
+}
+
+/* --------------------------------------------------------------------------
+   Control Cards Common Styles
+   -------------------------------------------------------------------------- */
+.ctrl-card {
+  background-color: #ffffff;
+  border: 1px solid #edf2f7;
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ctrl-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ctrl-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ctrl-header-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: #e0edff;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ctrl-header-icon.amber-tint {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.ctrl-header-icon.peach-tint {
+  background-color: #ffedd5;
+  color: #ea580c;
+}
+
+.ctrl-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.ctrl-badge-info {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background-color: #e0edff;
+  padding: 2px 10px;
+  border-radius: 9999px;
+}
+
+.ctrl-badge-subtle {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Scope Selector (Segmented Switcher)
+   -------------------------------------------------------------------------- */
+.scope-segmented-switcher {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  background-color: #f1f5f9;
+  padding: 4px;
+  border-radius: var(--radius-md);
+}
+
+.scope-tab-btn {
+  padding: 8px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.18s ease;
+}
+
+.scope-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.scope-tab-btn.active {
+  background-color: #ffffff;
+  color: var(--color-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   Form Fields
+   -------------------------------------------------------------------------- */
+.ctrl-form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ctrl-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ctrl-field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ctrl-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.ctrl-select {
+  width: 100%;
+  height: 40px;
+  padding: 0 32px 0 12px;
+  border-radius: var(--radius-md);
+  background-color: #f8fafc;
+  border: 1px solid var(--border-input);
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.ctrl-select:focus {
+  background-color: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.ctrl-select-caret {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  pointer-events: none;
+  display: flex;
+}
+
+/* --------------------------------------------------------------------------
+   Quick Command Buttons (Bật, Tắt, Reset)
+   -------------------------------------------------------------------------- */
+.quick-commands-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.cmd-action-btn {
+  padding: 12px 6px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: all 0.18s ease;
+  cursor: pointer;
+}
+
+.cmd-action-btn:active {
+  transform: scale(0.96);
+}
+
+/* Bật button (Light blue/cyan tint) */
+.cmd-btn-turn-on {
+  background-color: #cee5fb;
+  color: #074476;
+}
+
+.cmd-btn-turn-on:hover {
+  background-color: #bdd4e9;
+}
+
+.cmd-btn-turn-on.active-cmd {
+  outline: 2px solid #074476;
+  box-shadow: 0 0 0 4px rgba(7, 68, 118, 0.15);
+}
+
+/* Tắt button (Light peach/coral tint) */
+.cmd-btn-turn-off {
+  background-color: #ffdad6;
+  color: #845144;
+}
+
+.cmd-btn-turn-off:hover {
+  background-color: #ffbcab;
+}
+
+.cmd-btn-turn-off.active-cmd {
+  outline: 2px solid #845144;
+  box-shadow: 0 0 0 4px rgba(132, 81, 68, 0.15);
+}
+
+/* Reset button (Light slate/sky tint) */
+.cmd-btn-reset {
+  background-color: #d2e4ff;
+  color: #074476;
+}
+
+.cmd-btn-reset:hover {
+  background-color: #b4d4ff;
+}
+
+.cmd-btn-reset.active-cmd {
+  outline: 2px solid #074476;
+  box-shadow: 0 0 0 4px rgba(7, 68, 118, 0.15);
+}
+
+.cmd-title {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.cmd-sub {
+  font-size: 10.5px;
+  opacity: 0.8;
+}
+
+/* --------------------------------------------------------------------------
+   Brightness Slider Card
+   -------------------------------------------------------------------------- */
+.brightness-slider-box {
+  background-color: #f8fafc;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  border: 1px solid #edf2f7;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slider-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slider-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.slider-val-display {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.range-input {
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: #e2e8f0;
+  outline: none;
+  appearance: none;
+  accent-color: #1d4ed8;
+  cursor: pointer;
+}
+
+.slider-scale-hints {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+/* --------------------------------------------------------------------------
+   Advanced Toggle Options
+   -------------------------------------------------------------------------- */
+.toggle-options-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toggle-option-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background-color: #f8fafc;
+  border: 1px solid #edf2f7;
+}
+
+.toggle-info-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-icon-wrap {
+  color: var(--color-primary);
+  display: flex;
+}
+
+.toggle-text strong {
+  font-size: 13px;
+  color: var(--text-main);
+  display: block;
+  line-height: 1.2;
+}
+
+.toggle-text small {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Switch styling */
+.switch-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 20px;
+}
+
+.switch-wrapper input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #cbd5e1;
+  transition: 0.25s;
+  border-radius: 9999px;
+}
+
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.25s;
+  border-radius: 50%;
+}
+
+input:checked + .switch-slider {
+  background-color: #1d4ed8;
+}
+
+input:checked + .switch-slider:before {
+  transform: translateX(18px);
+}
+
+/* --------------------------------------------------------------------------
+   Selected Lights Table (Column 2)
+   -------------------------------------------------------------------------- */
+.ctrl-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ctrl-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.ctrl-table th {
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.ctrl-table td {
+  padding: 12px 12px;
+  border-bottom: 1px solid #f8fafc;
+  vertical-align: middle;
+}
+
+.ctrl-table tr:hover {
+  background-color: #f8fafc;
+}
+
+.col-dev-code {
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+.col-dev-code.orange-code {
+  color: #ea580c;
+}
+
+.badge-light-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.badge-light-status.status-on {
+  background-color: #e0edff;
+  color: #1d4ed8;
+}
+
+.badge-light-status.status-off {
+  background-color: #ffedd5;
+  color: #ea580c;
+}
+
+.progress-dim-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-dim-bar {
+  width: 50px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: #e2e8f0;
+  overflow: hidden;
+}
+
+.progress-dim-fill {
+  height: 100%;
+  background-color: #1d4ed8;
+}
+
+.dim-percent-num {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.online-wifi-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #0284c7;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Confirmation Action Card (Bottom of Column 2)
+   -------------------------------------------------------------------------- */
+.confirm-action-card {
+  background-color: #ffffff;
+  border: 1px solid #edf2f7;
+  border-radius: var(--radius-xl);
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.confirm-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.confirm-left-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.confirm-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background-color: #e0edff;
+  color: #1d4ed8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.confirm-text-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.confirm-text-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.confirm-text-sub strong {
+  color: #1d4ed8;
+}
+
+.confirm-badge-param {
+  font-size: 11.5px;
+  font-weight: 700;
+  background-color: #f1f5f9;
+  color: var(--text-body);
+  padding: 3px 10px;
+  border-radius: 6px;
+}
+
+.confirm-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #f8fafc;
+  padding-top: 10px;
+}
+
+.btn-skip-action {
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  background-color: #f1f5f9;
+  color: var(--text-body);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.btn-skip-action:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-execute-action {
+  padding: 7px 18px;
+  border-radius: var(--radius-sm);
+  background-color: #0f3b60;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(15, 59, 96, 0.25);
+  transition: all 0.15s ease;
+}
+
+.btn-execute-action:hover {
+  background-color: #174e7d;
+  transform: translateY(-1px);
+}
+
+.btn-execute-action:active {
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   Recent Commands Timeline (Column 3)
+   -------------------------------------------------------------------------- */
+.recent-commands-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.timeline-event-card {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background-color: #f8fafc;
+  border: 1px solid #edf2f7;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: background 0.15s ease;
+}
+
+.timeline-event-card:hover {
+  background-color: #f1f5f9;
+}
+
+.event-meta-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.event-time-code {
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.event-status-tag {
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.event-status-tag.status-success {
+  color: #1d4ed8;
+}
+
+.event-status-tag.status-pending {
+  color: #0284c7;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.event-status-tag.status-failed {
+  color: #ea580c;
+}
+
+.event-desc-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.timeline-footer-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #edf2f7;
+  padding-top: 14px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.timeline-footer-stat strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Design
+   -------------------------------------------------------------------------- */
+@media (min-width: 1025px) and (max-width: 1366px) {
+  .control-main-grid {
+    grid-template-columns: 3.5fr 4.9fr 3.6fr;
+    gap: 14px;
+  }
+
+  .ctrl-card {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .confirm-action-card {
+    padding: 14px 16px;
+  }
+
+  .ctrl-table th,
+  .ctrl-table td {
+    padding: 8px 8px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .control-main-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

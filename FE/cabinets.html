@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full bg-slate-50">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Danh sách tủ điều khiển chiếu sáng - SmartLight IoT Municipal System</title>
+  <meta name="description" content="Quản trị thông tin, đo lường điện năng 3 pha, trạng thái và cấu hình các tủ chiếu sáng trong hệ thống SmartLight IoT EVNCPC.">
+  
+  <!-- Google Fonts: Plus Jakarta Sans, JetBrains Mono & Material Symbols Outlined -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  
+  <!-- Canonical App Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/cabinets.css">
+  
+  <!-- Tailwind CSS CDN with configuration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef6ff',
+              100: '#d9eaff',
+              500: '#1e6be6',
+              600: '#0066ff',
+              700: '#0b51c5',
+              800: '#0c3e98',
+              900: '#1a365d',
+            },
+            primary: '#074476',
+            'primary-container': '#2b5c8f',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="h-full text-slate-800 flex overflow-hidden bg-slate-50">
+
+  <div class="dashboard-wrapper w-full flex">
+    
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Brand / Logo -->
+      <div class="sidebar-brand">
+        <div class="brand-logo-wrap">
+          <img src="images/logo.png" alt="SmartLight EVNCPC Logo" class="brand-logo-img">
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-name">SmartLight</h1>
+          <span class="brand-sub">MUNICIPAL IOT</span>
+        </div>
+        <button class="btn-close-sidebar" id="btnCloseSidebar" aria-label="Đóng menu">✕</button>
+      </div>
+
+      <!-- Navigation Menus -->
+      <nav class="sidebar-nav">
+        <!-- Section 1: GIÁM SÁT & ĐIỀU HÀNH -->
+        <div class="nav-group">
+          <div class="nav-group-title">GIÁM SÁT & ĐIỀU HÀNH</div>
+          <ul class="nav-list">
+            <li>
+              <a href="index.html" class="nav-link" data-nav="dashboard">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                  </svg>
+                </span>
+                <span class="nav-label">Dashboard (Tổng quan)</span>
+              </a>
+            </li>
+            <li>
+              <a href="map.html" class="nav-link" data-nav="map">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Bản đồ giám sát GIS</span>
+              </a>
+            </li>
+            <li>
+              <a href="control.html" class="nav-link" data-nav="control">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Điều khiển chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="schedules.html" class="nav-link" data-nav="schedule">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Lịch vận hành</span>
+              </a>
+            </li>
+            <li>
+              <a href="alerts.html" class="nav-link" data-nav="alerts">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Cảnh báo sự cố</span>
+                <span class="nav-badge" id="sidebarAlertCount">18</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 2: HẠ TẦNG CHIẾU SÁNG -->
+        <div class="nav-group">
+          <div class="nav-group-title">HẠ TẦNG CHIẾU SÁNG</div>
+          <ul class="nav-list">
+            <li>
+              <a href="areas.html" class="nav-link" data-nav="areas">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18"></path>
+                    <path d="M5 21V7l8-4v18"></path>
+                    <path d="M19 21V11l-6-3"></path>
+                    <path d="M9 9v.01"></path>
+                    <path d="M9 12v.01"></path>
+                    <path d="M9 15v.01"></path>
+                    <path d="M9 18v.01"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Khu vực chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="cabinets.html" class="nav-link active" data-nav="cabinets">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v5l3 3"></path>
+                    <path d="M9 12h6"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Tủ chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="routes.html" class="nav-link" data-nav="routes">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="6" cy="19" r="3"></circle>
+                    <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>
+                    <circle cx="18" cy="5" r="3"></circle>
+                  </svg>
+                </span>
+                <span class="nav-label">Tuyến chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="light-detail.html" class="nav-link" data-nav="lights">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                    <path d="M9 18h6"/>
+                    <path d="M10 22h4"/>
+                  </svg>
+                </span>
+                <span class="nav-label">Điểm đèn</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 3: QUẢN TRỊ & BÁO CÁO -->
+        <div class="nav-group">
+          <div class="nav-group-title">QUẢN TRỊ & BÁO CÁO</div>
+          <ul class="nav-list">
+            <li>
+              <a href="#users" class="nav-link" data-nav="users">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Quản lý người dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="#roles" class="nav-link" data-nav="roles">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Phân quyền</span>
+              </a>
+            </li>
+            <li>
+              <a href="reports.html" class="nav-link" data-nav="reports">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Báo cáo & thống kê</span>
+              </a>
+            </li>
+            <li>
+              <a href="#logs" class="nav-link" data-nav="logs">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </span>
+                <span class="nav-label">Nhật ký hệ thống</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Sidebar Bottom IoT Status Card -->
+      <div class="sidebar-footer">
+        <div class="iot-gateway-card">
+          <div class="gateway-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+            </svg>
+          </div>
+          <div class="gateway-info">
+            <span class="gateway-title">IoT Control Gateway</span>
+            <span class="gateway-status">Đang kết nối: <strong id="gatewayPingValue">99.8%</strong></span>
+          </div>
+          <div class="gateway-dot"></div>
+        </div>
+      </div>
+    </aside>
+    <!-- END: Sidebar -->
+
+    <!-- BEGIN: Main Content Area -->
+    <div class="main-container flex-1 flex flex-col h-screen overflow-hidden bg-[#f8fafc]">
+      
+      <!-- ==================== TOPBAR HEADER ==================== -->
+      <header class="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between flex-shrink-0 z-10 shadow-[0_1px_3px_rgba(0,0,0,0.02)]" data-purpose="topbar">
+        <!-- Search & Mobile Toggle -->
+        <div class="flex items-center gap-3 w-80 lg:w-96">
+          <button class="mobile-menu-btn block lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100" id="btnToggleMobileSidebar" aria-label="Mở menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <span class="material-symbols-outlined text-[18px]">search</span>
+            </div>
+            <input id="topSearchInput" class="w-full pl-10 pr-4 py-2 bg-slate-100/70 hover:bg-slate-100 focus:bg-white text-xs border border-transparent focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 rounded-xl transition placeholder-slate-400 text-slate-700" placeholder="Tìm nhanh trạm, tủ điện, điểm, sự... (Ctrl+K)" type="text">
+          </div>
+        </div>
+
+        <!-- Center / Right Status Badges & Profile -->
+        <div class="flex items-center gap-4 lg:gap-5">
+          <!-- Weather Widget -->
+          <div class="hidden md:flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-amber-50/80 px-3 py-1.5 rounded-xl border border-amber-200/60">
+            <span class="text-amber-500 text-sm">☀️</span>
+            <span>Đà Nẵng: <strong class="text-slate-800">28°C</strong></span>
+          </div>
+
+          <!-- Server / DB Status -->
+          <div class="hidden lg:flex items-center gap-2 text-xs font-medium text-slate-600 bg-emerald-50/80 px-3 py-1.5 rounded-xl border border-emerald-200/60">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-400 animate-pulse"></span>
+            <span>Server / DB: <strong class="text-emerald-700 font-bold">Bình thường</strong></span>
+          </div>
+
+          <!-- System Live Clock -->
+          <div class="hidden xl:flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200/60">
+            <span class="material-symbols-outlined text-[16px] text-slate-400">schedule</span>
+            <span id="liveClockDisplay">Thứ Năm, 24/10/2024 - <span class="font-mono text-slate-700 font-semibold" id="liveTime">19:42:15 GMT+7</span></span>
+          </div>
+
+          <!-- Notification Bell -->
+          <a href="alerts.html" class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition" title="Xem 18 cảnh báo sự cố">
+            <span class="material-symbols-outlined text-[22px]">notifications</span>
+            <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">12</span>
+          </a>
+
+          <div class="h-6 w-px bg-slate-200"></div>
+
+          <!-- User Profile Dropdown -->
+          <div class="flex items-center gap-3 cursor-pointer group">
+            <div class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow ring-2 ring-white">
+              VM
+            </div>
+            <div class="text-left hidden sm:block">
+              <div class="text-xs font-bold text-slate-800 leading-tight group-hover:text-primary transition">Nguyễn Văn Minh</div>
+              <div class="text-[11px] text-slate-400 font-medium">Quản trị hệ thống</div>
+            </div>
+            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 transition">expand_more</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- ==================== SCROLLABLE MAIN CONTENT ==================== -->
+      <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-6 space-y-5 pb-16">
+        
+        <!-- ==================== PAGE TITLE & TOP ACTIONS ==================== -->
+        <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 font-sans">Danh sách tủ điều khiển chiếu sáng</h1>
+            <p class="text-xs text-slate-500 mt-1">Quản trị thông tin, đo lường điện năng 3 pha, trạng thái và cấu hình các tủ chiếu sáng trong hệ thống</p>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <button id="btnSyncStatus" class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/80 rounded-xl transition shadow-sm hover:border-slate-300">
+              <span class="material-symbols-outlined text-[18px] text-slate-500" id="syncIcon">sync</span>
+              <span>Đồng bộ trạng thái</span>
+            </button>
+            <button id="btnOpenAddCabinetModal" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-[#063b66] rounded-xl transition shadow-sm shadow-primary/20">
+              <span class="material-symbols-outlined text-[18px]">add</span>
+              <span>+ Thêm tủ</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- ==================== 4 STAT SUMMARY KPI CARDS ==================== -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Card 1: Tổng số tủ -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] hover:border-blue-300 transition group cursor-pointer" onclick="filterByCard('all')">
+            <div class="flex items-center justify-between mb-2">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-[20px]">lightbulb</span>
+              </div>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                +12%
+              </span>
+            </div>
+            <div class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">TỔNG SỐ TỦ</div>
+            <div class="flex items-baseline gap-2 mt-0.5">
+              <div class="text-2xl font-extrabold text-slate-900 tracking-tight font-sans">950 <span class="text-xs font-bold text-slate-500">TỦ</span></div>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-1">Tổng quy mô quản lý toàn TP</div>
+          </div>
+
+          <!-- Card 2: Online kết nối -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] hover:border-emerald-300 transition group cursor-pointer" onclick="filterByCard('online')">
+            <div class="flex items-center justify-between mb-2">
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-[20px]">wifi</span>
+              </div>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                95.1%
+              </span>
+            </div>
+            <div class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">ONLINE KẾT NỐI</div>
+            <div class="flex items-baseline gap-2 mt-0.5">
+              <div class="text-2xl font-extrabold text-slate-900 tracking-tight font-sans">902 <span class="text-xs font-bold text-slate-500">TỦ</span></div>
+            </div>
+            <div class="text-[11px] text-emerald-600 font-medium mt-1">Vận hành ổn định</div>
+          </div>
+
+          <!-- Card 3: Mất kết nối -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] hover:border-rose-300 transition group cursor-pointer" onclick="filterByCard('offline')">
+            <div class="flex items-center justify-between mb-2">
+              <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-[20px]">wifi_off</span>
+              </div>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
+                -1.2%
+              </span>
+            </div>
+            <div class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">MẤT KẾT NỐI</div>
+            <div class="flex items-baseline gap-2 mt-0.5">
+              <div class="text-2xl font-extrabold text-rose-600 tracking-tight font-sans">30 <span class="text-xs font-bold text-rose-500">TỦ</span></div>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-1">Lỗi viễn thông / Mất nguồn</div>
+          </div>
+
+          <!-- Card 4: Cảnh báo sự cố -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] hover:border-amber-300 transition group cursor-pointer" onclick="filterByCard('warning')">
+            <div class="flex items-center justify-between mb-2">
+              <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-[20px]">warning</span>
+              </div>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-600 border border-amber-100">
+                1.9%
+              </span>
+            </div>
+            <div class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">CẢNH BÁO SỰ CỐ</div>
+            <div class="flex items-baseline gap-2 mt-0.5">
+              <div class="text-2xl font-extrabold text-amber-600 tracking-tight font-sans">18 <span class="text-xs font-bold text-amber-500">TỦ</span></div>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-1">Mất pha, quá nhiệt, rò điện</div>
+          </div>
+        </section>
+
+        <!-- ==================== TABS ROW & VIEW UTILITIES ==================== -->
+        <section class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+          <!-- Primary Navigation Tabs -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0" id="mainTabList">
+            <button class="px-4 py-2 text-xs font-bold rounded-xl transition bg-slate-900 text-white shadow-sm" data-tab="all" onclick="selectMainTab('all', this)">
+              Danh sách tủ (950)
+            </button>
+            <button class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition" data-tab="offline" onclick="selectMainTab('offline', this)">
+              Tủ mất kết nối (30)
+            </button>
+            <button class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition inline-flex items-center gap-1.5" data-tab="warning" onclick="selectMainTab('warning', this)">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span>Có cảnh báo (18)</span>
+            </button>
+            <button class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition" data-tab="map" onclick="location.href='map.html'">
+              Bản đồ chiếu sáng
+            </button>
+            <button class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition inline-flex items-center gap-1.5" data-tab="decor" onclick="selectMainTab('decor', this)">
+              <span class="text-amber-500">✨</span>
+              <span>Cụm đèn trang trí</span>
+            </button>
+          </div>
+
+          <!-- Right View Controls -->
+          <div class="flex items-center gap-2 self-end md:self-auto">
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200/60">
+              <button id="btnViewGrid" class="p-1.5 rounded-md bg-white text-slate-800 shadow-sm transition" title="Hiển thị dạng thẻ lưới (Cards Grid)">
+                <span class="material-symbols-outlined text-[18px]">grid_view</span>
+              </button>
+              <button id="btnViewTable" class="p-1.5 rounded-md text-slate-500 hover:text-slate-800 transition" title="Hiển thị dạng bảng (Table List)">
+                <span class="material-symbols-outlined text-[18px]">view_list</span>
+              </button>
+            </div>
+            <button id="btnExportData" class="p-2 text-slate-600 hover:text-slate-900 hover:bg-white rounded-lg border border-slate-200/80 transition shadow-sm" title="Xuất dữ liệu Excel/CSV">
+              <span class="material-symbols-outlined text-[18px]">download</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- ==================== DIM FILTER PILLS & SEARCH BAR ==================== -->
+        <section class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          <!-- Dim Mode Chips -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 text-xs">
+            <span class="text-slate-500 font-semibold whitespace-nowrap">Chế độ Dim:</span>
+            <div class="flex items-center gap-1.5 flex-nowrap" id="dimFilterGroup">
+              <button class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-white transition dim-chip active" data-dim="all" onclick="filterByDim('all', this)">
+                Tất cả (950)
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip" data-dim="100" onclick="filterByDim('100', this)">
+                100% (810)
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip" data-dim="70" onclick="filterByDim('70', this)">
+                70% (78)
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip" data-dim="30" onclick="filterByDim('30', this)">
+                30% (19)
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip inline-flex items-center gap-1" data-dim="decor" onclick="filterByDim('decor', this)">
+                <span>✨ Cụm đèn trang trí</span>
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip" data-dim="50" onclick="filterByDim('50', this)">
+                50% (35)
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 transition dim-chip" data-dim="0" onclick="filterByDim('0', this)">
+                CẮT: 0% (5)
+              </button>
+              <button class="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 transition dim-chip" data-dim="warning" onclick="filterByDim('warning', this)">
+                Cảnh báo (18)
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Search input -->
+          <div class="relative w-full lg:w-72">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <span class="material-symbols-outlined text-[17px]">search</span>
+            </span>
+            <input id="cabinetSearchInput" type="text" class="w-full pl-9 pr-3.5 py-1.5 text-xs bg-white border border-slate-200 rounded-xl focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-slate-700 placeholder-slate-400 transition" placeholder="Tìm theo mã tủ, tên tủ, vị trí...">
+          </div>
+        </section>
+
+        <!-- ==================== SPLIT CONTAINER: LEFT PANEL & RIGHT CARDS ==================== -->
+        <div class="cabinets-container">
+          
+          <!-- ==================== LEFT PANEL (CÂY QUẢN LÝ TỦ & DANH SÁCH TỦ) ==================== -->
+          <div class="cabinets-left-panel">
+            
+            <!-- Panel Top Header & Tab Switcher -->
+            <div class="p-3 border-b border-slate-100 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5" id="leftPanelTitle">
+                  <span class="material-symbols-outlined text-[18px] text-primary" id="leftPanelIcon">account_tree</span>
+                  <span id="leftPanelTitleText">Cây quản lý tủ</span>
+                </span>
+                <div class="flex items-center gap-1 text-slate-400">
+                  <button id="btnToggleAllExpand" class="p-1 hover:text-slate-700 hover:bg-slate-100 rounded transition" title="Thu gọn/Mở rộng tất cả">
+                    <span class="material-symbols-outlined text-[16px]">unfold_more</span>
+                  </button>
+                  <button id="btnRefreshLeftTree" class="p-1 hover:text-slate-700 hover:bg-slate-100 rounded transition" title="Làm mới cây danh mục">
+                    <span class="material-symbols-outlined text-[16px]">refresh</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Segmented Tab Switcher: [ Cây quản lý tủ ] vs [ Danh sách tủ ] -->
+              <div class="panel-tab-switcher">
+                <button class="panel-tab-btn active" id="btnSwitchToTree" onclick="switchLeftPanelMode('tree')">
+                  Cây quản lý tủ
+                </button>
+                <button class="panel-tab-btn" id="btnSwitchToList" onclick="switchLeftPanelMode('list')">
+                  Danh sách tủ
+                </button>
+              </div>
+
+              <!-- Search Filter in Panel -->
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
+                  <span class="material-symbols-outlined text-[16px]">search</span>
+                </span>
+                <input id="leftFilterInput" type="text" class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200/80 rounded-lg focus:bg-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-slate-700 placeholder-slate-400 transition" placeholder="Lọc theo tên khu vực, tuyến, điểm đè...">
+              </div>
+
+              <!-- Subheader Hierarchy & Collapse text -->
+              <div class="flex items-center justify-between text-[11px] text-slate-400 font-medium px-0.5">
+                <span id="hierarchyNotice">Phân cấp: Khu vực | Tuyến | Điểm đèn</span>
+                <button id="btnCollapseAllText" class="text-brand-600 hover:text-brand-700 font-semibold" onclick="toggleCollapseAll()">Thu gọn hết</button>
+              </div>
+            </div>
+
+            <!-- ==================== VIEW MODE 1: CÂY QUẢN LÝ TỦ (TREE VIEW) ==================== -->
+            <div id="treeViewContent" class="flex-1 overflow-y-auto p-2.5 space-y-1">
+              
+              <!-- Root: Tất cả (950) -->
+              <div class="tree-node">
+                <div class="tree-node-row font-bold text-slate-900" onclick="handleTreeNodeClick('all')">
+                  <span class="tree-chevron expanded" onclick="toggleTreeNode(event, 'node-all')">
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                  </span>
+                  <input type="checkbox" checked class="tree-checkbox" onclick="handleCheckboxClick(event, 'all')">
+                  <span class="material-symbols-outlined text-[17px] text-amber-500">folder</span>
+                  <span class="flex-1">Tất cả tủ</span>
+                  <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">950</span>
+                </div>
+
+                <!-- Children of Root -->
+                <div class="tree-children" id="node-all">
+                  
+                  <!-- District: Hải Châu -->
+                  <div class="tree-node">
+                    <div class="tree-node-row font-semibold text-slate-800" onclick="handleTreeNodeClick('hai-chau')">
+                      <span class="tree-chevron expanded" onclick="toggleTreeNode(event, 'node-hai-chau')">
+                        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                      </span>
+                      <input type="checkbox" checked class="tree-checkbox">
+                      <span class="material-symbols-outlined text-[17px] text-primary">location_city</span>
+                      <span class="flex-1">Hải Châu</span>
+                      <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">292 tủ</span>
+                    </div>
+
+                    <!-- Children of Hải Châu -->
+                    <div class="tree-children" id="node-hai-chau">
+                      
+                      <!-- Cabinet: T01 - Bạch Đằng -->
+                      <div class="tree-node">
+                        <div class="tree-node-row selected" onclick="focusCabinetCard('T-HC003')">
+                          <span class="tree-chevron expanded" onclick="toggleTreeNode(event, 'node-t01')">
+                            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                          </span>
+                          <input type="checkbox" checked class="tree-checkbox">
+                          <span class="material-symbols-outlined text-[16px] text-blue-600">electric_meter</span>
+                          <span class="flex-1 font-bold">T01 - Bạch Đằng</span>
+                          <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded whitespace-nowrap">Online • 30 nguồn / 12 CẦU</span>
+                        </div>
+
+                        <!-- Routes of T01 -->
+                        <div class="tree-children" id="node-t01">
+                          
+                          <!-- Tuyến 1 - Bạch Đằng -->
+                          <div class="tree-node">
+                            <div class="tree-node-row text-slate-700 font-medium">
+                              <span class="tree-chevron expanded" onclick="toggleTreeNode(event, 'node-t01-r1')">
+                                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                              </span>
+                              <input type="checkbox" checked class="tree-checkbox">
+                              <span class="flex-1">Tuyến 1 - Bạch Đằng</span>
+                              <span class="text-[10px] font-bold text-emerald-600">BẬT 100%</span>
+                            </div>
+                            <!-- Lamp points of Tuyến 1 -->
+                            <div class="tree-children" id="node-t01-r1">
+                              <div class="tree-node-row text-slate-600 text-[11px] pl-1">
+                                <input type="checkbox" checked class="tree-checkbox">
+                                <span>T01 - D1 (LED 120W)</span>
+                                <span class="ml-auto text-emerald-600 font-bold">BẬT 100%</span>
+                              </div>
+                              <div class="tree-node-row text-slate-600 text-[11px] pl-1">
+                                <input type="checkbox" checked class="tree-checkbox">
+                                <span>T01 - D2 (LED 120W)</span>
+                                <span class="ml-auto text-emerald-600 font-bold">BẬT 100%</span>
+                              </div>
+                              <div class="tree-node-row text-slate-600 text-[11px] pl-1">
+                                <input type="checkbox" checked class="tree-checkbox">
+                                <span>T01 - D3 (LED 120W)</span>
+                                <span class="ml-auto text-blue-600 font-bold">BẬT 70%</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Tuyến 2 - Trần Phú -->
+                          <div class="tree-node">
+                            <div class="tree-node-row text-slate-700 font-medium">
+                              <span class="tree-chevron expanded" onclick="toggleTreeNode(event, 'node-t01-r2')">
+                                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                              </span>
+                              <input type="checkbox" checked class="tree-checkbox">
+                              <span class="flex-1">Tuyến 2 - Trần Phú</span>
+                              <span class="text-[10px] font-bold text-emerald-600">BẬT 100%</span>
+                            </div>
+                            <!-- Lamp points of Tuyến 2 -->
+                            <div class="tree-children" id="node-t01-r2">
+                              <div class="tree-node-row text-slate-600 text-[11px] pl-1">
+                                <input type="checkbox" checked class="tree-checkbox">
+                                <span>T01 - D4 (LED 150W)</span>
+                                <span class="ml-auto text-emerald-600 font-bold">BẬT 100%</span>
+                              </div>
+                              <div class="tree-node-row text-slate-600 text-[11px] pl-1">
+                                <input type="checkbox" checked class="tree-checkbox">
+                                <span>T01 - D5 (LED 150W)</span>
+                                <span class="ml-auto text-emerald-600 font-bold">BẬT 100%</span>
+                              </div>
+                              <div class="tree-node-row text-slate-600 text-[11px] pl-1">
+                                <input type="checkbox" checked class="tree-checkbox">
+                                <span>T01 - D6 (LED 150W)</span>
+                                <span class="ml-auto text-blue-600 font-bold">BẬT 70%</span>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+                      <!-- Cabinet: T02 - Nguyễn Văn Linh -->
+                      <div class="tree-node">
+                        <div class="tree-node-row" onclick="focusCabinetCard('T-HC002')">
+                          <span class="tree-chevron expanded" onclick="toggleTreeNode(event, 'node-t02')">
+                            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                          </span>
+                          <input type="checkbox" checked class="tree-checkbox">
+                          <span class="material-symbols-outlined text-[16px] text-blue-600">electric_meter</span>
+                          <span class="flex-1 font-bold">T02 - Nguyễn Văn Linh</span>
+                          <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">118 tủ</span>
+                        </div>
+
+                        <!-- Routes of T02 -->
+                        <div class="tree-children" id="node-t02">
+                          <div class="tree-node">
+                            <div class="tree-node-row text-slate-700 font-medium">
+                              <span class="tree-chevron" onclick="toggleTreeNode(event, 'node-t02-r1')">
+                                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                              </span>
+                              <input type="checkbox" checked class="tree-checkbox">
+                              <span class="flex-1">Tuyến 1</span>
+                              <span class="text-[10px] text-emerald-600 font-bold">BẬT 100%</span>
+                            </div>
+                            <div class="tree-children collapsed" id="node-t02-r1">
+                              <div class="tree-node-row text-slate-600 text-[11px] pl-1">
+                                <input type="checkbox" checked class="tree-checkbox">
+                                <span>T02 - D01 - BẬT 100%</span>
+                              </div>
+                              <div class="tree-node-row text-slate-600 text-[11px] pl-1">
+                                <input type="checkbox" checked class="tree-checkbox">
+                                <span>T02 - D02 - BẬT 100%</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="tree-node">
+                            <div class="tree-node-row text-slate-700 font-medium">
+                              <span class="tree-chevron" onclick="toggleTreeNode(event, 'node-t02-r2')">
+                                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                              </span>
+                              <input type="checkbox" class="tree-checkbox">
+                              <span class="flex-1">Tuyến 2</span>
+                              <span class="text-[10px] text-slate-400 font-bold">TẮT</span>
+                            </div>
+                            <div class="tree-children collapsed" id="node-t02-r2">
+                              <div class="tree-node-row text-slate-400 text-[11px] pl-1">
+                                <input type="checkbox" class="tree-checkbox">
+                                <span>T02 - D03 - TẮT</span>
+                              </div>
+                              <div class="tree-node-row text-slate-600 text-[11px] pl-1">
+                                <input type="checkbox" checked class="tree-checkbox">
+                                <span>T02 - D04 - BẬT</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <!-- District: Thanh Khê -->
+                  <div class="tree-node">
+                    <div class="tree-node-row font-semibold text-slate-800" onclick="handleTreeNodeClick('thanh-khe')">
+                      <span class="tree-chevron" onclick="toggleTreeNode(event, 'node-thanh-khe')">
+                        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                      </span>
+                      <input type="checkbox" checked class="tree-checkbox">
+                      <span class="material-symbols-outlined text-[17px] text-primary">location_city</span>
+                      <span class="flex-1">Thanh Khê</span>
+                      <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">160 tủ</span>
+                    </div>
+                    <div class="tree-children collapsed" id="node-thanh-khe">
+                      <div class="tree-node-row text-xs text-slate-700" onclick="focusCabinetCard('T-TK003')">
+                        <span class="material-symbols-outlined text-[15px] text-blue-500">electric_meter</span>
+                        <span>T3 Hoàng Văn Thái</span>
+                        <span class="ml-auto text-[10px] text-emerald-600 font-bold">Online</span>
+                      </div>
+                      <div class="tree-node-row text-xs text-slate-700" onclick="focusCabinetCard('T-TK007')">
+                        <span class="material-symbols-outlined text-[15px] text-slate-400">electric_meter</span>
+                        <span>T7 Nguyễn Tất Thành</span>
+                        <span class="ml-auto text-[10px] text-slate-400 font-bold">Mất tín hiệu</span>
+                      </div>
+                      <div class="tree-node-row text-xs text-slate-700" onclick="focusCabinetCard('T-TK009')">
+                        <span class="material-symbols-outlined text-[15px] text-rose-500">warning</span>
+                        <span class="text-rose-600 font-bold">T9 Trần Cao Vân</span>
+                        <span class="ml-auto text-[10px] text-rose-600 font-bold">SỰ CỐ</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- District: Sơn Trà -->
+                  <div class="tree-node">
+                    <div class="tree-node-row font-semibold text-slate-800" onclick="handleTreeNodeClick('son-tra')">
+                      <span class="tree-chevron" onclick="toggleTreeNode(event, 'node-son-tra')">
+                        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                      </span>
+                      <input type="checkbox" checked class="tree-checkbox">
+                      <span class="material-symbols-outlined text-[17px] text-primary">location_city</span>
+                      <span class="flex-1">Sơn Trà</span>
+                      <span class="text-[11px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">180 tủ • 1 MẤT PHA</span>
+                    </div>
+                    <div class="tree-children collapsed" id="node-son-tra">
+                      <div class="tree-node-row text-xs text-slate-700" onclick="focusCabinetCard('T-ST011')">
+                        <span class="material-symbols-outlined text-[15px] text-amber-500">warning</span>
+                        <span class="text-amber-700 font-bold">T11 Võ Nguyên Giáp</span>
+                        <span class="ml-auto text-[10px] text-amber-600 font-bold">MẤT PHA</span>
+                      </div>
+                      <div class="tree-node-row text-xs text-slate-700" onclick="focusCabinetCard('T-ST013')">
+                        <span class="material-symbols-outlined text-[15px] text-blue-500">electric_meter</span>
+                        <span>T13 Sơn Trà Điện Ngọc</span>
+                        <span class="ml-auto text-[10px] text-amber-600 font-bold">Ắc quy yếu</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- District: Ngũ Hành Sơn -->
+                  <div class="tree-node">
+                    <div class="tree-node-row font-semibold text-slate-800" onclick="handleTreeNodeClick('ngu-hanh-son')">
+                      <span class="tree-chevron" onclick="toggleTreeNode(event, 'node-ngu-hanh-son')">
+                        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                      </span>
+                      <input type="checkbox" checked class="tree-checkbox">
+                      <span class="material-symbols-outlined text-[17px] text-primary">location_city</span>
+                      <span class="flex-1">Ngũ Hành Sơn</span>
+                      <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">120 tủ</span>
+                    </div>
+                    <div class="tree-children collapsed" id="node-ngu-hanh-son">
+                      <div class="tree-node-row text-xs text-slate-700">
+                        <span class="material-symbols-outlined text-[15px] text-blue-500">electric_meter</span>
+                        <span>T14 Lê Văn Hiến</span>
+                        <span class="ml-auto text-[10px] text-emerald-600 font-bold">Online</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ==================== VIEW MODE 2: DANH SÁCH TỦ (GROUPED LIST) ==================== -->
+            <div id="listViewContent" class="flex-1 overflow-y-auto p-2.5 space-y-2 hidden">
+              
+              <!-- Group 1: Phường Hải Châu 1 -->
+              <div class="ward-group">
+                <div class="ward-header" onclick="toggleWardGroup(this)">
+                  <span class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px] text-primary">domain</span>
+                    <span>Phường Hải Châu 1</span>
+                  </span>
+                  <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">38 tủ</span>
+                </div>
+                <div class="ward-body">
+                  <!-- Tuyến Bạch Đằng -->
+                  <div class="route-section">
+                    <div class="route-title">
+                      <span class="material-symbols-outlined text-[14px]">alt_route</span>
+                      <span>Tuyến đường Bạch Đằng</span>
+                    </div>
+                    <div class="cabinet-list-item active" onclick="focusCabinetCard('T-HC003')">
+                      <span class="truncate">[T01-HC] Bạch Đằng - Cầu Rồng</span>
+                      <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
+                    </div>
+                    <div class="cabinet-list-item" onclick="focusCabinetCard('T-HC003')">
+                      <span class="truncate">[T01-HC] Bạch Đằng - Chợ Hàn</span>
+                      <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
+                    </div>
+                  </div>
+                  <!-- Tuyến 2 Tháng 9 -->
+                  <div class="route-section">
+                    <div class="route-title">
+                      <span class="material-symbols-outlined text-[14px]">alt_route</span>
+                      <span>Tuyến đường 2 Tháng 9</span>
+                    </div>
+                    <div class="cabinet-list-item" onclick="focusCabinetCard('T-HC002')">
+                      <span class="truncate">[T03] Đường 2/9 (Cổ Viện Chàm)</span>
+                      <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">Bật 70%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Group 2: Phường Thạch Thang -->
+              <div class="ward-group">
+                <div class="ward-header" onclick="toggleWardGroup(this)">
+                  <span class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px] text-primary">domain</span>
+                    <span>Phường Thạch Thang</span>
+                  </span>
+                  <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">32 tủ</span>
+                </div>
+                <div class="ward-body">
+                  <div class="route-section">
+                    <div class="route-title">
+                      <span class="material-symbols-outlined text-[14px]">alt_route</span>
+                      <span>Tuyến Lê Duẩn - Quang Trung</span>
+                    </div>
+                    <div class="cabinet-list-item" onclick="focusCabinetCard('T-TK003')">
+                      <span class="truncate">[T05] T3 Lê Duẩn</span>
+                      <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
+                    </div>
+                    <div class="cabinet-list-item">
+                      <span class="truncate">[04-TT] Quang Trung TTYT</span>
+                      <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Group 3: Phường Thuận Phước (Có sự cố) -->
+              <div class="ward-group">
+                <div class="ward-header" onclick="toggleWardGroup(this)">
+                  <span class="flex items-center gap-1.5 text-rose-700">
+                    <span class="material-symbols-outlined text-[16px] text-rose-600">domain</span>
+                    <span>Phường Thuận Phước</span>
+                  </span>
+                  <span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">3 sự cố</span>
+                </div>
+                <div class="ward-body">
+                  <div class="route-section">
+                    <div class="route-title">
+                      <span class="material-symbols-outlined text-[14px]">alt_route</span>
+                      <span>Tuyến đường 3 Tháng 2</span>
+                    </div>
+                    <div class="cabinet-list-item" onclick="focusCabinetCard('T-TK009')">
+                      <span class="truncate text-rose-700 font-bold">[T09] Trần Cao Vân Cắt Cây</span>
+                      <span class="text-[10px] font-extrabold text-rose-600 bg-rose-100 px-1.5 py-0.5 rounded">SỰ CỐ</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Group 4: Phường Phước Mỹ (Có cảnh báo) -->
+              <div class="ward-group">
+                <div class="ward-header" onclick="toggleWardGroup(this)">
+                  <span class="flex items-center gap-1.5 text-amber-700">
+                    <span class="material-symbols-outlined text-[16px] text-amber-600">domain</span>
+                    <span>Phường Phước Mỹ</span>
+                  </span>
+                  <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">5 cảnh báo</span>
+                </div>
+                <div class="ward-body">
+                  <div class="route-section">
+                    <div class="route-title">
+                      <span class="material-symbols-outlined text-[14px]">alt_route</span>
+                      <span>Tuyến ven biển Võ Nguyên Giáp</span>
+                    </div>
+                    <div class="cabinet-list-item" onclick="focusCabinetCard('T-ST011')">
+                      <span class="truncate text-amber-800 font-semibold">[T11] Võ Nguyên Giáp Mất Pha</span>
+                      <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">MẤT PHA</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Group 5: Phường An Hải Bắc -->
+              <div class="ward-group">
+                <div class="ward-header" onclick="toggleWardGroup(this)">
+                  <span class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px] text-primary">domain</span>
+                    <span>Phường An Hải Bắc</span>
+                  </span>
+                  <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">24 tủ</span>
+                </div>
+                <div class="ward-body">
+                  <div class="route-section">
+                    <div class="route-title">
+                      <span class="material-symbols-outlined text-[14px]">alt_route</span>
+                      <span>Tuyến Phạm Văn Đồng</span>
+                    </div>
+                    <div class="cabinet-list-item">
+                      <span class="truncate">[T15] Phạm Văn Đồng 1</span>
+                      <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+          <!-- END: LEFT PANEL -->
+
+          <!-- ==================== RIGHT PANEL (CABINET CARDS GRID & TABLE) ==================== -->
+          <div class="cabinets-right-panel">
+            
+            <!-- Cards Grid Container -->
+            <div class="cabinet-grid" id="cabinetsGridContainer">
+              
+              <!-- ==================== CARD 1: T3 HOÀNG VĂN THÁI (NORMAL / ONLINE 100%) ==================== -->
+              <div class="cabinet-card" id="card-T-TK003" data-status="online" data-dim="100" data-code="T-TK003" data-name="T3 Hoàng Văn Thái">
+                <!-- Card Header -->
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start gap-2.5">
+                    <span class="status-dot-pulse dot-online mt-1.5" title="Online kết nối ổn định"></span>
+                    <div>
+                      <h3 class="text-sm font-bold text-slate-900 leading-tight hover:text-brand-600 cursor-pointer transition" onclick="openCabinetDetailsModal('T-TK003')">
+                        T3 Hoàng Văn Thái
+                      </h3>
+                      <p class="text-[11px] text-slate-500 mt-0.5">
+                        Q. Thanh Khê • Nhiệt độ tủ: <strong class="text-slate-700">28.5°C</strong>
+                      </p>
+                    </div>
+                  </div>
+                  <!-- Sim 4G & Timestamp -->
+                  <div class="text-right">
+                    <div class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                      <span>4G VIETTEL</span>
+                      <span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span>
+                    </div>
+                    <div class="text-[10px] font-mono text-slate-400 mt-0.5">24/10/2024 - 19:42:15</div>
+                  </div>
+                </div>
+
+                <!-- 3-Phase Metering Boxes -->
+                <div class="phase-metering-row">
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 1 (L1)</div>
+                    <div class="phase-val-v">221.4 <span class="text-[9px] font-normal text-slate-400">V</span></div>
+                    <div class="phase-val-a">15.1 <span class="text-[9px] font-normal text-slate-400">A</span></div>
+                  </div>
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 2 (L2)</div>
+                    <div class="phase-val-v">220.7 <span class="text-[9px] font-normal text-slate-400">V</span></div>
+                    <div class="phase-val-a">15.3 <span class="text-[9px] font-normal text-slate-400">A</span></div>
+                  </div>
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 3 (L3)</div>
+                    <div class="phase-val-v">221.8 <span class="text-[9px] font-normal text-slate-400">V</span></div>
+                    <div class="phase-val-a">15.2 <span class="text-[9px] font-normal text-slate-400">A</span></div>
+                  </div>
+                </div>
+
+                <!-- Metrics Strip (Dim %, cos phi, kW, kWh) -->
+                <div class="metrics-strip">
+                  <div class="dim-badge dim-badge-100">
+                    <span class="text-xs">100</span>
+                    <span class="text-[9px]">DIM %</span>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">cos φ</div>
+                    <div class="font-mono font-bold text-slate-800">0.95</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">Công suất</div>
+                    <div class="font-mono font-bold text-slate-800">10.4 <span class="text-[9px] font-normal">kW</span></div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">Sản lượng E</div>
+                    <div class="font-mono font-bold text-slate-800">148.2 <span class="text-[9px] font-normal">kWh</span></div>
+                  </div>
+                </div>
+
+                <!-- Status Banner -->
+                <div class="card-status-banner banner-normal">
+                  <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+                  <span>Hoạt động bình thường • Đang 3 khởi động từ</span>
+                </div>
+
+                <!-- Card Footer Info -->
+                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <span>Mã: <strong class="text-slate-700 font-mono">T-HC003</strong></span>
+                    <span>•</span>
+                    <span>Chế độ: <strong class="text-slate-700">AUTO</strong></span>
+                  </div>
+                  <span class="text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded">Nguồn: Lưới 380V</span>
+                </div>
+              </div>
+
+              <!-- ==================== CARD 2: T11 VÕ NGUYÊN GIÁP (WARNING: MẤT PHA 2) ==================== -->
+              <div class="cabinet-card card-warning" id="card-T-ST011" data-status="warning" data-dim="100" data-code="T-ST011" data-name="T11 Võ Nguyên Giáp">
+                <!-- Card Header -->
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start gap-2.5">
+                    <span class="status-dot-pulse dot-warning mt-1.5" title="Cảnh báo sự cố mất pha"></span>
+                    <div>
+                      <h3 class="text-sm font-bold text-slate-900 leading-tight hover:text-amber-600 cursor-pointer transition" onclick="openCabinetDetailsModal('T-ST011')">
+                        T11 Võ Nguyên Giáp
+                      </h3>
+                      <p class="text-[11px] text-slate-500 mt-0.5">
+                        Q. Sơn Trà • Nhiệt độ tủ: <strong class="text-slate-700">29.1°C</strong>
+                      </p>
+                    </div>
+                  </div>
+                  <!-- Sim 4G & Timestamp -->
+                  <div class="text-right">
+                    <div class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                      <span>4G VINAPHONE</span>
+                      <span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span>
+                    </div>
+                    <div class="text-[10px] font-mono text-slate-400 mt-0.5">24/10/2024 - 19:41:20</div>
+                  </div>
+                </div>
+
+                <!-- 3-Phase Metering Boxes (Phase 2 Warning Highlight) -->
+                <div class="phase-metering-row">
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 1 (L1)</div>
+                    <div class="phase-val-v">221.0 <span class="text-[9px] font-normal text-slate-400">V</span></div>
+                    <div class="phase-val-a">17.4 <span class="text-[9px] font-normal text-slate-400">A</span></div>
+                  </div>
+                  <div class="phase-box phase-danger">
+                    <div class="phase-title text-rose-600 font-bold">PHA 2 (L2) MẤT</div>
+                    <div class="phase-val-v">0.0 <span class="text-[9px] font-normal text-rose-400">V</span></div>
+                    <div class="phase-val-a">0.0 <span class="text-[9px] font-normal text-rose-400">A</span></div>
+                  </div>
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 3 (L3)</div>
+                    <div class="phase-val-v">220.5 <span class="text-[9px] font-normal text-slate-400">V</span></div>
+                    <div class="phase-val-a">16.8 <span class="text-[9px] font-normal text-slate-400">A</span></div>
+                  </div>
+                </div>
+
+                <!-- Metrics Strip -->
+                <div class="metrics-strip">
+                  <div class="dim-badge dim-badge-100">
+                    <span class="text-xs">100</span>
+                    <span class="text-[9px]">DIM %</span>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">cos φ</div>
+                    <div class="font-mono font-bold text-slate-800">0.93</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">Công suất</div>
+                    <div class="font-mono font-bold text-slate-800">8.2 <span class="text-[9px] font-normal">kW</span></div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">Sản lượng E</div>
+                    <div class="font-mono font-bold text-slate-800">94.5 <span class="text-[9px] font-normal">kWh</span></div>
+                  </div>
+                </div>
+
+                <!-- Warning Banner -->
+                <div class="card-status-banner banner-warning">
+                  <span class="material-symbols-outlined text-[16px] text-amber-600">warning</span>
+                  <span>Cảnh báo: Mất điện áp Pha 2 (Nhánh phía Tây)</span>
+                </div>
+
+                <!-- Card Footer & CTA Action -->
+                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <span>Mã: <strong class="text-slate-700 font-mono">T-ST011</strong></span>
+                    <span>•</span>
+                    <span>Chế độ: <strong class="text-slate-700">AUTO</strong></span>
+                  </div>
+                  <button class="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg transition shadow-sm text-xs flex items-center gap-1" onclick="openInspectionModal('T-ST011')">
+                    <span>Kiểm tra ngay</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==================== CARD 3: T9 TRẦN CAO VÂN (CRITICAL EMERGENCY: ĐỨT CÁP / TỰ CẮT CÁP) ==================== -->
+              <div class="cabinet-card card-danger" id="card-T-TK009" data-status="danger" data-dim="0" data-code="T-TK009" data-name="T9 Trần Cao Vân">
+                <!-- Card Header -->
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start gap-2.5">
+                    <span class="status-dot-pulse dot-danger mt-1.5" title="Sự cố đặc biệt nghiêm trọng"></span>
+                    <div>
+                      <h3 class="text-sm font-extrabold text-rose-700 leading-tight hover:text-rose-800 cursor-pointer transition" onclick="openEmergencyModal('T-TK009')">
+                        T9 Trần Cao Vân
+                      </h3>
+                      <p class="text-[11px] text-rose-600 font-semibold mt-0.5">
+                        Q. Thanh Khê • Sự cố đặc biệt nghiêm trọng
+                      </p>
+                    </div>
+                  </div>
+                  <!-- Sim 4G & Timestamp -->
+                  <div class="text-right">
+                    <div class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded border border-rose-300">
+                      <span>4G VIETTEL</span>
+                      <span class="material-symbols-outlined text-[14px]">error</span>
+                    </div>
+                    <div class="text-[10px] font-mono text-rose-500 font-bold mt-0.5">24/10/2024 - 19:35:00</div>
+                  </div>
+                </div>
+
+                <!-- 3-Phase Metering Boxes (All Cut to 0.0V) -->
+                <div class="phase-metering-row">
+                  <div class="phase-box phase-danger">
+                    <div class="phase-title text-rose-600">PHA 1 (L1)</div>
+                    <div class="phase-val-v">0.0 <span class="text-[9px] font-normal text-rose-400">V</span></div>
+                    <div class="phase-val-a">0.0 <span class="text-[9px] font-normal text-rose-400">A</span></div>
+                  </div>
+                  <div class="phase-box phase-danger">
+                    <div class="phase-title text-rose-600">PHA 2 (L2)</div>
+                    <div class="phase-val-v">0.0 <span class="text-[9px] font-normal text-rose-400">V</span></div>
+                    <div class="phase-val-a">0.0 <span class="text-[9px] font-normal text-rose-400">A</span></div>
+                  </div>
+                  <div class="phase-box phase-danger">
+                    <div class="phase-title text-rose-600">PHA 3 (L3)</div>
+                    <div class="phase-val-v">0.0 <span class="text-[9px] font-normal text-rose-400">V</span></div>
+                    <div class="phase-val-a">0.0 <span class="text-[9px] font-normal text-rose-400">A</span></div>
+                  </div>
+                </div>
+
+                <!-- Alarm Notice & Dim Strip -->
+                <div class="flex items-center gap-2.5 bg-rose-50 border border-rose-200/80 rounded-xl p-2.5">
+                  <div class="dim-badge dim-badge-0 shrink-0">
+                    <span class="text-xs">0%</span>
+                    <span class="text-[9px]">TẮT</span>
+                  </div>
+                  <div class="text-[11px] text-rose-800 leading-snug">
+                    <strong class="font-bold block text-rose-900">RƠ LE BẢO VỆ ĐÃ NGẮT</strong>
+                    Phát hiện đứt cáp nguồn chiếu sáng nhánh D3
+                  </div>
+                </div>
+
+                <!-- Threat Banner -->
+                <div class="card-status-banner banner-danger font-bold text-center justify-center tracking-wide">
+                  <span>⚡ NGUY HIỂM: ĐỨT CÁP TRỤ 12-14 TRẦN CAO VÂN</span>
+                </div>
+
+                <!-- Card Footer & Emergency Action -->
+                <div class="flex items-center justify-between text-[11px] pt-1 border-t border-rose-200">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-600 text-white">
+                    [TỰ CẮT CÁP]
+                  </span>
+                  <button class="px-3.5 py-1 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-lg transition shadow-sm text-xs flex items-center gap-1" onclick="openEmergencyModal('T-TK009')">
+                    <span class="material-symbols-outlined text-[14px]">bolt</span>
+                    <span>Xử lý ngay</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==================== CARD 4: T7 NGUYỄN TẤT THÀNH (OFFLINE / MẤT KẾT NỐI HEARTBEAT) ==================== -->
+              <div class="cabinet-card card-offline" id="card-T-TK007" data-status="offline" data-dim="rtc" data-code="T-TK007" data-name="T7 Nguyễn Tất Thành">
+                <!-- Card Header -->
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start gap-2.5">
+                    <span class="status-dot-pulse dot-offline mt-1.5" title="Mất tín hiệu kết nối"></span>
+                    <div>
+                      <h3 class="text-sm font-bold text-slate-600 leading-tight hover:text-slate-900 cursor-pointer transition" onclick="openCabinetDetailsModal('T-TK007')">
+                        T7 Nguyễn Tất Thành
+                      </h3>
+                      <p class="text-[11px] text-slate-400 mt-0.5">
+                        Q. Thanh Khê • Tuyến biển
+                      </p>
+                    </div>
+                  </div>
+                  <!-- Sim 4G & Timestamp -->
+                  <div class="text-right">
+                    <div class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 bg-slate-200/70 px-2 py-0.5 rounded">
+                      <span>4G VIETTEL</span>
+                      <span class="material-symbols-outlined text-[14px]">signal_cellular_connected_no_internet_0_bar</span>
+                    </div>
+                    <div class="text-[10px] font-mono text-slate-400 mt-0.5">Gián đoạn: 24/10/2024</div>
+                  </div>
+                </div>
+
+                <!-- 3-Phase Metering Boxes (Offline Dashes) -->
+                <div class="phase-metering-row opacity-60">
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 1 (L1)</div>
+                    <div class="phase-val-v text-slate-400">-- <span class="text-[9px] font-normal">V</span></div>
+                    <div class="phase-val-a text-slate-400">-- <span class="text-[9px] font-normal">A</span></div>
+                  </div>
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 2 (L2)</div>
+                    <div class="phase-val-v text-slate-400">-- <span class="text-[9px] font-normal">V</span></div>
+                    <div class="phase-val-a text-slate-400">-- <span class="text-[9px] font-normal">A</span></div>
+                  </div>
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 3 (L3)</div>
+                    <div class="phase-val-v text-slate-400">-- <span class="text-[9px] font-normal">V</span></div>
+                    <div class="phase-val-a text-slate-400">-- <span class="text-[9px] font-normal">A</span></div>
+                  </div>
+                </div>
+
+                <!-- Heartbeat Lost Box -->
+                <div class="bg-slate-100 rounded-xl p-3 text-center border border-slate-200">
+                  <div class="flex items-center justify-center gap-2 text-slate-700 font-bold text-xs">
+                    <span class="material-symbols-outlined text-[18px] text-slate-500">wifi_off</span>
+                    <span>Mất tín hiệu Heartbeat</span>
+                  </div>
+                  <div class="text-[11px] text-slate-500 mt-0.5">Gián đoạn: 3 giờ 12 phút trước</div>
+                </div>
+
+                <!-- Status Banner -->
+                <div class="card-status-banner banner-offline">
+                  <span class="material-symbols-outlined text-[16px] text-slate-500">sync_problem</span>
+                  <span>Mất kết nối viễn thông • Giữ nguyên lịch RTC</span>
+                </div>
+
+                <!-- Card Footer & Ping Action -->
+                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-200">
+                  <div class="flex items-center gap-2">
+                    <span>Mã: <strong class="text-slate-700 font-mono">T-TK007</strong></span>
+                    <span>•</span>
+                    <span>Lịch: <strong class="text-slate-700">RTC</strong></span>
+                  </div>
+                  <button class="px-3 py-1 bg-white hover:bg-slate-100 text-slate-700 font-semibold border border-slate-300 rounded-lg transition shadow-sm text-xs flex items-center gap-1" onclick="pingCabinetModem('T-TK007')">
+                    <span class="material-symbols-outlined text-[14px]">cell_tower</span>
+                    <span>Ping Modem</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==================== CARD 5: T2 ĐƯỜNG 2/9 (DIM 70% + CẢNH BÁO CỬA MỞ) ==================== -->
+              <div class="cabinet-card" id="card-T-HC002" data-status="online" data-dim="70" data-code="T-HC002" data-name="T2 Đường 2/9">
+                <!-- Card Header -->
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start gap-2.5">
+                    <span class="status-dot-pulse dot-online mt-1.5" title="Đang vận hành Dim 70%"></span>
+                    <div>
+                      <h3 class="text-sm font-bold text-slate-900 leading-tight hover:text-brand-600 cursor-pointer transition" onclick="openCabinetDetailsModal('T-HC002')">
+                        T2 Đường 2/9
+                      </h3>
+                      <p class="text-[11px] text-slate-500 mt-0.5">
+                        Q. Hải Châu • Tuyến trung tâm
+                      </p>
+                    </div>
+                  </div>
+                  <!-- Sim 4G & Timestamp -->
+                  <div class="text-right">
+                    <div class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                      <span>4G VINAPHONE</span>
+                      <span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span>
+                    </div>
+                    <div class="text-[10px] font-mono text-slate-400 mt-0.5">24/10/2024 - 19:42:00</div>
+                  </div>
+                </div>
+
+                <!-- 3-Phase Metering Boxes -->
+                <div class="phase-metering-row">
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 1 (L1)</div>
+                    <div class="phase-val-v">221.1 <span class="text-[9px] font-normal text-slate-400">V</span></div>
+                    <div class="phase-val-a">12.4 <span class="text-[9px] font-normal text-slate-400">A</span></div>
+                  </div>
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 2 (L2)</div>
+                    <div class="phase-val-v">221.3 <span class="text-[9px] font-normal text-slate-400">V</span></div>
+                    <div class="phase-val-a">12.4 <span class="text-[9px] font-normal text-slate-400">A</span></div>
+                  </div>
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 3 (L3)</div>
+                    <div class="phase-val-v">220.9 <span class="text-[9px] font-normal text-slate-400">V</span></div>
+                    <div class="phase-val-a">12.5 <span class="text-[9px] font-normal text-slate-400">A</span></div>
+                  </div>
+                </div>
+
+                <!-- Metrics Strip -->
+                <div class="metrics-strip">
+                  <div class="dim-badge dim-badge-70">
+                    <span class="text-xs">70</span>
+                    <span class="text-[9px]">DIM %</span>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">cos φ</div>
+                    <div class="font-mono font-bold text-slate-800">0.91</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">Công suất</div>
+                    <div class="font-mono font-bold text-slate-800">8.6 <span class="text-[9px] font-normal">kW</span></div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">Sản lượng E</div>
+                    <div class="font-mono font-bold text-slate-800">112.4 <span class="text-[9px] font-normal">kWh</span></div>
+                  </div>
+                </div>
+
+                <!-- Door Open Alert Banner -->
+                <div class="card-status-banner banner-warning">
+                  <span class="material-symbols-outlined text-[16px] text-amber-600">door_front</span>
+                  <span>Cảnh báo: Cửa tủ đang mở (Công tắc hành trình báo động)</span>
+                </div>
+
+                <!-- Card Footer Info -->
+                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <span>Mã: <strong class="text-slate-700 font-mono">T-HC002</strong></span>
+                    <span>•</span>
+                    <span>Chế độ: <strong class="text-slate-700">TIẾT KIỆM</strong></span>
+                  </div>
+                  <span class="text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded">Nguồn: Lưới ổn định</span>
+                </div>
+              </div>
+
+              <!-- ==================== CARD 6: T13 SƠN TRÀ ĐIỆN NGỌC (DIM 30% + ẮC QUY YẾU) ==================== -->
+              <div class="cabinet-card" id="card-T-ST013" data-status="online" data-dim="30" data-code="T-ST013" data-name="T13 Sơn Trà Điện Ngọc">
+                <!-- Card Header -->
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start gap-2.5">
+                    <span class="status-dot-pulse dot-warning mt-1.5" title="Cảnh báo ắc quy yếu"></span>
+                    <div>
+                      <h3 class="text-sm font-bold text-slate-900 leading-tight hover:text-brand-600 cursor-pointer transition" onclick="openCabinetDetailsModal('T-ST013')">
+                        T13 Sơn Trà Điện Ngọc
+                      </h3>
+                      <p class="text-[11px] text-slate-500 mt-0.5">
+                        Q. Sơn Trà • Tuyến nội đảo Nam
+                      </p>
+                    </div>
+                  </div>
+                  <!-- Sim 4G & Timestamp -->
+                  <div class="text-right">
+                    <div class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                      <span>4G VIETTEL</span>
+                      <span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span>
+                    </div>
+                    <div class="text-[10px] font-mono text-slate-400 mt-0.5">24/10/2024 - 19:40:45</div>
+                  </div>
+                </div>
+
+                <!-- 3-Phase Metering Boxes -->
+                <div class="phase-metering-row">
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 1 (L1)</div>
+                    <div class="phase-val-v">220.0 <span class="text-[9px] font-normal text-slate-400">V</span></div>
+                    <div class="phase-val-a">5.4 <span class="text-[9px] font-normal text-slate-400">A</span></div>
+                  </div>
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 2 (L2)</div>
+                    <div class="phase-val-v">221.0 <span class="text-[9px] font-normal text-slate-400">V</span></div>
+                    <div class="phase-val-a">5.3 <span class="text-[9px] font-normal text-slate-400">A</span></div>
+                  </div>
+                  <div class="phase-box">
+                    <div class="phase-title">PHA 3 (L3)</div>
+                    <div class="phase-val-v">220.2 <span class="text-[9px] font-normal text-slate-400">V</span></div>
+                    <div class="phase-val-a">5.4 <span class="text-[9px] font-normal text-slate-400">A</span></div>
+                  </div>
+                </div>
+
+                <!-- Metrics Strip -->
+                <div class="metrics-strip">
+                  <div class="dim-badge dim-badge-30">
+                    <span class="text-xs">30</span>
+                    <span class="text-[9px]">DIM %</span>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">cos φ</div>
+                    <div class="font-mono font-bold text-slate-800">0.88</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">Công suất</div>
+                    <div class="font-mono font-bold text-slate-800">3.7 <span class="text-[9px] font-normal">kW</span></div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-[10px] text-slate-400 font-medium">Sản lượng E</div>
+                    <div class="font-mono font-bold text-slate-800">51.1 <span class="text-[9px] font-normal">kWh</span></div>
+                  </div>
+                </div>
+
+                <!-- Battery Alert Banner -->
+                <div class="card-status-banner banner-warning">
+                  <span class="material-symbols-outlined text-[16px] text-amber-600">battery_alert</span>
+                  <span>Cảnh báo: Ắc quy yếu 11.2V • Nguồn DC dự phòng</span>
+                </div>
+
+                <!-- Card Footer Info -->
+                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <span>Mã: <strong class="text-slate-700 font-mono">T-ST013</strong></span>
+                    <span>•</span>
+                    <span>Chế độ: <strong class="text-slate-700">LỊCH TIẾT KIỆM</strong></span>
+                  </div>
+                  <span class="text-amber-700 font-mono font-bold bg-amber-50 px-2 py-0.5 rounded">V: 11.2V</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Alternative Table View (Hidden by default, toggled via Toolbar) -->
+            <div id="cabinetsTableContainer" class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold tracking-wider text-[11px]">
+                    <tr>
+                      <th class="py-3 px-4">Mã tủ</th>
+                      <th class="py-3 px-4">Tên tủ</th>
+                      <th class="py-3 px-4">Khu vực / Tuyến</th>
+                      <th class="py-3 px-4 text-center">Trạng thái</th>
+                      <th class="py-3 px-4 text-center">U (V) 3 Pha</th>
+                      <th class="py-3 px-4 text-center">I (A) 3 Pha</th>
+                      <th class="py-3 px-4 text-center">Dim (%)</th>
+                      <th class="py-3 px-4 text-center">Công suất</th>
+                      <th class="py-3 px-4 text-center">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 font-medium text-slate-700" id="cabinetTableBody">
+                    <!-- Populated dynamically via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- ==================== PAGINATION ROW ==================== -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500 pt-2 pb-6">
+              <div>
+                Hiển thị <strong class="text-slate-800">1 - 6</strong> trong tổng số <strong class="text-slate-800">950</strong> tủ điều khiển
+              </div>
+              <div class="flex items-center gap-1">
+                <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-600 disabled:opacity-40" disabled>
+                  <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                </button>
+                <button class="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-900 text-white font-bold transition">1</button>
+                <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">2</button>
+                <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">3</button>
+                <span class="px-1 text-slate-400">...</span>
+                <button class="w-8 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">159</button>
+                <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-600">
+                  <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+          <!-- END: RIGHT PANEL -->
+
+        </div>
+
+      </main>
+
+      <!-- ==================== FIXED BOTTOM SYSTEM BAR ==================== -->
+      <footer class="bottom-system-bar">
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-1.5 font-semibold text-slate-700">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Tủ Online: <strong class="text-emerald-700">902 / 950 (94.9%)</strong></span>
+          </div>
+          <div class="flex items-center gap-1.5 font-semibold text-slate-700">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span>Cảnh báo: <strong class="text-amber-700">18</strong></span>
+          </div>
+          <div class="flex items-center gap-1.5 font-semibold text-slate-700">
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+            <span>Mất kết nối: <strong class="text-rose-700">30</strong></span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 font-mono text-[11px] text-slate-400">
+          <span>Phiên bản QHK: <strong class="text-slate-600">v1.4.1 (Đà Nẵng IOT)</strong></span>
+          <span>|</span>
+          <span>Người dùng: <strong class="text-slate-600">Nguyễn Văn Minh (Admin)</strong></span>
+          <span>|</span>
+          <span>Cập nhật: <strong class="text-slate-600" id="footerLiveTime">19:42:15</strong></span>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: CHI TIẾT TỦ ĐIỀU KHIỂN ==================== -->
+  <div id="modalCabinetDetails" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[22px]">electric_meter</span>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2" id="detailCabinetTitle">
+              Chi tiết tủ: T3 Hoàng Văn Thái
+            </h3>
+            <p class="text-xs text-slate-500" id="detailCabinetSub">Mã tủ: T-HC003 • Quận Thanh Khê • 4G Viettel</p>
+          </div>
+        </div>
+        <button class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200 transition" onclick="closeCabinetDetailsModal()">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto space-y-5 text-xs">
+        
+        <!-- Live Phase Telemetry -->
+        <div>
+          <h4 class="font-bold text-slate-800 uppercase tracking-wider text-[11px] mb-2 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-primary">speed</span>
+            <span>Đo lường điện năng 3 pha tức thời</span>
+          </h4>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+              <div class="text-[10px] font-bold text-slate-500">PHA 1 (L1)</div>
+              <div class="text-xl font-mono font-extrabold text-slate-900 mt-1" id="detailL1V">221.4 V</div>
+              <div class="text-xs font-mono font-bold text-blue-600 mt-0.5" id="detailL1A">15.1 A</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+              <div class="text-[10px] font-bold text-slate-500">PHA 2 (L2)</div>
+              <div class="text-xl font-mono font-extrabold text-slate-900 mt-1" id="detailL2V">220.7 V</div>
+              <div class="text-xs font-mono font-bold text-blue-600 mt-0.5" id="detailL2A">15.3 A</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+              <div class="text-[10px] font-bold text-slate-500">PHA 3 (L3)</div>
+              <div class="text-xl font-mono font-extrabold text-slate-900 mt-1" id="detailL3V">221.8 V</div>
+              <div class="text-xs font-mono font-bold text-blue-600 mt-0.5" id="detailL3A">15.2 A</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Relay & Contactor Control -->
+        <div>
+          <h4 class="font-bold text-slate-800 uppercase tracking-wider text-[11px] mb-2 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-primary">toggle_on</span>
+            <span>Điều khiển Khởi động từ & Rơ-le bảo vệ</span>
+          </h4>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="border border-slate-200 rounded-xl p-3 flex items-center justify-between bg-white">
+              <div>
+                <span class="font-bold text-slate-800 block">Nhánh K1 (Đông)</span>
+                <span class="text-[10px] text-emerald-600 font-semibold">ĐANG ĐÓNG</span>
+              </div>
+              <input type="checkbox" checked class="w-4 h-4 accent-emerald-600 cursor-pointer" onchange="toggleContactor('K1', this.checked)">
+            </div>
+            <div class="border border-slate-200 rounded-xl p-3 flex items-center justify-between bg-white">
+              <div>
+                <span class="font-bold text-slate-800 block">Nhánh K2 (Tây)</span>
+                <span class="text-[10px] text-emerald-600 font-semibold">ĐANG ĐÓNG</span>
+              </div>
+              <input type="checkbox" checked class="w-4 h-4 accent-emerald-600 cursor-pointer" onchange="toggleContactor('K2', this.checked)">
+            </div>
+            <div class="border border-slate-200 rounded-xl p-3 flex items-center justify-between bg-white">
+              <div>
+                <span class="font-bold text-slate-800 block">Nhánh K3 (Trang trí)</span>
+                <span class="text-[10px] text-emerald-600 font-semibold">ĐANG ĐÓNG</span>
+              </div>
+              <input type="checkbox" checked class="w-4 h-4 accent-emerald-600 cursor-pointer" onchange="toggleContactor('K3', this.checked)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Dimming Slider -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-800">Điều chỉnh mức Dimming tức thời</span>
+            <span class="font-mono font-bold text-brand-600 text-sm" id="detailDimDisplay">100%</span>
+          </div>
+          <input type="range" min="0" max="100" step="10" value="100" class="w-full accent-primary cursor-pointer" id="detailDimSlider" oninput="updateModalDim(this.value)">
+          <div class="flex justify-between text-[10px] font-mono text-slate-400">
+            <span>0% (TẮT)</span>
+            <span>30%</span>
+            <span>50%</span>
+            <span>70%</span>
+            <span>100% (SÁNG TỐI ĐA)</span>
+          </div>
+        </div>
+
+        <!-- General Parameters Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white border border-slate-200 rounded-xl p-3">
+          <div>
+            <span class="text-slate-400 block text-[10px]">Hệ số công suất</span>
+            <strong class="font-mono text-slate-800 text-sm">cos φ 0.95</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">Tần số lưới</span>
+            <strong class="font-mono text-slate-800 text-sm">50.02 Hz</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">Nhiệt độ bên trong</span>
+            <strong class="font-mono text-slate-800 text-sm">28.5°C</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">Cường độ sóng 4G</span>
+            <strong class="font-mono text-emerald-600 text-sm">-72 dBm (Tốt)</strong>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50">
+        <button class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200 transition" onclick="closeCabinetDetailsModal()">Đóng</button>
+        <div class="flex items-center gap-2">
+          <button class="px-3 py-1.5 rounded-xl text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 transition" onclick="pingCabinetModem('T-CURRENT')">
+            Ping kiểm tra tín hiệu
+          </button>
+          <button class="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-[#063b66] transition shadow-sm" onclick="saveCabinetSettings()">
+            Lưu & Phát lệnh xuống tủ
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: THÊM TỦ ĐIỀU KHIỂN ==================== -->
+  <div id="modalAddCabinet" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px] text-primary">add_circle</span>
+          <span>Thêm tủ điều khiển chiếu sáng mới</span>
+        </h3>
+        <button class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg" onclick="closeAddCabinetModal()">✕</button>
+      </div>
+
+      <form id="formAddCabinet" class="p-6 space-y-3.5 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Mã tủ định danh *</label>
+          <input type="text" required placeholder="Ví dụ: T-HC015, T-ST020..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-brand-500 font-mono text-slate-800">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Tên tủ điều khiển *</label>
+          <input type="text" required placeholder="Ví dụ: T15 Nguyễn Hữu Thọ..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-brand-500 text-slate-800">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Quận / Huyện *</label>
+            <select class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-brand-500 text-slate-800">
+              <option value="hai-chau">Hải Châu</option>
+              <option value="thanh-khe">Thanh Khê</option>
+              <option value="son-tra">Sơn Trà</option>
+              <option value="ngu-hanh-son">Ngũ Hành Sơn</option>
+              <option value="cam-le">Cẩm Lệ</option>
+              <option value="lien-chieu">Liên Chiểu</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Tuyến đường</label>
+            <input type="text" placeholder="Ví dụ: Đường Bạch Đằng" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">SIM Viễn thông 4G</label>
+            <select class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800">
+              <option value="viettel">Viettel 4G IoT</option>
+              <option value="vinaphone">Vinaphone M2M</option>
+              <option value="mobifone">Mobifone IoT</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Công suất định mức (kW)</label>
+            <input type="number" step="0.1" value="15.0" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800 font-mono">
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Tọa độ GPS (Vĩ độ, Kinh độ)</label>
+          <input type="text" placeholder="16.0678, 108.2208" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white font-mono text-slate-800">
+        </div>
+        <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" class="px-3.5 py-2 text-slate-600 hover:bg-slate-100 rounded-xl transition" onclick="closeAddCabinetModal()">Hủy</button>
+          <button type="submit" class="px-4 py-2 bg-primary hover:bg-[#063b66] text-white font-bold rounded-xl transition shadow-sm">Thêm tủ mới</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script src="js/cabinets.js"></script>
+</body>
+</html>

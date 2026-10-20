@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full bg-slate-50">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Quản lý khu vực chiếu sáng - SmartLight IoT Municipal System</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Material Symbols Outlined -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  
+  <!-- Canonical App Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Tailwind CSS CDN with configuration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef6ff',
+              100: '#d9eaff',
+              500: '#1e6be6',
+              600: '#0066ff',
+              700: '#0b51c5',
+              800: '#0c3e98',
+              900: '#1a365d',
+            },
+            primary: '#074476',
+            'primary-container': '#2b5c8f',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+  <!-- Areas Custom Styles -->
+  <link rel="stylesheet" href="css/areas.css">
+</head>
+
+<body class="h-full text-slate-800 flex overflow-hidden bg-slate-50">
+
+  <div class="dashboard-wrapper w-full flex">
+    
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Brand / Logo -->
+      <div class="sidebar-brand">
+        <div class="brand-logo-wrap">
+          <img src="images/logo.png" alt="SmartLight EVNCPC Logo" class="brand-logo-img">
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-name">SmartLight</h1>
+          <span class="brand-sub">MUNICIPAL IOT</span>
+        </div>
+        <button class="btn-close-sidebar" id="btnCloseSidebar" aria-label="Đóng menu">✕</button>
+      </div>
+
+      <!-- Navigation Menus -->
+      <nav class="sidebar-nav">
+        <!-- Section 1: GIÁM SÁT & ĐIỀU HÀNH -->
+        <div class="nav-group">
+          <div class="nav-group-title">GIÁM SÁT & ĐIỀU HÀNH</div>
+          <ul class="nav-list">
+            <li>
+              <a href="index.html" class="nav-link" data-nav="dashboard">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                  </svg>
+                </span>
+                <span class="nav-label">Dashboard (Tổng quan)</span>
+              </a>
+            </li>
+            <li>
+              <a href="map.html" class="nav-link" data-nav="map">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Bản đồ giám sát</span>
+              </a>
+            </li>
+            <li>
+              <a href="control.html" class="nav-link" data-nav="control">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Điều khiển chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="schedules.html" class="nav-link" data-nav="schedule">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Lịch vận hành</span>
+              </a>
+            </li>
+            <li>
+              <a href="alerts.html" class="nav-link" data-nav="alerts">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Cảnh báo sự cố</span>
+                <span class="nav-badge" id="sidebarAlertCount">18</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 2: HẠ TẦNG CHIẾU SÁNG -->
+        <div class="nav-group">
+          <div class="nav-group-title">HẠ TẦNG CHIẾU SÁNG</div>
+          <ul class="nav-list">
+            <li>
+              <a href="areas.html" class="nav-link active" data-nav="areas">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18"></path>
+                    <path d="M5 21V7l8-4v18"></path>
+                    <path d="M19 21V11l-6-3"></path>
+                    <path d="M9 9v.01"></path>
+                    <path d="M9 12v.01"></path>
+                    <path d="M9 15v.01"></path>
+                    <path d="M9 18v.01"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Khu vực chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="cabinets.html" class="nav-link" data-nav="cabinets">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v5l3 3"></path>
+                    <path d="M9 12h6"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Tủ chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="routes.html" class="nav-link" data-nav="routes">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="6" cy="19" r="3"></circle>
+                    <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>
+                    <circle cx="18" cy="5" r="3"></circle>
+                  </svg>
+                </span>
+                <span class="nav-label">Tuyến chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="light-detail.html" class="nav-link" data-nav="lights">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                    <path d="M9 18h6"/>
+                    <path d="M10 22h4"/>
+                  </svg>
+                </span>
+                <span class="nav-label">Điểm đèn</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 3: QUẢN TRỊ & BÁO CÁO -->
+        <div class="nav-group">
+          <div class="nav-group-title">QUẢN TRỊ & BÁO CÁO</div>
+          <ul class="nav-list">
+            <li>
+              <a href="#users" class="nav-link" data-nav="users">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Quản lý người dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="#roles" class="nav-link" data-nav="roles">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Phân quyền</span>
+              </a>
+            </li>
+            <li>
+              <a href="reports.html" class="nav-link" data-nav="reports">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Báo cáo & thống kê</span>
+              </a>
+            </li>
+            <li>
+              <a href="#logs" class="nav-link" data-nav="logs">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </span>
+                <span class="nav-label">Nhật ký hệ thống</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Sidebar Bottom IoT Status Card -->
+      <div class="sidebar-footer">
+        <div class="iot-gateway-card">
+          <div class="gateway-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+            </svg>
+          </div>
+          <div class="gateway-info">
+            <span class="gateway-title">IoT Central Gateway</span>
+            <span class="gateway-status">Đang kết nối: <strong id="gatewayPingValue">99.8%</strong></span>
+          </div>
+          <div class="gateway-dot"></div>
+        </div>
+      </div>
+    </aside>
+    <!-- END: Sidebar -->
+
+    <!-- BEGIN: Main Content Area -->
+    <div class="main-container flex-1 flex flex-col h-screen overflow-hidden bg-[#f8fafc]">
+      
+      <!-- Topbar Header -->
+      <header class="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between flex-shrink-0 z-10 shadow-[0_1px_3px_rgba(0,0,0,0.02)]" data-purpose="topbar">
+        <!-- Search & Mobile Toggle in Topbar -->
+        <div class="flex items-center gap-3 w-80 lg:w-96">
+          <button class="mobile-menu-btn block lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100" id="btnToggleMobileSidebar" aria-label="Mở menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <span class="material-symbols-outlined text-[18px]">search</span>
+            </div>
+            <input id="topSearchInput" class="w-full pl-10 pr-4 py-2 bg-slate-100/70 hover:bg-slate-100 focus:bg-white text-xs border border-transparent focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 rounded-xl transition placeholder-slate-400 text-slate-700" placeholder="Tìm nhanh trạm, tủ điện, lộ đèn, sự cố (Ctrl+K)..." type="text">
+          </div>
+        </div>
+
+        <!-- Right Side Info & Profile -->
+        <div class="flex items-center gap-5">
+          <!-- System Clock -->
+          <div class="hidden xl:flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200/60">
+            <span class="material-symbols-outlined text-[16px] text-slate-400">schedule</span>
+            <span id="liveClockDisplay">Thứ năm, 24/10/2024 • <span class="font-mono text-slate-700 font-semibold" id="liveTime">19:42:15 GMT+7</span></span>
+          </div>
+
+          <!-- Notification Bell -->
+          <a href="alerts.html" class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition" title="Xem 18 cảnh báo sự cố">
+            <span class="material-symbols-outlined text-[22px]">notifications</span>
+            <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">5</span>
+          </a>
+
+          <div class="h-6 w-px bg-slate-200"></div>
+
+          <!-- User Profile Dropdown -->
+          <div class="flex items-center gap-3 cursor-pointer group">
+            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow ring-2 ring-white">
+              <span class="material-symbols-outlined text-[18px] text-white">person</span>
+            </div>
+            <div class="text-left hidden sm:block">
+              <div class="text-xs font-bold text-slate-800 leading-tight group-hover:text-primary transition">Nguyễn Văn Minh</div>
+              <div class="text-[11px] text-slate-400 font-medium">Quản trị hệ thống</div>
+            </div>
+            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 transition">expand_more</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Main Content -->
+      <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-6 space-y-6">
+        
+        <!-- Top Action & Title Bar -->
+        <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 font-sans">Quản lý khu vực chiếu sáng</h1>
+            <p class="text-xs text-slate-500 font-medium mt-1">Quản lý danh sách các khu vực chiếu sáng trên toàn thành phố Đà Nẵng</p>
+          </div>
+
+          <div>
+            <button id="btnOpenAddAreaModal" class="h-10 px-4 rounded-xl bg-primary text-white hover:bg-primary-container transition-all flex items-center gap-1.5 shadow-sm text-xs font-bold" type="button">
+              <span class="material-symbols-outlined text-[18px]">add</span>
+              <span>Thêm khu vực</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- KPI Metric Cards (4 Cards) -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <!-- Card 1: Tổng khu vực -->
+          <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">TỔNG KHU VỰC</span>
+                <div class="text-3xl font-extrabold text-slate-900 tracking-tight mt-1" id="statTotalAreas">6</div>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-sky-100 text-primary flex items-center justify-center shadow-sm">
+                <span class="material-symbols-outlined text-[24px]">location_on</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 mt-3 pt-2 border-t border-slate-100 text-xs text-slate-400">
+              <span>— 0% so với tháng trước</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Đang hoạt động -->
+          <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">ĐANG HOẠT ĐỘNG</span>
+                <div class="text-3xl font-extrabold text-primary tracking-tight mt-1" id="statActiveAreas">5</div>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-sky-50 text-brand-600 flex items-center justify-center shadow-sm">
+                <span class="material-symbols-outlined text-[24px]">power_settings_new</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 mt-3 pt-2 border-t border-slate-100 text-xs text-emerald-600 font-semibold">
+              <span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+              <span>+17% so với tháng trước</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Bảo trì -->
+          <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">BẢO TRÌ</span>
+                <div class="text-3xl font-extrabold text-amber-700 tracking-tight mt-1" id="statMaintenanceAreas">1</div>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shadow-sm">
+                <span class="material-symbols-outlined text-[24px]">build</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 mt-3 pt-2 border-t border-slate-100 text-xs text-slate-400">
+              <span>— 0% so với tháng trước</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Có cảnh báo -->
+          <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col justify-between hover:border-slate-300 transition">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">CÓ CẢNH BÁO</span>
+                <div class="text-3xl font-extrabold text-rose-600 tracking-tight mt-1" id="statAlertAreas">1</div>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shadow-sm">
+                <span class="material-symbols-outlined text-[24px]">warning</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 mt-3 pt-2 border-t border-slate-100 text-xs text-slate-400">
+              <span>— 0% so với tháng trước</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Filter & Search Toolbar -->
+        <section class="p-4 bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <!-- Search input -->
+          <div class="relative flex-1 max-w-lg">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+            <input id="searchAreaInput" class="w-full h-10 pl-9 pr-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 placeholder:text-slate-400 text-xs focus:outline-none focus:border-primary focus:bg-white transition" placeholder="Tìm kiếm theo mã khu vực, tên khu vực, quận/huyện..." type="text">
+          </div>
+
+          <!-- Filters -->
+          <div class="flex items-center gap-2.5">
+            <div class="relative min-w-[160px]">
+              <select id="filterStatus" class="w-full h-10 pl-3 pr-8 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs font-medium appearance-none focus:outline-none focus:border-primary focus:bg-white cursor-pointer transition">
+                <option value="all" selected>Tất cả trạng thái</option>
+                <option value="Hoạt động">Hoạt động</option>
+                <option value="Bảo trì">Bảo trì</option>
+                <option value="Có cảnh báo">Có cảnh báo</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[18px]">expand_more</span>
+            </div>
+
+            <button id="btnFilterToggle" class="h-10 px-4 rounded-xl bg-sky-50 border border-sky-200 text-primary hover:bg-sky-100 transition-all flex items-center gap-1.5 text-xs font-semibold" type="button">
+              <span class="material-symbols-outlined text-[18px]">tune</span>
+              <span>Bộ lọc</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Areas Data Table (Full Width) -->
+        <section class="w-full flex flex-col bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-50/80 text-slate-500 font-bold uppercase tracking-wider text-[10.5px] border-b border-slate-200/70 select-none">
+                  <th class="py-3.5 px-4 text-center w-10">
+                    <input type="checkbox" id="selectAllCheckbox" class="rounded border-slate-300 text-primary focus:ring-primary/20">
+                  </th>
+                  <th class="py-3.5 px-4 cursor-pointer hover:text-slate-800" onclick="sortTable('id')">
+                    <div class="flex items-center gap-1">MÃ KHU VỰC <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+                  </th>
+                  <th class="py-3.5 px-4 cursor-pointer hover:text-slate-800" onclick="sortTable('name')">
+                    <div class="flex items-center gap-1">TÊN KHU VỰC <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+                  </th>
+                  <th class="py-3.5 px-4 cursor-pointer hover:text-slate-800" onclick="sortTable('district')">
+                    <div class="flex items-center gap-1">QUẬN/HUYỆN <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+                  </th>
+                  <th class="py-3.5 px-4 text-center cursor-pointer hover:text-slate-800" onclick="sortTable('cabinets')">
+                    <div class="flex items-center justify-center gap-1">SỐ TỦ <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+                  </th>
+                  <th class="py-3.5 px-4 text-center cursor-pointer hover:text-slate-800" onclick="sortTable('routes')">
+                    <div class="flex items-center justify-center gap-1">SỐ TUYẾN <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+                  </th>
+                  <th class="py-3.5 px-4 text-right cursor-pointer hover:text-slate-800" onclick="sortTable('lamps')">
+                    <div class="flex items-center justify-end gap-1">SỐ ĐIỂM ĐÈN <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+                  </th>
+                  <th class="py-3.5 px-4 text-center cursor-pointer hover:text-slate-800" onclick="sortTable('rate')">
+                    <div class="flex items-center justify-center gap-1">TỶ LỆ HOẠT ĐỘNG <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+                  </th>
+                  <th class="py-3.5 px-4 text-center cursor-pointer hover:text-slate-800" onclick="sortTable('alerts')">
+                    <div class="flex items-center justify-center gap-1">CẢNH BÁO <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+                  </th>
+                  <th class="py-3.5 px-4 text-center cursor-pointer hover:text-slate-800" onclick="sortTable('status')">
+                    <div class="flex items-center justify-center gap-1">TRẠNG THÁI <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+                  </th>
+                  <th class="py-3.5 px-4 text-center cursor-pointer hover:text-slate-800" onclick="sortTable('updated')">
+                    <div class="flex items-center justify-center gap-1">CẬP NHẬT CUỐI <span class="material-symbols-outlined text-[14px]">unfold_more</span></div>
+                  </th>
+                  <th class="py-3.5 px-4 text-center w-28">THAO TÁC</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700" id="areasTableBody">
+                <!-- Rendered by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Footer -->
+          <div class="p-4 px-5 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <span class="text-xs text-slate-500">
+              Hiển thị <span class="font-bold text-slate-800" id="showingCount">1 - 6</span> của <span class="font-bold text-slate-800">6</span> khu vực
+            </span>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                <span>Số hàng:</span>
+                <select class="h-8 px-2 rounded-lg bg-white border border-slate-200 text-xs">
+                  <option selected>10 / trang</option>
+                  <option>20 / trang</option>
+                  <option>50 / trang</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-1">
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center bg-white border border-slate-200 text-slate-400 disabled:opacity-40" disabled type="button">
+                  <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                </button>
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-white font-bold text-xs shadow-sm" type="button">
+                  1
+                </button>
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center bg-white border border-slate-200 text-slate-400 disabled:opacity-40" disabled type="button">
+                  <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="pt-4 pb-6 text-center text-xs text-slate-400">
+          SmartLight IoT v1.0.0 © 2024. Tất cả quyền được bảo lưu. Hệ thống quản lý vận hành năng lượng đô thị thông minh.
+        </footer>
+      </main>
+    </div>
+    <!-- END: Main Content Area -->
+  </div>
+  <!-- END: dashboard-wrapper -->
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Modal: Thêm khu vực chiếu sáng mới -->
+  <div id="modalAddArea" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-sky-50 text-primary flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">add_location_alt</span>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Thêm khu vực chiếu sáng mới</h3>
+            <p class="text-[11px] text-slate-400">Đăng ký địa bàn quản lý chiếu sáng công cộng TP. Đà Nẵng</p>
+          </div>
+        </div>
+        <button id="btnCloseAddAreaModal" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition">✕</button>
+      </div>
+
+      <form id="formAddArea" class="p-6 space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Mã khu vực</label>
+            <input type="text" required value="KV-07" class="w-full text-xs font-mono border border-slate-200 rounded-xl px-3 py-2 bg-slate-50 focus:bg-white focus:border-primary focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tên khu vực</label>
+            <input type="text" required placeholder="VD: Hòa Vang..." class="w-full text-xs border border-slate-200 rounded-xl px-3 py-2 focus:border-primary focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Quận / Huyện phụ trách</label>
+          <select class="w-full text-xs border border-slate-200 rounded-xl px-3 py-2 bg-slate-50">
+            <option>Huyện Hòa Vang</option>
+            <option>Huyện Hoàng Sa</option>
+            <option>Quận Hải Châu</option>
+            <option>Quận Sơn Trà</option>
+            <option>Quận Thanh Khê</option>
+            <option>Quận Ngũ Hành Sơn</option>
+            <option>Quận Liên Chiểu</option>
+            <option>Quận Cẩm Lệ</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Đơn vị quản trị</label>
+            <input type="text" value="Cty CP Chiếu sáng ĐT Đà Nẵng" class="w-full text-xs border border-slate-200 rounded-xl px-3 py-2">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Trạng thái ban đầu</label>
+            <select class="w-full text-xs border border-slate-200 rounded-xl px-3 py-2 bg-slate-50">
+              <option selected>Hoạt động</option>
+              <option>Bảo trì</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
+          <button type="button" id="btnCancelAddAreaModal" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Hủy</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-container shadow-sm">Tạo khu vực</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Areas Management Logic -->
+  <script src="js/areas.js"></script>
+</body>
+</html>

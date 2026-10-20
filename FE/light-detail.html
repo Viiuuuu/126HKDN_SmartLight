@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full bg-slate-50">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Chi tiết điểm đèn: LD-0001 - Đường Lê Duẩn - SmartLight IoT Municipal System</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Material Symbols Outlined -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  
+  <!-- Canonical App Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Tailwind CSS CDN with configuration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef6ff',
+              100: '#d9eaff',
+              500: '#1e6be6',
+              600: '#0066ff',
+              700: '#0b51c5',
+              800: '#0c3e98',
+              900: '#1a365d',
+            },
+            primary: '#074476',
+            'primary-container': '#2b5c8f',
+            'primary-fixed': '#d2e4ff',
+            'primary-fixed-dim': '#a0c9ff',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+  
+  <link rel="stylesheet" href="css/light-detail.css">
+</head>
+
+<body class="h-full text-slate-800 flex overflow-hidden bg-slate-50">
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Main System Wrapper -->
+  <div class="dashboard-wrapper w-full flex">
+    
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Brand / Logo -->
+      <div class="sidebar-brand">
+        <div class="brand-logo-wrap">
+          <img src="images/logo.png" alt="SmartLight EVNCPC Logo" class="brand-logo-img">
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-name">SmartLight</h1>
+          <span class="brand-sub">MUNICIPAL IOT</span>
+        </div>
+        <button class="btn-close-sidebar" id="btnCloseSidebar" aria-label="Đóng menu">✕</button>
+      </div>
+
+      <!-- Navigation Menus -->
+      <nav class="sidebar-nav">
+        <!-- Section 1: GIÁM SÁT & ĐIỀU HÀNH -->
+        <div class="nav-group">
+          <div class="nav-group-title">GIÁM SÁT & ĐIỀU HÀNH</div>
+          <ul class="nav-list">
+            <li>
+              <a href="index.html" class="nav-link" data-nav="dashboard">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                  </svg>
+                </span>
+                <span class="nav-label">Dashboard (Tổng quan)</span>
+              </a>
+            </li>
+            <li>
+              <a href="map.html" class="nav-link" data-nav="map">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Bản đồ giám sát</span>
+              </a>
+            </li>
+            <li>
+              <a href="control.html" class="nav-link" data-nav="control">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Điều khiển chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="schedules.html" class="nav-link" data-nav="schedule">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Lịch vận hành</span>
+              </a>
+            </li>
+            <li>
+              <a href="alerts.html" class="nav-link" data-nav="alerts">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Cảnh báo sự cố</span>
+                <span class="nav-badge" id="sidebarAlertCount">18</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 2: HẠ TẦNG CHIẾU SÁNG -->
+        <div class="nav-group">
+          <div class="nav-group-title">HẠ TẦNG CHIẾU SÁNG</div>
+          <ul class="nav-list">
+            <li>
+              <a href="areas.html" class="nav-link" data-nav="areas">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18"></path>
+                    <path d="M5 21V7l8-4v18"></path>
+                    <path d="M19 21V11l-6-3"></path>
+                    <path d="M9 9v.01"></path>
+                    <path d="M9 12v.01"></path>
+                    <path d="M9 15v.01"></path>
+                    <path d="M9 18v.01"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Khu vực chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="cabinets.html" class="nav-link" data-nav="cabinets">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v5l3 3"></path>
+                    <path d="M9 12h6"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Tủ chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="routes.html" class="nav-link" data-nav="routes">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="6" cy="19" r="3"></circle>
+                    <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>
+                    <circle cx="18" cy="5" r="3"></circle>
+                  </svg>
+                </span>
+                <span class="nav-label">Tuyến chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="light-detail.html" class="nav-link active" data-nav="lights">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                    <path d="M9 18h6"/>
+                    <path d="M10 22h4"/>
+                  </svg>
+                </span>
+                <span class="nav-label">Điểm đèn</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 3: QUẢN TRỊ & BÁO CÁO -->
+        <div class="nav-group">
+          <div class="nav-group-title">QUẢN TRỊ & BÁO CÁO</div>
+          <ul class="nav-list">
+            <li>
+              <a href="#users" class="nav-link" data-nav="users">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Quản lý người dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="#roles" class="nav-link" data-nav="roles">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Phân quyền</span>
+              </a>
+            </li>
+            <li>
+              <a href="reports.html" class="nav-link" data-nav="reports">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Báo cáo & thống kê</span>
+              </a>
+            </li>
+            <li>
+              <a href="#logs" class="nav-link" data-nav="logs">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </span>
+                <span class="nav-label">Nhật ký hệ thống</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Sidebar Bottom IoT Status Card -->
+      <div class="sidebar-footer">
+        <div class="iot-gateway-card">
+          <div class="gateway-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+            </svg>
+          </div>
+          <div class="gateway-info">
+            <span class="gateway-title">IoT Central Gateway</span>
+            <span class="gateway-status">Đang kết nối: <strong id="gatewayPingValue">99.8%</strong></span>
+          </div>
+          <div class="gateway-dot"></div>
+        </div>
+      </div>
+    </aside>
+    <!-- END: Sidebar -->
+
+    <!-- ==================== MAIN CONTAINER ==================== -->
+    <div class="main-container flex-1 flex flex-col h-screen overflow-hidden bg-[#f8fafc]">
+      
+      <!-- Topbar Header (Synchronized with system standard) -->
+      <header class="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between flex-shrink-0 z-10 shadow-[0_1px_3px_rgba(0,0,0,0.02)]" data-purpose="topbar">
+        <!-- Search & Mobile Toggle in Topbar -->
+        <div class="flex items-center gap-3 w-80 lg:w-96">
+          <button class="mobile-menu-btn block lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100" id="btnToggleMobileSidebar" aria-label="Mở menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <span class="material-symbols-outlined text-[18px]">search</span>
+            </div>
+            <input id="globalSearchInput" class="w-full pl-10 pr-12 py-2 bg-slate-100/70 hover:bg-slate-100 focus:bg-white text-xs border border-transparent focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 rounded-xl transition placeholder-slate-400 text-slate-700" placeholder="Tìm kiếm điểm đèn, mã tủ, tuyến đường... (Ctrl+K)" type="text">
+            <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-2xs pointer-events-none">⌘K</kbd>
+          </div>
+        </div>
+
+        <!-- Right Side Info & Profile -->
+        <div class="flex items-center gap-5">
+          <!-- System Clock -->
+          <div class="hidden xl:flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200/60">
+            <span class="material-symbols-outlined text-[16px] text-slate-400">schedule</span>
+            <span id="liveClockDisplay">Thứ tư, 15/10/2025 • <span class="font-mono text-slate-700 font-semibold" id="liveTime">19:45:00 GMT+7</span></span>
+          </div>
+
+          <!-- Notification Bell -->
+          <a href="alerts.html" class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition" title="Xem 18 cảnh báo sự cố">
+            <span class="material-symbols-outlined text-[22px]">notifications</span>
+            <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">5</span>
+          </a>
+
+          <div class="h-6 w-px bg-slate-200"></div>
+
+          <!-- User Profile Dropdown -->
+          <div class="flex items-center gap-3 cursor-pointer group">
+            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow ring-2 ring-white">
+              <span class="material-symbols-outlined text-[18px] text-white">person</span>
+            </div>
+            <div class="text-left hidden sm:block">
+              <div class="text-xs font-bold text-slate-800 leading-tight group-hover:text-primary transition">Nguyễn Văn Minh</div>
+              <div class="text-[11px] text-slate-400 font-medium">Quản trị viên hệ thống</div>
+            </div>
+            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 transition">expand_more</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Main Content -->
+      <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-6 space-y-6">
+        
+        <!-- TOP BREADCRUMB & ACTION BAR -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white px-5 py-3.5 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div class="flex items-center gap-2 flex-wrap text-xs font-medium">
+            <a href="routes.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/70 text-slate-700 font-semibold transition-colors">
+              <span class="material-symbols-outlined text-[16px] text-primary">arrow_back</span>
+              <span>Danh sách điểm đèn</span>
+            </a>
+            <span class="text-slate-300">/</span>
+            <a href="route-detail.html" class="text-slate-500 hover:text-primary transition-colors font-medium">Tuyến TL-01</a>
+            <span class="text-slate-300">/</span>
+            <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-primary border border-blue-100 font-mono font-bold text-xs" id="breadcrumbLampCode">LD-0001</span>
+          </div>
+          
+          <div class="flex items-center gap-2.5 self-end md:self-auto">
+            <button id="btnPrintSpecs" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-50 text-slate-700 hover:text-primary hover:bg-slate-100 border border-slate-200/80 transition-colors text-xs font-semibold shadow-2xs">
+              <span class="material-symbols-outlined text-[16px]">print</span>
+              <span>In thông số</span>
+            </button>
+            <button id="btnShareLamp" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-50 text-slate-700 hover:text-primary hover:bg-slate-100 border border-slate-200/80 transition-colors text-xs font-semibold shadow-2xs">
+              <span class="material-symbols-outlined text-[16px]">share</span>
+              <span>Chia sẻ</span>
+            </button>
+            <button id="btnSyncNow" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white hover:bg-brand-700 transition-all text-xs font-semibold shadow-xs">
+              <span class="material-symbols-outlined text-[16px]" id="syncIcon">sync</span>
+              <span>Đồng bộ tức thì</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- HERO TITLE BANNER -->
+        <div class="rounded-2xl bg-white p-6 border border-slate-200/80 shadow-xs flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-3 flex-wrap">
+              <div class="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-primary shadow-2xs">
+                <span class="material-symbols-outlined text-[24px]">wb_incandescent</span>
+              </div>
+              <div>
+                <div class="flex items-center gap-2.5 flex-wrap">
+                  <h1 class="text-xl lg:text-2xl font-bold text-slate-900 tracking-tight" id="heroLampTitle">Điểm đèn: LD-0001</h1>
+                  <span id="heroStatusBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200/80">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span id="heroLightStatusText">Đang phát sáng (80%) • Chế độ thông minh</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-xs text-slate-500 flex items-center gap-2 flex-wrap pt-0.5">
+              <span class="inline-flex items-center gap-1 text-slate-700 font-semibold">
+                <span class="material-symbols-outlined text-[16px] text-primary">location_on</span>
+                <span id="heroLocationText">Đường Lê Duẩn - Điểm số 001</span>
+              </span>
+              <span class="text-slate-300">•</span>
+              <span>Tuyến TL-01</span>
+              <span class="text-slate-300">•</span>
+              <span>Tủ CS-01</span>
+              <span class="text-slate-300">•</span>
+              <span>Quận Ba Đình, Hà Nội</span>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3 self-start lg:self-center">
+            <div class="flex flex-col items-end text-right">
+              <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Mã định danh phần cứng</span>
+              <span class="text-xs font-bold text-primary font-mono bg-slate-100/80 px-3 py-1.5 rounded-xl border border-slate-200 mt-1">NB-IoT-8841-VN</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN 2-COLUMN BALANCED GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          <!-- LEFT COLUMN (col-span-12 lg:col-span-5 space-y-6) -->
+          <div class="lg:col-span-5 flex flex-col gap-6">
+            
+            <!-- 1. LAMP OPTICAL VISUAL CARD -->
+            <div class="rounded-2xl bg-white p-6 border border-slate-200/80 shadow-xs flex flex-col items-center relative overflow-hidden">
+              <!-- Glow backdrops -->
+              <div class="absolute -top-12 -right-8 w-64 h-64 rounded-full bg-amber-200/40 blur-3xl pointer-events-none transition-all duration-700" id="ambient-glow"></div>
+              <div class="absolute -top-6 -left-6 w-48 h-48 rounded-full bg-blue-100/30 blur-2xl pointer-events-none"></div>
+              
+              <div class="w-full flex items-center justify-between mb-2 z-10">
+                <div class="flex items-center gap-2 text-primary font-semibold text-xs">
+                  <span class="material-symbols-outlined text-[18px]">light</span>
+                  <span>Mô hình quang học thực tế</span>
+                </div>
+                <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/60" id="lampPoleHeightTag">Cột cao 8.0m</span>
+              </div>
+
+              <!-- Interactive Visual Street Lamp SVG -->
+              <div class="w-full h-56 flex items-center justify-center relative my-1 z-10">
+                <svg class="w-full h-full max-w-[280px]" fill="none" viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <radialGradient id="lampGlowWarm" cx="68%" cy="26%" r="55%">
+                      <stop offset="0%" stop-color="#FFB300" stop-opacity="0.9"></stop>
+                      <stop offset="35%" stop-color="#FCD34D" stop-opacity="0.55"></stop>
+                      <stop offset="70%" stop-color="#FEF3C7" stop-opacity="0.18"></stop>
+                      <stop offset="100%" stop-color="#FFFBEB" stop-opacity="0"></stop>
+                    </radialGradient>
+                    <linearGradient id="poleMetallic" x1="0%" x2="100%" y1="0%" y2="0%">
+                      <stop offset="0%" stop-color="#334155"></stop>
+                      <stop offset="50%" stop-color="#074476"></stop>
+                      <stop offset="100%" stop-color="#1e293b"></stop>
+                    </linearGradient>
+                  </defs>
+                  
+                  <!-- Light Beam Cone with Dynamic Opacity -->
+                  <polygon class="transition-opacity duration-300 opacity-80" fill="url(#lampGlowWarm)" id="lamp-beam" points="208,35 142,210 288,210"></polygon>
+                  
+                  <!-- Street ground line -->
+                  <path d="M50 212 H270" stroke="#CBD5E1" stroke-linecap="round" stroke-width="2.5"></path>
+                  
+                  <!-- Base foundation plate -->
+                  <path d="M124 212 H156" stroke="#074476" stroke-linecap="round" stroke-width="4.5"></path>
+                  <circle cx="128" cy="211" r="1.5" fill="#CBD5E1"></circle>
+                  <circle cx="152" cy="211" r="1.5" fill="#CBD5E1"></circle>
+                  
+                  <!-- Pole Column with curve -->
+                  <path d="M140 212 V78 C140 45, 170 32, 212 32" stroke="url(#poleMetallic)" stroke-linecap="round" stroke-width="7"></path>
+                  <path d="M136.5 130 H143.5" stroke="#94A3B8" stroke-linecap="round" stroke-width="3"></path>
+                  <path d="M136.5 175 H143.5" stroke="#94A3B8" stroke-linecap="round" stroke-width="3"></path>
+                  
+                  <!-- Lamp Luminaire Fixture -->
+                  <path d="M198 32 L232 31 C237 31, 240 34, 238 39 L227 44 C224 45, 202 42, 198 32 Z" fill="#074476"></path>
+                  <ellipse class="animate-pulse" cx="218" cy="38" fill="#FCD34D" id="lamp-lens" rx="8" ry="2.5"></ellipse>
+                  <circle cx="218" cy="38" fill="#FFFFFF" r="3" id="lamp-core"></circle>
+                </svg>
+              </div>
+
+              <!-- Lamp ID & Quick Rename Button -->
+              <div class="flex items-center gap-2 mt-2 z-10">
+                <span class="text-2xl font-bold text-slate-900 tracking-tight" id="lampCodeDisplay">LD-0001</span>
+                <button id="btnOpenEditModal" class="text-slate-400 hover:text-primary transition-colors p-1 rounded-lg hover:bg-slate-100" title="Chỉnh sửa thông số điểm đèn">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+              </div>
+              <div class="text-xs text-slate-500 mt-0.5 z-10" id="lampSubName">Đường Lê Duẩn - Điểm số 001</div>
+              <div class="mt-3.5 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold z-10 border border-slate-200/60 shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Hoạt động 4.250 giờ liên tục</span>
+              </div>
+            </div>
+
+            <!-- 2. QUICK SPECS GRID -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="rounded-2xl bg-white p-4 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="flex items-center gap-1.5 text-slate-500 mb-2">
+                  <span class="material-symbols-outlined text-[18px] text-primary">alt_route</span>
+                  <span class="text-[10.5px] uppercase tracking-wider font-bold text-slate-400">Tuyến vận hành</span>
+                </div>
+                <div>
+                  <div class="text-sm font-bold text-slate-800">Tuyến TL-01</div>
+                  <div class="text-xs text-slate-500 mt-0.5">Phân đoạn A2</div>
+                </div>
+              </div>
+              
+              <div class="rounded-2xl bg-white p-4 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="flex items-center gap-1.5 text-slate-500 mb-2">
+                  <span class="material-symbols-outlined text-[18px] text-primary">location_city</span>
+                  <span class="text-[10.5px] uppercase tracking-wider font-bold text-slate-400">Khu vực</span>
+                </div>
+                <div>
+                  <div class="text-sm font-bold text-slate-800">Quận Ba Đình</div>
+                  <div class="text-xs text-slate-500 mt-0.5">Phường Điện Biên</div>
+                </div>
+              </div>
+              
+              <div class="rounded-2xl bg-white p-4 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="flex items-center gap-1.5 text-slate-500 mb-2">
+                  <span class="material-symbols-outlined text-[18px] text-amber-600">bolt</span>
+                  <span class="text-[10.5px] uppercase tracking-wider font-bold text-slate-400">Công suất danh định</span>
+                </div>
+                <div>
+                  <div class="text-sm font-bold text-slate-800" id="specRatedPower">120W (Philips)</div>
+                  <div class="text-xs text-slate-500 mt-0.5">Tuổi thọ 50.000 giờ</div>
+                </div>
+              </div>
+              
+              <div class="rounded-2xl bg-white p-4 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                <div class="flex items-center gap-1.5 text-slate-500 mb-2">
+                  <span class="material-symbols-outlined text-[18px] text-primary">my_location</span>
+                  <span class="text-[10.5px] uppercase tracking-wider font-bold text-slate-400">Tọa độ GPS</span>
+                </div>
+                <div>
+                  <div class="text-sm font-bold text-slate-800 font-mono">21.0293, 105.8342</div>
+                  <div class="text-xs text-slate-500 mt-0.5">Cột số 14 • Cao 8m</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. DIMMING QUICK CONTROL -->
+            <div class="rounded-2xl bg-white p-6 border border-slate-200/80 shadow-xs flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 rounded-xl bg-blue-50 text-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[20px]">tune</span>
+                  </div>
+                  <div>
+                    <span class="text-sm font-bold text-slate-800 block">Điều khiển độ sáng</span>
+                    <span class="text-xs text-slate-500">Tự động hoặc can thiệp tay</span>
+                  </div>
+                </div>
+                <div class="flex items-baseline gap-1 bg-slate-100 px-3.5 py-1.5 rounded-xl border border-slate-200/60">
+                  <span class="text-lg font-bold text-primary" id="dimming-val">80%</span>
+                </div>
+              </div>
+              
+              <!-- Slider Input -->
+              <div class="flex flex-col gap-2.5 pt-1">
+                <input class="w-full h-2 rounded-lg bg-slate-200 appearance-none cursor-pointer" id="dimming-range" max="100" min="0" oninput="updateBrightness(this.value)" step="5" type="range" value="80">
+                <div class="flex justify-between items-center text-xs text-slate-500 px-0.5 font-medium">
+                  <button class="hover:text-primary transition-colors" onclick="setQuickDim(0)">0% (Tắt)</button>
+                  <button class="hover:text-primary transition-colors" onclick="setQuickDim(20)">20%</button>
+                  <button class="hover:text-primary transition-colors" onclick="setQuickDim(50)">50%</button>
+                  <button class="hover:text-primary transition-colors" onclick="setQuickDim(70)">70%</button>
+                  <button class="text-primary font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-100" id="preset80" onclick="setQuickDim(80)">80%</button>
+                  <button class="hover:text-primary transition-colors" onclick="setQuickDim(100)">100%</button>
+                </div>
+              </div>
+              
+              <!-- On / Off Action Buttons -->
+              <div class="grid grid-cols-2 gap-3 pt-1">
+                <button class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary text-white font-semibold text-xs shadow-xs hover:bg-brand-700 transition-all" id="btn-turn-on" onclick="toggleLight(true)">
+                  <span class="material-symbols-outlined text-[18px]">wb_incandescent</span>
+                  <span>Bật đèn (100%)</span>
+                </button>
+                <button class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-slate-200 font-semibold text-xs shadow-2xs transition-all" id="btn-turn-off" onclick="toggleLight(false)">
+                  <span class="material-symbols-outlined text-[18px]">power_settings_new</span>
+                  <span>Tắt đèn (0%)</span>
+                </button>
+              </div>
+              
+              <a class="flex items-center justify-center gap-1.5 pt-1 text-primary hover:text-brand-700 text-xs font-semibold transition-colors" href="#history-section">
+                <span class="material-symbols-outlined text-[16px]">history</span>
+                <span>Xem chi tiết lịch sử vận hành &amp; lệnh gửi</span>
+                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+              </a>
+            </div>
+
+            <!-- 4. TELEMETRY & ELECTRICAL STATUS -->
+            <div class="rounded-2xl bg-white p-5 border border-slate-200/80 shadow-xs flex flex-col gap-3.5">
+              <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-[20px]">electric_meter</span>
+                  <span class="text-xs font-bold text-slate-800">Đo lường điện năng tức thời</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-emerald-700 text-[11px] font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+                  <span class="material-symbols-outlined text-[14px]">wifi</span>
+                  <span>NB-IoT tốt (-78 dBm)</span>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-3 gap-2.5 text-center">
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <span class="text-[10.5px] uppercase font-bold text-slate-400 block">Điện áp</span>
+                  <span class="text-base font-bold text-primary">224.6 <span class="text-xs font-normal text-slate-500">V</span></span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <span class="text-[10.5px] uppercase font-bold text-slate-400 block">Công suất</span>
+                  <span class="text-base font-bold text-slate-800" id="telemetryPower">118.2 <span class="text-xs font-normal text-slate-500">W</span></span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <span class="text-[10.5px] uppercase font-bold text-slate-400 block">Hệ số PF</span>
+                  <span class="text-base font-bold text-slate-800">0.98</span>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between text-xs text-slate-500 px-1 pt-0.5">
+                <span>Dòng điện: <strong class="text-slate-800 font-semibold" id="telemetryCurrent">0.54 A</strong></span>
+                <span>Tần số lưới: <strong class="text-slate-800 font-semibold">50.02 Hz</strong></span>
+                <span>Nhiệt độ Driver: <strong class="text-primary font-semibold">42°C</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN (col-span-12 lg:col-span-7 space-y-6) -->
+          <div class="lg:col-span-7 flex flex-col gap-6">
+            
+            <!-- 1. MAP CARD -->
+            <div class="rounded-2xl bg-white p-5 border border-slate-200/80 shadow-xs flex flex-col gap-3">
+              <div class="flex items-center justify-between px-1">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-blue-50 text-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[18px]">map</span>
+                  </div>
+                  <div>
+                    <span class="text-sm font-bold text-slate-800 block">Vị trí thực địa &amp; Tuyến kết nối số hóa</span>
+                    <span class="text-xs text-slate-500">Tọa độ số hóa trực tuyến trên bản đồ GIS</span>
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/60">
+                  <button id="btnMapStreet" class="px-3 py-1 rounded-lg bg-white text-primary text-xs font-bold shadow-2xs">Sơ đồ phố</button>
+                  <button id="btnMapSatellite" class="px-3 py-1 rounded-lg text-slate-500 hover:text-slate-800 text-xs font-medium transition-colors">Vệ tinh</button>
+                </div>
+              </div>
+
+              <!-- Interactive Vector Map Canvas -->
+              <div class="relative w-full h-80 rounded-xl bg-slate-100 overflow-hidden shadow-inner flex items-center justify-center border border-slate-200/70" id="mapWrapper">
+                <svg class="w-full h-full object-cover" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <pattern height="40" id="cityGridNew" patternUnits="userSpaceOnUse" width="40">
+                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#E2E8F0" stroke-width="1"></path>
+                    </pattern>
+                  </defs>
+                  
+                  <!-- Canvas Background -->
+                  <rect fill="#F8FAFC" height="320" width="700"></rect>
+                  <rect fill="url(#cityGridNew)" height="320" width="700"></rect>
+                  
+                  <!-- Major Roads -->
+                  <path d="M 0 160 Q 350 150 700 170" stroke="#FFFFFF" stroke-width="38"></path>
+                  <path d="M 0 160 Q 350 150 700 170" stroke="#CBD5E1" stroke-dasharray="8 8" stroke-width="2"></path>
+                  
+                  <path d="M 320 0 L 370 320" stroke="#FFFFFF" stroke-width="32"></path>
+                  <path d="M 320 0 L 370 320" stroke="#CBD5E1" stroke-dasharray="8 8" stroke-width="2"></path>
+                  
+                  <!-- Parks & Landmarks -->
+                  <rect fill="#E0F2FE" height="96" opacity="0.8" rx="12" width="220" x="30" y="25"></rect>
+                  <text fill="#0369A1" font-family="Plus Jakarta Sans" font-size="11" font-weight="700" x="48" y="60">Công viên Thống Nhất</text>
+                  <text fill="#0284C7" font-family="Plus Jakarta Sans" font-size="9" font-weight="500" x="48" y="78">Khu vực sinh thái bờ hồ</text>
+                  
+                  <rect fill="#F1F5F9" height="90" opacity="0.9" rx="12" width="240" x="420" y="195"></rect>
+                  <text fill="#475569" font-family="Plus Jakarta Sans" font-size="11" font-weight="700" x="438" y="235">Khu dân cư Điện Biên</text>
+                  <text fill="#64748B" font-family="Plus Jakarta Sans" font-size="9" font-weight="500" x="438" y="252">Tổ dân phố 4 &amp; 5</text>
+                  
+                  <!-- Route TL-01 cable line with animated dash -->
+                  <path class="cable-flow" d="M 80 160 L 220 158 L 350 162 L 490 165 L 620 168" stroke="#074476" stroke-width="3.5"></path>
+                  
+                  <!-- Cabinet node -->
+                  <g transform="translate(80, 160)" class="cursor-pointer" onclick="showToast('Tủ chiếu sáng CS-01: Đang cấp nguồn ổn định 3 pha', 'info')">
+                    <rect class="shadow-md" fill="#074476" height="28" rx="6" width="28" x="-14" y="-14"></rect>
+                    <text fill="#FFFFFF" font-family="Plus Jakarta Sans" font-size="9" font-weight="bold" text-anchor="middle" x="0" y="4">CS</text>
+                    <text fill="#074476" font-family="Plus Jakarta Sans" font-size="10" font-weight="700" text-anchor="middle" x="0" y="26">Tủ CS-01</text>
+                  </g>
+                  
+                  <!-- Peer lamps along route -->
+                  <g transform="translate(220, 158)" class="cursor-pointer" onclick="showToast('Điểm đèn LD-0002 • Công suất 120W • 80%', 'info')">
+                    <circle fill="#074476" r="7"></circle>
+                    <circle fill="#FFFFFF" r="3"></circle>
+                    <text fill="#64748B" font-family="Plus Jakarta Sans" font-size="9" font-weight="600" text-anchor="middle" x="0" y="-12">LD-0002</text>
+                  </g>
+                  
+                  <g transform="translate(490, 165)" class="cursor-pointer" onclick="showToast('Điểm đèn LD-0003 • Công suất 120W • 80%', 'info')">
+                    <circle fill="#074476" r="7"></circle>
+                    <circle fill="#FFFFFF" r="3"></circle>
+                    <text fill="#64748B" font-family="Plus Jakarta Sans" font-size="9" font-weight="600" text-anchor="middle" x="0" y="-12">LD-0003</text>
+                  </g>
+                  
+                  <g transform="translate(620, 168)" class="cursor-pointer" onclick="showToast('Điểm đèn LD-0004 • Công suất 120W • 80%', 'info')">
+                    <circle fill="#074476" r="7"></circle>
+                    <circle fill="#FFFFFF" r="3"></circle>
+                    <text fill="#64748B" font-family="Plus Jakarta Sans" font-size="9" font-weight="600" text-anchor="middle" x="0" y="-12">LD-0004</text>
+                  </g>
+                  
+                  <!-- Selected focus lamp: LD-0001 -->
+                  <g transform="translate(350, 162)">
+                    <circle class="animate-ping" fill="#FCD34D" opacity="0.6" r="26"></circle>
+                    <circle fill="#FCD34D" opacity="0.4" r="16"></circle>
+                    <circle fill="#074476" r="9"></circle>
+                    <circle fill="#FFFFFF" r="4"></circle>
+                    <!-- Tooltip callout banner -->
+                    <rect fill="#074476" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.18))" height="28" rx="8" width="100" x="-50" y="-52"></rect>
+                    <text id="mapMarkerLabel" fill="#FFFFFF" font-family="Plus Jakarta Sans" font-size="11" font-weight="bold" text-anchor="middle" x="0" y="-34">LD-0001 (80%)</text>
+                    <polygon fill="#074476" points="-5,-24 5,-24 0,-18"></polygon>
+                  </g>
+                </svg>
+
+                <!-- Map Overlay Controls -->
+                <div class="absolute bottom-3 right-3 flex flex-col gap-1 bg-white/95 backdrop-blur rounded-xl p-1 shadow-xs border border-slate-200">
+                  <button id="btnZoomIn" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-700 hover:bg-slate-100" title="Phóng to">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                  </button>
+                  <button id="btnZoomOut" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-700 hover:bg-slate-100" title="Thu nhỏ">
+                    <span class="material-symbols-outlined text-[18px]">remove</span>
+                  </button>
+                </div>
+                
+                <div class="absolute top-3 left-3 bg-white/95 backdrop-blur px-3 py-1.5 rounded-xl shadow-xs flex items-center gap-2 border border-slate-200">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <span class="text-xs font-semibold text-slate-800">Ngã tư Lê Duẩn - Trần Nhân Tông</span>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-slate-500 text-xs px-1 pt-1 flex-wrap gap-2">
+                <span class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px] text-primary">electrical_services</span>
+                  <span>Khoảng cách đến tủ điều khiển: <strong class="text-slate-800 font-semibold">240 mét</strong></span>
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px] text-primary">straighten</span>
+                  <span>Khoảng cách cột lân cận: <strong class="text-slate-800 font-semibold">35 mét</strong></span>
+                </span>
+              </div>
+            </div>
+
+            <!-- 2. DETAILED INFORMATION TABS & ENERGY / MAINTENANCE LOGS -->
+            <div class="rounded-2xl bg-white shadow-xs border border-slate-200/80 overflow-hidden" id="history-section">
+              <!-- Tab Navigation -->
+              <div class="flex border-b border-slate-200 bg-slate-50 px-5 pt-3 gap-3 overflow-x-auto">
+                <button class="pb-3 px-3 text-xs font-bold text-primary border-b-2 border-primary transition-all flex items-center gap-1.5 whitespace-nowrap" id="tab-btn-1" onclick="switchDetailTab(1)">
+                  <span class="material-symbols-outlined text-[18px]">schedule</span>
+                  <span>Lịch trình tự động</span>
+                </button>
+                <button class="pb-3 px-3 text-xs font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all flex items-center gap-1.5 whitespace-nowrap" id="tab-btn-2" onclick="switchDetailTab(2)">
+                  <span class="material-symbols-outlined text-[18px]">show_chart</span>
+                  <span>Biểu đồ điện năng 7 ngày</span>
+                </button>
+                <button class="pb-3 px-3 text-xs font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition-all flex items-center gap-1.5 whitespace-nowrap" id="tab-btn-3" onclick="switchDetailTab(3)">
+                  <span class="material-symbols-outlined text-[18px]">build_circle</span>
+                  <span>Nhật ký &amp; Bảo trì</span>
+                </button>
+              </div>
+
+              <!-- Tab 1: SCHEDULE -->
+              <div class="p-6 flex flex-col gap-4" id="tab-content-1">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-bold text-slate-800">Kịch bản vận hành hiện tại: LH-001 (Đô thị trung tâm)</span>
+                    <span class="text-xs text-slate-500 mt-0.5">Tự động điều chỉnh theo cảm biến ánh sáng và múi giờ thiên văn địa phương</span>
+                  </div>
+                  <span class="px-3 py-1 rounded-full bg-blue-50 text-primary border border-blue-100 text-xs font-bold">Tự động (Auto)</span>
+                </div>
+
+                <!-- Step timeline visual cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-1">
+                  <div class="p-4 rounded-xl bg-slate-50 flex flex-col justify-between gap-3 border border-slate-200/70 hover:border-primary/50 transition-colors">
+                    <div class="flex items-center justify-between">
+                      <span class="text-base font-bold text-primary">18:00</span>
+                      <span class="w-6 h-6 rounded-full bg-blue-100 text-primary text-[11px] font-bold flex items-center justify-center">1</span>
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-800">Bật sáng tối đa (100%)</div>
+                      <p class="text-xs text-slate-500 mt-1 leading-relaxed">Giờ cao điểm giao thông buổi tối, bảo đảm an toàn tầm nhìn phương tiện.</p>
+                    </div>
+                    <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                      <div class="bg-primary h-full w-full"></div>
+                    </div>
+                  </div>
+
+                  <div class="p-4 rounded-xl bg-slate-50 flex flex-col justify-between gap-3 border border-slate-200/70 hover:border-amber-400 transition-colors">
+                    <div class="flex items-center justify-between">
+                      <span class="text-base font-bold text-primary">22:30</span>
+                      <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold flex items-center justify-center">2</span>
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-800">Giảm sáng êm (70%)</div>
+                      <p class="text-xs text-slate-500 mt-1 leading-relaxed">Lưu lượng đường Lê Duẩn giảm dần, chuyển mức tiết kiệm trung gian.</p>
+                    </div>
+                    <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                      <div class="bg-amber-400 h-full w-[70%]"></div>
+                    </div>
+                  </div>
+
+                  <div class="p-4 rounded-xl bg-slate-50 flex flex-col justify-between gap-3 border border-slate-200/70 hover:border-blue-400 transition-colors">
+                    <div class="flex items-center justify-between">
+                      <span class="text-base font-bold text-primary">01:00</span>
+                      <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 text-[11px] font-bold flex items-center justify-center">3</span>
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-800">Tiết kiệm đêm (50%)</div>
+                      <p class="text-xs text-slate-500 mt-1 leading-relaxed">Duy trì an ninh đô thị đến 05:30 sáng, sau đó tự động ngắt tải hoàn toàn.</p>
+                    </div>
+                    <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                      <div class="bg-primary/60 h-full w-[50%]"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab 2: ENERGY CHART -->
+              <div class="p-6 flex flex-col gap-4 hidden" id="tab-content-2">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div>
+                    <span class="text-sm font-bold text-slate-800">Lượng tiêu thụ điện năng 7 ngày qua</span>
+                    <p class="text-xs text-slate-500 mt-0.5">Trung bình: <strong class="text-slate-800 font-semibold">2.4 kWh/ngày</strong> • Tiết kiệm <strong class="text-emerald-600 font-semibold">28%</strong> so với bóng cao áp Sodium cũ</p>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center gap-1.5 text-xs text-slate-600">
+                      <span class="w-3 h-3 rounded-full bg-primary"></span> Thực tế LED
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 text-xs text-slate-400">
+                      <span class="w-3 h-3 rounded-full bg-slate-300"></span> Định mức cũ
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Clean Inline SVG Area Chart -->
+                <div class="w-full h-56 bg-slate-50 rounded-xl p-3 flex flex-col justify-between border border-slate-200/70">
+                  <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 600 160">
+                    <defs>
+                      <linearGradient id="areaGradientNew" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#074476" stop-opacity="0.3"></stop>
+                        <stop offset="100%" stop-color="#074476" stop-opacity="0.0"></stop>
+                      </linearGradient>
+                    </defs>
+                    <!-- Grid Lines -->
+                    <line stroke="#E2E8F0" stroke-dasharray="3 3" stroke-width="1" x1="0" x2="600" y1="30" y2="30"></line>
+                    <line stroke="#E2E8F0" stroke-dasharray="3 3" stroke-width="1" x1="0" x2="600" y1="80" y2="80"></line>
+                    <line stroke="#E2E8F0" stroke-dasharray="3 3" stroke-width="1" x1="0" x2="600" y1="130" y2="130"></line>
+                    
+                    <!-- Old Benchmark dashed line -->
+                    <path d="M 10 45 Q 150 48 300 45 T 590 46" fill="none" stroke="#94A3B8" stroke-dasharray="4 4" stroke-width="2"></path>
+                    
+                    <!-- LED Area Fill -->
+                    <path d="M 20 110 Q 110 85 200 102 T 380 90 T 500 98 T 580 88 L 580 150 L 20 150 Z" fill="url(#areaGradientNew)"></path>
+                    
+                    <!-- LED Solid Stroke -->
+                    <path d="M 20 110 Q 110 85 200 102 T 380 90 T 500 98 T 580 88" fill="none" stroke="#074476" stroke-width="3"></path>
+                    
+                    <!-- Data Points -->
+                    <circle cx="20" cy="110" fill="#074476" r="4"></circle>
+                    <circle cx="110" cy="94" fill="#074476" r="4"></circle>
+                    <circle cx="200" cy="102" fill="#074476" r="4"></circle>
+                    <circle cx="295" cy="96" fill="#074476" r="4"></circle>
+                    <circle cx="380" cy="90" fill="#074476" r="4"></circle>
+                    <circle cx="500" cy="98" fill="#074476" r="4"></circle>
+                    <circle cx="580" cy="88" fill="#FCD34D" r="5" stroke="#074476" stroke-width="2.5"></circle>
+                  </svg>
+                  
+                  <div class="flex justify-between items-center text-slate-500 text-xs px-2 font-medium">
+                    <span>T5 (09/10)</span>
+                    <span>T6 (10/10)</span>
+                    <span>T7 (11/10)</span>
+                    <span>CN (12/10)</span>
+                    <span>T2 (13/10)</span>
+                    <span>T3 (14/10)</span>
+                    <span class="text-primary font-bold">Hôm nay (2.3 kWh)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab 3: LOGS -->
+              <div class="p-6 flex flex-col gap-4 hidden" id="tab-content-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-bold text-slate-800">Nhật ký kỹ thuật &amp; Chỉ số sức khỏe</span>
+                  <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-100">Tình trạng: 98% Tốt</span>
+                </div>
+                
+                <div class="flex flex-col gap-3">
+                  <div class="p-4 rounded-xl bg-slate-50 flex items-start justify-between gap-4 border border-slate-200/70">
+                    <div class="flex items-start gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-blue-100 text-primary flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[18px]">verified</span>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-slate-800">Bảo trì định kỳ cấp trạm &amp; thay LED Driver</div>
+                        <div class="text-xs text-slate-500 mt-0.5 leading-relaxed">Kỹ sư Trần Đình Trọng • Đội Vận hành số 2 kiểm tra thông mạch, thay thế bộ nguồn Meanwell 150W chống sét lan truyền.</div>
+                      </div>
+                    </div>
+                    <span class="text-xs text-slate-400 whitespace-nowrap">15/09/2024</span>
+                  </div>
+                  
+                  <div class="p-4 rounded-xl bg-slate-50 flex items-start justify-between gap-4 border border-slate-200/70">
+                    <div class="flex items-start gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-blue-100 text-primary flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[18px]">system_update</span>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-slate-800">Cập nhật Firmware vi điều khiển OTA v2.4.1</div>
+                        <div class="text-xs text-slate-500 mt-0.5 leading-relaxed">Tối ưu thuật toán truyền thông NB-IoT và kiểm soát giảm chói thích ứng thời tiết mưa phùn.</div>
+                      </div>
+                    </div>
+                    <span class="text-xs text-slate-400 whitespace-nowrap">28/08/2024</span>
+                  </div>
+                  
+                  <div class="p-4 rounded-xl bg-slate-50 flex items-start justify-between gap-4 border border-slate-200/70">
+                    <div class="flex items-start gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[18px]">warning</span>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-slate-800">Cảnh báo dao động điện áp nhẹ lúc 19:12 (Đã tự phục hồi)</div>
+                        <div class="text-xs text-slate-500 mt-0.5 leading-relaxed">Điện áp tức thời đạt 242 VAC trong 1.2 giây do đóng cắt trạm biến áp phân phối phụ cận.</div>
+                      </div>
+                    </div>
+                    <span class="text-xs text-slate-400 whitespace-nowrap">12/07/2024</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <!-- END: Main Container -->
+  </div>
+
+  <!-- ==================== MODAL CHỈNH SỬA THÔNG SỐ ĐIỂM ĐÈN ==================== -->
+  <div id="modalEditLight" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-[22px]">tune</span>
+          <h3 class="text-base font-bold text-slate-800">Chỉnh sửa thông số điểm đèn</h3>
+        </div>
+        <button id="btnCloseEditModal" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">✕</button>
+      </div>
+
+      <form id="formEditLight" class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Mã điểm đèn</label>
+            <input type="text" id="editLampCode" value="LD-0001" disabled class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-600 cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Mã phần cứng NB-IoT</label>
+            <input type="text" value="NB-IoT-8841-VN" disabled class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs font-mono text-slate-600 cursor-not-allowed">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Tên vị trí điểm đèn</label>
+          <input type="text" id="editLampName" value="Đường Lê Duẩn - Điểm số 001" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tuyến chiếu sáng</label>
+            <select class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-800 focus:border-brand-500">
+              <option selected>Tuyến TL-01 (Đường Lê Duẩn)</option>
+              <option>Tuyến TL-02 (Trần Hưng Đạo)</option>
+              <option>Tuyến TL-03 (Nguyễn Văn Linh)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tủ điều khiển nguồn</label>
+            <select class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-800 focus:border-brand-500">
+              <option selected>Tủ CS-01 (Điện Biên)</option>
+              <option>Tủ CS-02 (Cầu Rồng)</option>
+              <option>Tủ CS-03 (Sân Bay)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Công suất danh định (W)</label>
+            <input type="number" id="editLampPower" value="120" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-800 focus:border-brand-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Chiều cao cột (m)</label>
+            <input type="number" step="0.5" id="editLampHeight" value="8.0" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-800 focus:border-brand-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Ghi chú vận hành</label>
+          <textarea rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs text-slate-800 focus:border-brand-500" placeholder="Nhập ghi chú kỹ thuật..."></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+          <button type="button" id="btnCancelEditModal" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50">Hủy</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-brand-700 shadow-xs">Lưu thay đổi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Client-side Interactive Script -->
+  <script src="js/light-detail.js"></script>
+</body>
+</html>

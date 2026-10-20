@@ -1,0 +1,502 @@
+/* ==========================================================================
+   SmartLight EVNCPC - Official Public Lighting Management Login Page
+   ========================================================================== */
+
+:root {
+  --primary-blue: #0054a6;
+  --primary-blue-dark: #003e80;
+  --primary-blue-light: #0d6efd;
+  --evn-red: #e31818;
+  
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  --border-input: #dce5ef;
+  --border-focus: #0054a6;
+  
+  --font-brand: 'Nunito', sans-serif;
+  --font-body: 'Nunito', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: var(--font-body);
+  color: var(--text-main);
+  background-color: #f0f6fc;
+}
+
+/* --------------------------------------------------------------------------
+   Full Page Layout
+   -------------------------------------------------------------------------- */
+.login-page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Background Image Layer (Da Nang Dragon Bridge Night) */
+.bg-image-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+/* Main Container Grid */
+.login-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1360px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 40px 60px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  gap: 40px;
+}
+
+/* --------------------------------------------------------------------------
+   Left Hero Content
+   -------------------------------------------------------------------------- */
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  max-height: 580px;
+  padding: 20px 0;
+  color: #ffffff;
+}
+
+.hero-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.brand-title {
+  font-family: var(--font-brand);
+  font-size: 3.2rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  line-height: 1.1;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
+}
+
+.brand-tagline {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-brand);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1.35;
+  color: #e2f1ff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.hero-quote-box {
+  margin-top: auto;
+  max-width: 490px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(6, 18, 38, 0.62);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 22px 26px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.38);
+}
+
+.quote-heading {
+  font-family: var(--font-brand);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.quote-desc {
+  font-size: 0.94rem;
+  line-height: 1.65;
+  font-style: italic;
+  color: #f1f7ff;
+  font-weight: 400;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   Right Auth / Login Card
+   -------------------------------------------------------------------------- */
+.auth-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 430px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 36px 36px 30px 36px;
+  box-shadow: 
+    0 16px 40px rgba(0, 50, 120, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+  box-shadow: 
+    0 20px 48px rgba(0, 50, 120, 0.16),
+    0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* EVNCPC Logo */
+.logo-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.evn-logo {
+  width: 96px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Login Heading */
+.card-login-title {
+  font-family: var(--font-brand);
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--primary-blue);
+  letter-spacing: 0.6px;
+  margin-top: 8px;
+  margin-bottom: 22px;
+  text-align: center;
+}
+
+/* Alert Message Container */
+.alert-message {
+  display: none;
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.4;
+  animation: fadeInDown 0.3s ease;
+}
+
+.alert-message.error {
+  display: block;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.alert-message.success {
+  display: block;
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Form Styles */
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.form-control {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: var(--text-main);
+  background-color: #ffffff;
+  border: 1px solid var(--border-input);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control::placeholder {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.form-control:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(0, 77, 166, 0.12);
+}
+
+.form-control.is-invalid {
+  border-color: #ef4444;
+  background-color: #fffaf0;
+}
+
+/* Password Toggle Eye Button */
+.btn-toggle-pwd {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #8392a5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+}
+
+.btn-toggle-pwd:hover {
+  color: var(--primary-blue);
+}
+
+/* Remember me & Forgot Password Row */
+.form-options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -2px;
+  margin-bottom: 6px;
+}
+
+.remember-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.remember-checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-blue);
+  cursor: pointer;
+}
+
+.forgot-pwd-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-blue);
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.forgot-pwd-link:hover {
+  color: var(--primary-blue-dark);
+  text-decoration: underline;
+}
+
+/* Submit Button */
+.btn-login-submit {
+  width: 100%;
+  height: 48px;
+  margin-top: 4px;
+  background: linear-gradient(135deg, #0257ba 0%, #003b80 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0, 60, 135, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  position: relative;
+}
+
+.btn-login-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(0, 60, 135, 0.4);
+  background: linear-gradient(135deg, #0863cf 0%, #004494 100%);
+}
+
+.btn-login-submit:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 10px rgba(0, 60, 135, 0.3);
+}
+
+.btn-login-submit:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: spin 0.8s linear infinite;
+  margin-left: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Bottom Policy Link */
+.login-card-footer {
+  margin-top: 18px;
+  text-align: center;
+  width: 100%;
+}
+
+.policy-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  color: #5d718b;
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 0.2s ease;
+}
+
+.policy-link svg {
+  flex-shrink: 0;
+  color: #004da6;
+}
+
+.policy-link:hover {
+  color: var(--primary-blue);
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Design
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .login-container {
+    padding: 30px;
+    gap: 30px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .brand-title {
+    font-size: 2.6rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .bg-gradient-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(4, 25, 54, 0.85) 0%,
+      rgba(8, 45, 92, 0.7) 40%,
+      rgba(240, 247, 255, 0.95) 60%,
+      #f2f7fd 100%
+    );
+  }
+
+  .login-container {
+    grid-template-columns: 1fr;
+    justify-content: center;
+    padding: 24px 20px;
+    min-height: 100vh;
+  }
+
+  .hero-section {
+    max-height: none;
+    align-items: center;
+    text-align: center;
+    padding: 24px 0 16px 0;
+  }
+
+  .brand-title {
+    font-size: 2.4rem;
+  }
+
+  .brand-tagline {
+    font-size: 0.92rem;
+  }
+
+  .hero-quote-box {
+    display: none; /* Hide quote on small mobile to give focus to login card */
+  }
+
+  .login-card {
+    padding: 28px 24px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 24px 18px;
+  }
+
+  .brand-title {
+    font-size: 2rem;
+  }
+
+  .form-options-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

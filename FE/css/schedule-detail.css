@@ -1,0 +1,56 @@
+/* ==========================================================================
+   SmartLight Municipal IoT - Schedule Detail Stylesheet (schedule-detail.css)
+   ========================================================================== */
+
+:root { 
+  --pastel-1: #E7EDF7; 
+  --pastel-2: #D4E4F2; 
+  --pastel-3: #BAD1E6; 
+  --pastel-4: #F7E9E4; 
+  --pastel-5: #FBB9A8; 
+  --text-muted-dark: #1e3a58; 
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.pulse-dot {
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.stage-card-active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.12);
+}
+
+.street-preview-cone {
+  background: radial-gradient(ellipse at top, rgba(254, 240, 138, 0.6) 0%, rgba(253, 224, 71, 0.2) 50%, rgba(253, 224, 71, 0) 80%);
+  transition: opacity 0.4s ease;
+}
