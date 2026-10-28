@@ -5,14 +5,13 @@
 // 1. Live Clock Sync matching system
 function updateLiveClock() {
   const now = new Date();
-  const days = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+  const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
   const dayStr = days[now.getDay()];
   const dateStr = String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear();
-  const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
   
   const clockEl = document.getElementById('liveClockDisplay');
   if (clockEl) {
-    clockEl.innerHTML = `${dayStr}, ${dateStr} • <span class="font-mono text-slate-700 font-semibold" id="liveTime">${timeStr} GMT+7</span>`;
+    clockEl.textContent = `${dayStr}, ${dateStr}`;
   }
 }
 

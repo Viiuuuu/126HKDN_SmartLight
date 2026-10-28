@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const seconds = String(now.getSeconds()).padStart(2, '0');
 
     if (topbarLiveClock) {
-      topbarLiveClock.textContent = `${dayName}, ${date}/${month}/${year} • ${hours}:${minutes}:${seconds} GMT+7`;
+      topbarLiveClock.textContent = `${dayName}, ${date}/${month}/${year}`;
     }
   }
 

@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const seconds = String(now.getSeconds()).padStart(2, '0');
 
     if (topbarLiveClock) {
-      topbarLiveClock.textContent = `${dayName}, ${date}/${month}/${year} • ${hours}:${minutes}:${seconds} GMT+7`;
+      topbarLiveClock.textContent = `${dayName}, ${date}/${month}/${year}`;
     }
   }
 
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     brightnessRange.addEventListener('input', (e) => {
       currentBrightness = e.target.value;
       if (sliderPercentVal) sliderPercentVal.textContent = currentBrightness;
-      if (confirmBadgeParam) confirmBadgeParam.textContent = `TL-05 • ${currentBrightness}%`;
+      if (confirmBadgeParam) confirmBadgeParam.textContent = `Bạch Đằng • ${currentBrightness}%`;
 
       // Update table brightness progress bars
       document.querySelectorAll('#tableSelectedLights .progress-dim-fill').forEach(fill => {
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnResetGateway) {
     btnResetGateway.addEventListener('click', () => {
-      setCommand('RESET', 'KHỞI ĐỘNG LẠI Gateway TL-05', btnResetGateway);
+      setCommand('RESET', 'KHỞI ĐỘNG LẠI Gateway Bạch Đằng', btnResetGateway);
     });
   }
 
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
           newEvent.className = 'timeline-event-card';
           newEvent.innerHTML = `
             <div class="event-meta-top">
-              <span class="event-time-code">${timeStr} • TL-05</span>
+              <span class="event-time-code">${timeStr} • Tuyến Bạch Đằng</span>
               <span class="event-status-tag status-success">Thành công</span>
             </div>
             <strong class="event-desc-title">${currentCommand} 12 điểm đèn (${currentBrightness}%)</strong>
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
           recentCommandsList.insertBefore(newEvent, recentCommandsList.firstChild);
         }
 
-        showToast(`Phát lệnh thành công! 12 điểm đèn Tuyến TL-05 đã phản hồi ACK lúc ${timeStr}`, 'success');
+        showToast(`Phát lệnh thành công! 12 điểm đèn Tuyến Bạch Đằng đã phản hồi ACK lúc ${timeStr}`, 'success');
       }, 700);
     });
   }

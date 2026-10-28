@@ -300,73 +300,146 @@
           </ul>
         </div>
       </nav>
-
-      <!-- Sidebar Bottom IoT Status Card -->
-      <div class="sidebar-footer">
-        <div class="iot-gateway-card">
-          <div class="gateway-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-            </svg>
-          </div>
-          <div class="gateway-info">
-            <span class="gateway-title">IoT Central Gateway</span>
-            <span class="gateway-status">Đang kết nối: <strong id="gatewayPingValue">99.8%</strong></span>
-          </div>
-          <div class="gateway-dot"></div>
-        </div>
-      </div>
     </aside>
     <!-- END: Sidebar -->
 
     <!-- BEGIN: Main Content Area -->
     <div class="main-container flex-1 flex flex-col h-screen overflow-hidden bg-[#f8fafc]">
       
-      <!-- Topbar Header -->
-      <header class="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between flex-shrink-0 z-10 shadow-[0_1px_3px_rgba(0,0,0,0.02)]" data-purpose="topbar">
-        <!-- Search & Mobile Toggle in Topbar -->
-        <div class="flex items-center gap-3 w-80 lg:w-96">
-          <button class="mobile-menu-btn block lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100" id="btnToggleMobileSidebar" aria-label="Mở menu">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <!-- Top Header Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="btnToggleMobileSidebar" aria-label="Mở menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="3" y1="12" x2="21" y2="12"></line>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
           </button>
-          <div class="relative flex-1">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <span class="material-symbols-outlined text-[18px]">search</span>
-            </div>
-            <input id="topSearchInput" class="w-full pl-10 pr-4 py-2 bg-slate-100/70 hover:bg-slate-100 focus:bg-white text-xs border border-transparent focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 rounded-xl transition placeholder-slate-400 text-slate-700" placeholder="Tìm nhanh trạm, tủ điện, lộ đèn, sự cố (Ctrl+K)..." type="text">
+          
+          <!-- Search Bar -->
+          <div class="search-box">
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <input 
+              type="text" 
+              class="search-input" 
+              id="topSearchInput" 
+              placeholder="Tìm nhanh tủ điện, điểm đèn, sự cố..." 
+              autocomplete="off"
+            >
           </div>
         </div>
 
-        <!-- Right Side Info & Profile -->
-        <div class="flex items-center gap-5">
-          <!-- System Clock -->
-          <div class="hidden xl:flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200/60">
-            <span class="material-symbols-outlined text-[16px] text-slate-400">schedule</span>
-            <span id="liveClockDisplay">Thứ năm, 24/10/2024 • <span class="font-mono text-slate-700 font-semibold" id="liveTime">19:42:15 GMT+7</span></span>
+        <div class="topbar-right">
+          <!-- Realtime Clock / Date -->
+          <div class="system-time-display">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="topbarLiveClock">Thứ Năm, 22/10/2026</span>
           </div>
 
           <!-- Notification Bell -->
-          <button id="btnNotifications" class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition" title="Thông báo hệ thống">
-            <span class="material-symbols-outlined text-[22px]">notifications</span>
-            <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">5</span>
-          </button>
+          <div class="notification-wrapper">
+            <button class="btn-icon-topbar" id="btnNotifications" aria-label="Thông báo hệ thống" title="Thông báo hệ thống">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span class="notification-badge-dot"></span>
+            </button>
 
-          <div class="h-6 w-px bg-slate-200"></div>
+            <!-- Notification Popover -->
+            <div class="notification-dropdown" id="notificationDropdown">
+              <div class="dropdown-header">
+                <strong>Thông báo mới (3)</strong>
+                <button class="btn-text-subtle" id="btnMarkAllRead">Đọc tất cả</button>
+              </div>
+              <ul class="dropdown-list">
+                <li class="notification-item unread">
+                  <span class="noti-indicator danger"></span>
+                  <div>
+                    <p class="noti-title">Sự cố điện áp Tuyến TL - 05</p>
+                    <small class="noti-time">12 phút trước</small>
+                  </div>
+                </li>
+                <li class="notification-item unread">
+                  <span class="noti-indicator warning"></span>
+                  <div>
+                    <p class="noti-title">Tủ CS - 07 cảnh báo mở cửa</p>
+                    <small class="noti-time">45 phút trước</small>
+                  </div>
+                </li>
+                <li class="notification-item">
+                  <span class="noti-indicator info"></span>
+                  <div>
+                    <p class="noti-title">Đồng bộ dữ liệu IoT Gateway thành công</p>
+                    <small class="noti-time">2 giờ trước</small>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
 
-          <!-- User Profile Dropdown -->
-          <div class="flex items-center gap-3 cursor-pointer group">
-            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow ring-2 ring-white">
-              <span class="material-symbols-outlined text-[18px] text-white">person</span>
+          <!-- User Profile Chip -->
+          <div class="user-profile-wrapper">
+            <button class="user-profile-btn" id="btnUserProfile" aria-label="Hồ sơ người dùng">
+              <div class="user-avatar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="user-meta">
+                <span class="user-name" id="alertUserName">Nguyễn Văn Minh</span>
+                <span class="user-role" id="alertUserRole">Quản trị hệ thống</span>
+              </div>
+              <span class="user-action-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </span>
+            </button>
+
+            <!-- User Menu Dropdown -->
+            <div class="user-dropdown" id="userDropdown">
+              <div class="user-dropdown-info">
+                <strong>Nguyễn Văn Minh</strong>
+                <small>quantri@smartlight.evncpc.vn</small>
+              </div>
+              <hr class="dropdown-divider">
+              <a href="#profile" class="user-menu-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Hồ sơ cá nhân</span>
+              </a>
+              <a href="#settings" class="user-menu-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Cấu hình thiết bị</span>
+              </a>
+              <hr class="dropdown-divider">
+              <a href="login.html" class="user-menu-item logout-link" id="linkLogout">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Đăng xuất</span>
+              </a>
             </div>
-            <div class="text-left hidden sm:block">
-              <div class="text-xs font-bold text-slate-800 leading-tight group-hover:text-primary transition" id="alertUserName">Nguyễn Văn Minh</div>
-              <div class="text-[11px] text-slate-400 font-medium" id="alertUserRole">Nhân viên vận hành</div>
-            </div>
-            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 transition">expand_more</span>
           </div>
         </div>
       </header>
@@ -377,28 +450,10 @@
         <!-- Top Action & Title Bar -->
         <section class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div class="flex items-start gap-4">
-            <div class="w-12 h-12 rounded-xl bg-primary-container text-white flex items-center justify-center shadow-sm shrink-0">
-              <span class="material-symbols-outlined text-[26px]">notifications_active</span>
-            </div>
             <div class="flex flex-col">
               <div class="flex flex-wrap items-center gap-2">
                 <h1 class="text-2xl font-bold tracking-tight text-primary font-sans">Theo dõi cảnh báo sự cố</h1>
-                <span id="alertOpenCount" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-secondary-container text-on-secondary-container">
-                  18 đang ghi nhận
-                </span>
-                <span id="alertUrgentCount" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-error-container text-error">
-                  3 Khẩn
-                </span>
-                <span id="alertMediumCount" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-secondary-container text-on-secondary-container">
-                  7 Vừa
-                </span>
-                <span id="alertLowCount" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-700">
-                  8 Thấp
-                </span>
               </div>
-              <p class="text-xs text-slate-500 font-medium mt-1">
-                Theo dõi, phân loại và điều phối xử lý các cảnh báo, sự cố phát sinh từ hạ tầng chiếu sáng thời gian thực.
-              </p>
             </div>
           </div>
 
@@ -419,86 +474,46 @@
           </div>
         </section>
 
-        <!-- KPI Stats Summary (4 Tonal Cards) -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          <!-- Card 1: Tổng cảnh báo -->
-          <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col justify-between relative overflow-hidden group hover:border-slate-300 transition">
-            <div class="flex items-start justify-between">
-              <div class="flex flex-col">
-                <span class="text-xs font-semibold text-slate-500">Tổng cảnh báo</span>
-                <span class="text-3xl font-extrabold text-slate-900 tracking-tight mt-1" id="statTotalCount">18</span>
-              </div>
-              <div class="w-11 h-11 rounded-xl bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
-                <span class="material-symbols-outlined text-[24px]">crisis_alert</span>
-              </div>
+        <!-- Metric Summary Bar (1 row) -->
+        <section class="bg-white rounded-2xl px-6 py-3.5 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-4 text-xs" data-purpose="metric-summary">
+          <div class="flex flex-wrap items-center gap-6 sm:gap-8">
+            <!-- Stat 1: Tổng cảnh báo -->
+            <div class="flex items-center gap-2">
+              <span class="text-slate-500 font-medium">Tổng cảnh báo:</span>
+              <span class="font-extrabold text-slate-900 text-base" id="statTotalCount">18</span>
             </div>
-            <div class="flex items-center gap-1.5 mt-3 pt-2 border-t border-slate-100">
-              <span class="flex items-center text-error font-bold text-xs">
-                <span class="material-symbols-outlined text-[16px]">arrow_upward</span>
-                3
-              </span>
-              <span class="text-xs text-slate-400">so với hôm qua</span>
+
+            <div class="h-4 w-px bg-slate-200 hidden sm:block"></div>
+
+            <!-- Stat 2: Cảnh báo nghiêm trọng -->
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span class="text-slate-500 font-medium">Cảnh báo nghiêm trọng:</span>
+              <span class="font-extrabold text-rose-600 text-base" id="statHighCount">4</span>
+            </div>
+
+            <div class="h-4 w-px bg-slate-200 hidden sm:block"></div>
+
+            <!-- Stat 3: Cảnh báo trung bình -->
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span class="text-slate-500 font-medium">Cảnh báo trung bình:</span>
+              <span class="font-extrabold text-amber-700 text-base" id="statMediumCount">9</span>
+            </div>
+
+            <div class="h-4 w-px bg-slate-200 hidden sm:block"></div>
+
+            <!-- Stat 4: Cảnh báo thấp -->
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+              <span class="text-slate-500 font-medium">Cảnh báo thấp:</span>
+              <span class="font-extrabold text-sky-700 text-base" id="statLowCount">5</span>
             </div>
           </div>
 
-          <!-- Card 2: Cảnh báo nghiêm trọng -->
-          <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col justify-between relative overflow-hidden group hover:border-slate-300 transition">
-            <div class="flex items-start justify-between">
-              <div class="flex flex-col">
-                <span class="text-xs font-semibold text-slate-500">Cảnh báo nghiêm trọng</span>
-                <span class="text-3xl font-extrabold text-error tracking-tight mt-1" id="statHighCount">4</span>
-              </div>
-              <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shadow-sm">
-                <span class="material-symbols-outlined text-[24px]">gpp_maybe</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-1.5 mt-3 pt-2 border-t border-slate-100">
-              <span class="flex items-center text-error font-bold text-xs">
-                <span class="material-symbols-outlined text-[16px]">arrow_upward</span>
-                2
-              </span>
-              <span class="text-xs text-slate-400">so với hôm qua</span>
-            </div>
-          </div>
-
-          <!-- Card 3: Cảnh báo trung bình -->
-          <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col justify-between relative overflow-hidden group hover:border-slate-300 transition">
-            <div class="flex items-start justify-between">
-              <div class="flex flex-col">
-                <span class="text-xs font-semibold text-slate-500">Cảnh báo trung bình</span>
-                <span class="text-3xl font-extrabold text-amber-700 tracking-tight mt-1" id="statMediumCount">9</span>
-              </div>
-              <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shadow-sm">
-                <span class="material-symbols-outlined text-[24px]">warning</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-1.5 mt-3 pt-2 border-t border-slate-100">
-              <span class="flex items-center text-amber-700 font-bold text-xs">
-                <span class="material-symbols-outlined text-[16px]">arrow_upward</span>
-                1
-              </span>
-              <span class="text-xs text-slate-400">so với hôm qua</span>
-            </div>
-          </div>
-
-          <!-- Card 4: Cảnh báo thấp -->
-          <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col justify-between relative overflow-hidden group hover:border-slate-300 transition">
-            <div class="flex items-start justify-between">
-              <div class="flex flex-col">
-                <span class="text-xs font-semibold text-slate-500">Cảnh báo thấp</span>
-                <span class="text-3xl font-extrabold text-primary tracking-tight mt-1" id="statLowCount">5</span>
-              </div>
-              <div class="w-11 h-11 rounded-xl bg-sky-100 text-primary flex items-center justify-center shadow-sm">
-                <span class="material-symbols-outlined text-[24px]">notifications_paused</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-1.5 mt-3 pt-2 border-t border-slate-100">
-              <span class="flex items-center text-slate-400 font-bold text-xs">
-                <span class="material-symbols-outlined text-[16px]">trending_flat</span>
-                0
-              </span>
-              <span class="text-xs text-slate-400">so với hôm qua</span>
-            </div>
+          <!-- Right Hint / Sub-info -->
+          <div class="text-slate-400 text-[11px] hidden lg:block">
+            <span>Thời gian thực • Tự động cập nhật từ IoT Gateway</span>
           </div>
         </section>
 

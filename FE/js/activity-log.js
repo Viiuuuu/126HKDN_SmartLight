@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const pad = (value) => String(value).padStart(2, '0');
   function updateClock() {
     const now = new Date();
-    clock.textContent = `${weekdays[now.getDay()]}, ${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()} • ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())} GMT+7`;
+    if (clock) clock.textContent = `${weekdays[now.getDay()]}, ${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`;
   }
   updateClock();
   window.setInterval(updateClock, 1000);

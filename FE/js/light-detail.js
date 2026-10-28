@@ -14,7 +14,7 @@ function updateClock() {
 
   const clockEl = document.getElementById('liveClockDisplay');
   if (clockEl) {
-    clockEl.innerHTML = `${dayName}, ${d}/${m}/${y} • <span class="font-mono text-slate-700 font-semibold" id="liveTime">${hh}:${mm}:${ss} GMT+7</span>`;
+    clockEl.textContent = `${dayName}, ${d}/${m}/${y}`;
   }
 }
 setInterval(updateClock, 1000);

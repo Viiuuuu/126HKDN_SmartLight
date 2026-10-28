@@ -355,21 +355,6 @@
           </ul>
         </div>
       </nav>
-
-      <div class="sidebar-footer">
-        <div class="iot-gateway-card">
-          <div class="gateway-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-            </svg>
-          </div>
-          <div class="gateway-info">
-            <span class="gateway-title">IoT Central Gateway</span>
-            <span class="gateway-status">Đang kết nối: <strong id="gatewayPingValue">99.8%</strong></span>
-          </div>
-          <div class="gateway-dot"></div>
-        </div>
-      </div>
     </aside>
 
     <!-- ==================== MAIN CONTENT ==================== -->
@@ -407,7 +392,7 @@
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
-            <span id="topbarLiveClock">Thứ Năm, 24/10/2024 • 19:42:15 GMT+7</span>
+            <span id="topbarLiveClock">Thứ Năm, 22/10/2026</span>
           </div>
 
           <div class="user-profile-wrapper">
@@ -858,7 +843,7 @@
       const minutes = String(now.getMinutes()).padStart(2, '0');
       const seconds = String(now.getSeconds()).padStart(2, '0');
       const el = document.getElementById('topbarLiveClock');
-      if (el) el.textContent = `${dayName}, ${date}/${month}/${year} • ${hours}:${minutes}:${seconds} GMT+7`;
+      if (el) el.textContent = `${dayName}, ${date}/${month}/${year}`;
     }
     updateClocks();
     setInterval(updateClocks, 1000);

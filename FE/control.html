@@ -217,22 +217,6 @@
           </ul>
         </div>
       </nav>
-
-      <!-- Sidebar Bottom IoT Status Card -->
-      <div class="sidebar-footer">
-        <div class="iot-gateway-card">
-          <div class="gateway-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-            </svg>
-          </div>
-          <div class="gateway-info">
-            <span class="gateway-title">IoT Central Gateway</span>
-            <span class="gateway-status">Đang kết nối: <strong id="gatewayPingValue">99.8%</strong></span>
-          </div>
-          <div class="gateway-dot"></div>
-        </div>
-      </div>
     </aside>
 
     <!-- ==================== MAIN CONTENT ==================== -->
@@ -260,7 +244,7 @@
               type="text" 
               class="search-input" 
               id="topSearchInput" 
-              placeholder="Tìm nhanh trạm, tủ điện, lộ đèn, sự cố (Ctrl+K)..." 
+              placeholder="Tìm nhanh tủ điện, điểm đèn, sự cố..." 
               autocomplete="off"
             >
           </div>
@@ -273,7 +257,7 @@
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
-            <span id="topbarLiveClock">Thứ Năm, 24/10/2024 • 19:42:15 GMT+7</span>
+            <span id="topbarLiveClock">Thứ Năm, 22/10/2026</span>
           </div>
 
           <!-- Notification Bell -->
@@ -296,7 +280,7 @@
                 <li class="notification-item unread">
                   <span class="noti-indicator danger"></span>
                   <div>
-                    <p class="noti-title">Sự cố điện áp Tuyến TL - 05</p>
+                    <p class="noti-title">Sự cố điện áp Tuyến Bạch Đằng</p>
                     <small class="noti-time">12 phút trước</small>
                   </div>
                 </li>
@@ -389,15 +373,6 @@
             </div>
             <p class="page-subtitle">Giám sát và gửi lệnh điều khiển tức thời cho các tuyến và cụm đèn đô thị</p>
           </div>
-
-          <!-- Session Time Pill -->
-          <div class="session-pill-box">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span>Phiên điều hành: <strong id="sessionTimeText">14:32:18</strong> (Hôm nay)</span>
-          </div>
         </section>
 
         <!-- ==================== 3-COLUMN MAIN GRID ==================== -->
@@ -454,13 +429,13 @@
               <!-- Form Selects -->
               <div class="ctrl-form-stack">
                 <div class="ctrl-field-group">
-                  <label class="ctrl-field-label-row">Quận / Huyện</label>
+                  <label class="ctrl-field-label-row">Khu vực / Phường</label>
                   <div class="ctrl-select-wrapper">
                     <select class="ctrl-select" id="selectDistrict">
-                      <option value="hoankiem" selected>Quận Hoàn Kiếm (16 tuyến, 1.420 đèn)</option>
-                      <option value="badinh">Quận Ba Đình (22 tuyến, 1.890 đèn)</option>
-                      <option value="dongda">Quận Đống Đa (18 tuyến, 1.630 đèn)</option>
-                      <option value="caugiay">Quận Cầu Giấy (24 tuyến, 2.150 đèn)</option>
+                      <option value="haichau" selected>Phường Hải Châu (16 tuyến, 1.420 đèn)</option>
+                      <option value="hoacuong">Phường Hòa Cường (22 tuyến, 1.890 đèn)</option>
+                      <option value="thanhkhe">Phường Thanh Khê (18 tuyến, 1.630 đèn)</option>
+                      <option value="anhai">Phường An Hải (24 tuyến, 2.150 đèn)</option>
                     </select>
                     <span class="ctrl-select-caret">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -474,10 +449,10 @@
                   <label class="ctrl-field-label-row">Tuyến chiếu sáng</label>
                   <div class="ctrl-select-wrapper">
                     <select class="ctrl-select" id="selectRoute">
-                      <option value="tl05" selected>Tuyến TL-05 (185 điểm đèn)</option>
-                      <option value="tl02">Tuyến TL-02 (94 điểm đèn)</option>
-                      <option value="tl03">Tuyến TL-03 (142 điểm đèn)</option>
-                      <option value="tl08">Tuyến TL-08 (88 điểm đèn)</option>
+                      <option value="tl05" selected>Tuyến Bạch Đằng (185 điểm đèn)</option>
+                      <option value="tl02">Tuyến 2 Tháng 9 (94 điểm đèn)</option>
+                      <option value="tl03">Tuyến Điện Biên Phủ (142 điểm đèn)</option>
+                      <option value="tl08">Tuyến Võ Nguyên Giáp (88 điểm đèn)</option>
                     </select>
                     <span class="ctrl-select-caret">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -657,7 +632,7 @@
                     <tr>
                       <td><input type="checkbox" class="row-checkbox" checked></td>
                       <td class="col-dev-code">DD-0876</td>
-                      <td>Ngã tư Tràng Tiền</td>
+                      <td>Ngã tư Bạch Đằng – Lê Duẩn</td>
                       <td>
                         <span class="badge-light-status status-on">
                           <span class="chip-dot dot-active" style="width: 6px; height: 6px;"></span>
@@ -684,7 +659,7 @@
                     <tr>
                       <td><input type="checkbox" class="row-checkbox" checked></td>
                       <td class="col-dev-code">DD-0877</td>
-                      <td>Phố Hàng Bài (Cột 02)</td>
+                      <td>Đường Bạch Đằng (Cột 02)</td>
                       <td>
                         <span class="badge-light-status status-on">
                           <span class="chip-dot dot-active" style="width: 6px; height: 6px;"></span>
@@ -711,7 +686,7 @@
                     <tr>
                       <td><input type="checkbox" class="row-checkbox" checked></td>
                       <td class="col-dev-code">DD-0878</td>
-                      <td>Hàng Bài – Lý Thường Kiệt</td>
+                      <td>Bạch Đằng – Nguyễn Văn Linh</td>
                       <td>
                         <span class="badge-light-status status-on">
                           <span class="chip-dot dot-active" style="width: 6px; height: 6px;"></span>
@@ -738,7 +713,7 @@
                     <tr>
                       <td><input type="checkbox" class="row-checkbox" checked></td>
                       <td class="col-dev-code">DD-0879</td>
-                      <td>Trần Hưng Đạo (Cột 08)</td>
+                      <td>Đường Trần Hưng Đạo (Cột 08)</td>
                       <td>
                         <span class="badge-light-status status-on">
                           <span class="chip-dot dot-active" style="width: 6px; height: 6px;"></span>
@@ -765,7 +740,7 @@
                     <tr>
                       <td><input type="checkbox" class="row-checkbox" checked></td>
                       <td class="col-dev-code orange-code">DD-0881</td>
-                      <td>Điện Biên Phủ</td>
+                      <td>Đường Điện Biên Phủ (Cột 12)</td>
                       <td>
                         <span class="badge-light-status status-off">
                           <span class="chip-dot dot-warning" style="width: 6px; height: 6px;"></span>
@@ -792,7 +767,7 @@
                     <tr>
                       <td><input type="checkbox" class="row-checkbox" checked></td>
                       <td class="col-dev-code">DD-0882</td>
-                      <td>Ngô Quyền (Cột 04)</td>
+                      <td>Đường Võ Nguyên Giáp (Cột 04)</td>
                       <td>
                         <span class="badge-light-status status-on">
                           <span class="chip-dot dot-active" style="width: 6px; height: 6px;"></span>
@@ -834,7 +809,7 @@
                     <p class="confirm-text-sub">Gửi lệnh tức thời: <strong id="confirmCmdLabel">BẬT 12 điểm đèn</strong></p>
                   </div>
                 </div>
-                <span class="confirm-badge-param" id="confirmBadgeParam">TL-05 • 80%</span>
+                <span class="confirm-badge-param" id="confirmBadgeParam">Bạch Đằng • 80%</span>
               </div>
 
               <div class="confirm-actions-row">
@@ -873,7 +848,7 @@
                 <!-- Event 1 -->
                 <div class="timeline-event-card">
                   <div class="event-meta-top">
-                    <span class="event-time-code">14:28 • TL-05</span>
+                    <span class="event-time-code">14:28 • Tuyến Bạch Đằng</span>
                     <span class="event-status-tag status-success">Thành công</span>
                   </div>
                   <strong class="event-desc-title">Bật 12 điểm đèn (80%)</strong>
@@ -882,7 +857,7 @@
                 <!-- Event 2 -->
                 <div class="timeline-event-card">
                   <div class="event-meta-top">
-                    <span class="event-time-code">14:15 • Hoàn Kiếm</span>
+                    <span class="event-time-code">14:15 • Phường Hải Châu</span>
                     <span class="event-status-tag status-success">Thành công</span>
                   </div>
                   <strong class="event-desc-title">Điều chỉnh mức sáng 50%</strong>
@@ -891,7 +866,7 @@
                 <!-- Event 3 -->
                 <div class="timeline-event-card">
                   <div class="event-meta-top">
-                    <span class="event-time-code">13:42 • Hàng Bài</span>
+                    <span class="event-time-code">13:42 • Phường Hòa Cường</span>
                     <span class="event-status-tag status-success">Thành công</span>
                   </div>
                   <strong class="event-desc-title">Tắt 5 điểm đèn</strong>
@@ -900,7 +875,7 @@
                 <!-- Event 4 (Pending) -->
                 <div class="timeline-event-card">
                   <div class="event-meta-top">
-                    <span class="event-time-code">11:18 • Tuyến TL-03</span>
+                    <span class="event-time-code">11:18 • Tuyến Điện Biên Phủ</span>
                     <span class="event-status-tag status-pending">
                       <span class="chip-dot dot-active" style="width: 5px; height: 5px;"></span>
                       <span>Đang chờ</span>
@@ -912,7 +887,7 @@
                 <!-- Event 5 (Failed) -->
                 <div class="timeline-event-card">
                   <div class="event-meta-top">
-                    <span class="event-time-code">09:21 • Xã Đàn</span>
+                    <span class="event-time-code">09:21 • Phường Thanh Khê</span>
                     <span class="event-status-tag status-failed">Lỗi gateway</span>
                   </div>
                   <strong class="event-desc-title">Tắt 3 điểm đèn (Timeout)</strong>

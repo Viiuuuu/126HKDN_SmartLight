@@ -72,9 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
 
-    // Topbar header format: "Thứ ..., DD/MM/YYYY • HH:mm:ss GMT+7"
+    // Topbar header format: chỉ giữ thứ ngày tháng năm
     if (topbarLiveClock) {
-      topbarLiveClock.textContent = `${dayName}, ${date}/${month}/${year} • ${hours}:${minutes}:${seconds} GMT+7`;
+      topbarLiveClock.textContent = `${dayName}, ${date}/${month}/${year}`;
     }
 
     // Page header pill format: "Thứ ..., DD tháng MM, YYYY • HH:mm:ss"

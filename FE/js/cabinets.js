@@ -488,13 +488,17 @@ document.getElementById('btnExportData')?.addEventListener('click', () => {
 });
 
 // Clock
+const daysOfWeekCabinets = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
 function updateClock() {
   const now = new Date();
-  const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} GMT+7`;
+  const dayName = daysOfWeekCabinets[now.getDay()];
+  const date = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = now.getFullYear();
+  const clockEl = document.getElementById('liveClockDisplay');
+  if (clockEl) clockEl.textContent = `${dayName}, ${date}/${month}/${year}`;
   const timeSimple = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-  const el = document.getElementById('liveTime');
   const footerEl = document.getElementById('footerLiveTime');
-  if (el) el.textContent = timeStr;
   if (footerEl) footerEl.textContent = timeSimple;
 }
 setInterval(updateClock, 1000);

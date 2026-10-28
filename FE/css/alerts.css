@@ -7,7 +7,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-html:not(.alert-authorized) .dashboard-wrapper { visibility: hidden; }
+/* Dashboard is always visible */
+.dashboard-wrapper { visibility: visible; }
 
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;

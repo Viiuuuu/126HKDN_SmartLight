@@ -38,7 +38,8 @@ function updateClock() {
   const now = new Date();
   const weekdays = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
   const date = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
-  document.getElementById('liveClockDisplay').textContent = `${weekdays[now.getDay()]}, ${date} • ${currentTime()} GMT+7`;
+  const el = document.getElementById('liveClockDisplay');
+  if (el) el.textContent = `${weekdays[now.getDay()]}, ${date}`;
 }
 
 function setText(id, value) {

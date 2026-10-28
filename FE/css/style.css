@@ -733,17 +733,34 @@ a {
   border: 1px solid var(--border-input);
   border-radius: var(--radius-md);
   padding: 8px 14px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   font-size: 12.5px;
   font-weight: 500;
   color: var(--text-body);
   box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  width: 310px;
+  min-width: 310px;
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  flex-shrink: 0;
 }
 
 .date-time-pill svg {
   color: var(--text-light);
+  flex-shrink: 0;
+}
+
+#pageDateTimeText {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  display: inline-block;
+  white-space: nowrap;
 }
 
 /* Button Refresh (Navy Blue Solid) */
@@ -847,6 +864,10 @@ a {
 
 .kpi-value-row {
   margin: 10px 0 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .kpi-value {
@@ -855,6 +876,7 @@ a {
   color: var(--text-main);
   letter-spacing: -0.03em;
   line-height: 1;
+  text-align: center;
 }
 
 .kpi-value.value-danger {

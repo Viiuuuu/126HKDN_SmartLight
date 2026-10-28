@@ -591,15 +591,67 @@ document.getElementById('btnQuickNote')?.addEventListener('click', () => {
   showToast('Đã mở sổ ghi chú sự cố cho ' + currentSelectedId);
 });
 
-// Live Clock
+// Live Clock (Chỉ hiển thị thứ, ngày tháng năm)
+const daysOfWeekAlerts = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
 function updateClock() {
   const now = new Date();
-  const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} GMT+7`;
-  const el = document.getElementById('liveTime');
-  if (el) el.textContent = timeStr;
+  const dayName = daysOfWeekAlerts[now.getDay()];
+  const dateStr = String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear();
+  const el = document.getElementById('topbarLiveClock') || document.getElementById('liveClockDisplay');
+  if (el) el.textContent = `${dayName}, ${dateStr}`;
 }
 setInterval(updateClock, 1000);
 updateClock();
+
+// Topbar Dropdowns (Notification & User Profile)
+const btnNotifications = document.getElementById('btnNotifications');
+const notificationDropdown = document.getElementById('notificationDropdown');
+const btnUserProfile = document.getElementById('btnUserProfile');
+const userDropdown = document.getElementById('userDropdown');
+
+if (btnNotifications && notificationDropdown) {
+  btnNotifications.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (userDropdown) userDropdown.classList.remove('active');
+    notificationDropdown.classList.toggle('active');
+  });
+}
+
+if (btnUserProfile && userDropdown) {
+  btnUserProfile.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (notificationDropdown) notificationDropdown.classList.remove('active');
+    userDropdown.classList.toggle('active');
+  });
+}
+
+document.addEventListener('click', () => {
+  if (notificationDropdown) notificationDropdown.classList.remove('active');
+  if (userDropdown) userDropdown.classList.remove('active');
+});
+
+// Topbar Search & Shortcut
+const topSearchInput = document.getElementById('topSearchInput');
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    if (topSearchInput) {
+      topSearchInput.focus();
+      topSearchInput.select();
+    }
+  }
+});
+
+if (topSearchInput) {
+  topSearchInput.addEventListener('input', (e) => {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.value = e.target.value;
+    }
+    currentPage = 1;
+    renderTable();
+  });
+}
 
 // Mobile Sidebar Toggle
 const sidebar = document.getElementById('sidebar');

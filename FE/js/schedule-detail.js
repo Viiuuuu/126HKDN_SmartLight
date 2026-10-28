@@ -1,11 +1,13 @@
 // ==================== JAVASCRIPT LOGIC FOR SCHEDULE DETAIL ====================
 
 // Live Clock Detail
+const daysOfWeekScheduleDetail = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
 function updateClockDetail() {
   const now = new Date();
-  const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} GMT+7`;
-  const el = document.getElementById('liveTimeDetail');
-  if (el) el.textContent = timeStr;
+  const dayName = daysOfWeekScheduleDetail[now.getDay()];
+  const dateStr = String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear();
+  const el = document.getElementById('liveClockDisplay') || document.getElementById('liveTimeDetail');
+  if (el) el.textContent = `${dayName}, ${dateStr}`;
 }
 setInterval(updateClockDetail, 1000);
 updateClockDetail();

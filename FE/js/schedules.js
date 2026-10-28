@@ -1,12 +1,13 @@
 // ==================== JAVASCRIPT LOGIC FOR SCHEDULES ====================
 
 // Live Clock Updater
+const daysOfWeekSchedules = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
 function updateClock() {
   const now = new Date();
-  const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} GMT+7`;
-  
-  const el = document.getElementById('liveTime');
-  if (el) el.textContent = timeStr;
+  const dayName = daysOfWeekSchedules[now.getDay()];
+  const dateStr = String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear();
+  const el = document.getElementById('liveClockDisplay');
+  if (el) el.textContent = `${dayName}, ${dateStr}`;
 }
 setInterval(updateClock, 1000);
 updateClock();
@@ -277,7 +278,7 @@ document.getElementById('btnEditScheduleInline')?.addEventListener('click', () =
   const codeEl = document.getElementById('newScheduleCode');
   const nameEl = document.getElementById('newScheduleName');
   if (codeEl) codeEl.value = 'LH-001';
-  if (nameEl) nameEl.value = 'Chiếu sáng ban đêm (Quận Ba Đình)';
+  if (nameEl) nameEl.value = 'Chiếu sáng ban đêm (Phường Hải Châu)';
 });
 
 // Mobile Sidebar Toggle
