@@ -169,7 +169,7 @@ btnOpenEditModal?.addEventListener('click', () => {
   });
 });
 
-formEditLight?.addEventListener('submit', (e) => {
+formEditLight?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const newNameEl = document.getElementById('editLampName');
   const newPowerEl = document.getElementById('editLampPower');
@@ -195,7 +195,23 @@ formEditLight?.addEventListener('submit', (e) => {
   }
   currentLightName = newName;
   currentRatedPower = Number.parseFloat(newPower) || currentRatedPower;
-  showToast('Đã cập nhật thông số trong bản demo; chưa lưu lên Backend.', 'warning');
+
+  if (!window.api) {
+    showToast('Đã cập nhật thông số trong bản demo; chưa lưu lên Backend.', 'warning');
+    return;
+  }
+
+  try {
+    await window.api.put(`/DiemDen/${encodeURIComponent(lightId)}`, {
+      maDen: lightId,
+      tenDen: newName,
+      congSuat: Number.parseFloat(newPower) || null
+    });
+    showToast(`Đã cập nhật thông số điểm đèn ${lightId} trên Backend.`);
+  } catch (error) {
+    console.warn('Không cập nhật được thông số điểm đèn.', error);
+    showToast(error.message || 'Không cập nhật được thông số điểm đèn trên Backend.', 'warning');
+  }
 });
 
 // Action Bar triggers

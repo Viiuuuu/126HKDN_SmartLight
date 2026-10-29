@@ -1,5 +1,6 @@
 /**
  * SmartLight Municipal IoT - Routes Management Logic (routes.html)
+ * Nguồn dữ liệu: API /TuyenChieuSang, /TuChieuSang, /KhuVuc, /DiemDen
  */
 
 // 1. Live Clock Sync matching system
@@ -8,7 +9,7 @@ function updateLiveClock() {
   const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
   const dayStr = days[now.getDay()];
   const dateStr = String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear();
-  
+
   const clockEl = document.getElementById('liveClockDisplay') || document.getElementById('topbarLiveClock');
   if (clockEl) {
     clockEl.textContent = `${dayStr}, ${dateStr}`;
@@ -40,9 +41,104 @@ function apiValue(record, camelName, pascalName) {
   return record?.[camelName] ?? record?.[pascalName];
 }
 
+// Danh sách tuyến đang hiển thị (đã chuẩn hoá từ API)
+let routesData = [];
+// Tra cứu nhanh: mã tuyến -> bản ghi chuẩn hoá
+const routeLookup = new Map();
+
+function statusLabel(rawStatus) {
+  const value = Number(rawStatus);
+  if (value === 1) return 'Hoạt động';
+  if (value === 0) return 'Ngừng hoạt động';
+  return 'Chưa xác định';
+}
+
+function statusPillHtml(status) {
+  if (status === 'Hoạt động') {
+    return `
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold border" style="background-color: rgb(232, 240, 254); color: rgb(26, 115, 232); border-color: rgb(194, 218, 248);">
+        <span class="w-1.5 h-1.5 rounded-full mr-1.5" style="background-color: rgb(26, 115, 232);"></span>
+        Hoạt động
+      </span>
+    `;
+  }
+  if (status === 'Ngừng hoạt động') {
+    return `
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
+        Ngừng hoạt động
+      </span>
+    `;
+  }
+  return `
+    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>
+      Chưa xác định
+    </span>
+  `;
+}
+
+function populateFilterOptions(areas, cabinets) {
+  const areaSelect = document.getElementById('filterArea');
+  if (areaSelect) {
+    areaSelect.replaceChildren();
+    const allAreas = document.createElement('option');
+    allAreas.value = '';
+    allAreas.textContent = 'Tất cả khu vực';
+    areaSelect.appendChild(allAreas);
+    areas.forEach(area => {
+      const id = String(apiValue(area, 'maKhuVuc', 'MaKhuVuc') || '').trim();
+      const name = String(apiValue(area, 'tenPhuongXa', 'TenPhuongXa') || '').trim();
+      if (!id || !name) return;
+      const option = document.createElement('option');
+      option.value = name;
+      option.textContent = name;
+      areaSelect.appendChild(option);
+    });
+  }
+
+  const cabinetSelect = document.getElementById('filterCabinet');
+  if (cabinetSelect) {
+    cabinetSelect.replaceChildren();
+    const allCabinets = document.createElement('option');
+    allCabinets.value = '';
+    allCabinets.textContent = 'Tất cả tủ chiếu sáng';
+    cabinetSelect.appendChild(allCabinets);
+    cabinets.forEach(cabinet => {
+      const id = String(apiValue(cabinet, 'maTu', 'MaTu') || '').trim();
+      const name = String(apiValue(cabinet, 'tenTu', 'TenTu') || '').trim();
+      if (!id) return;
+      const option = document.createElement('option');
+      option.value = name || id;
+      option.textContent = name || id;
+      cabinetSelect.appendChild(option);
+    });
+  }
+  const statusSelect = document.getElementById('filterStatus');
+  if (statusSelect) {
+    const currentValue = statusSelect.value;
+    statusSelect.replaceChildren();
+    const allStatuses = document.createElement('option');
+    allStatuses.value = '';
+    allStatuses.textContent = 'Tất cả trạng thái';
+    statusSelect.appendChild(allStatuses);
+    [
+      { value: 'Hoạt động', label: 'Hoạt động ổn định' },
+      { value: 'Ngừng hoạt động', label: 'Ngừng hoạt động' }
+    ].forEach(item => {
+      const option = document.createElement('option');
+      option.value = item.value;
+      option.textContent = item.label;
+      statusSelect.appendChild(option);
+    });
+    statusSelect.value = currentValue;
+  }
+}
+
 function renderApiRoutes(apiRoutes, cabinets, areas, lights) {
   const tbody = document.getElementById('routesTableBody');
   if (!tbody) return;
+
   const areaNames = new Map(areas.map(area => [
     String(apiValue(area, 'maKhuVuc', 'MaKhuVuc') || '').trim(),
     String(apiValue(area, 'tenPhuongXa', 'TenPhuongXa') || '').trim()
@@ -52,8 +148,8 @@ function renderApiRoutes(apiRoutes, cabinets, areas, lights) {
     cabinet
   ]));
 
-  tbody.replaceChildren();
-  apiRoutes.forEach(route => {
+  routeLookup.clear();
+  routesData = apiRoutes.map(route => {
     const id = String(apiValue(route, 'maTuyen', 'MaTuyen') || '').trim();
     const cabinetId = String(apiValue(route, 'maTu', 'MaTu') || '').trim();
     const cabinet = cabinetById.get(cabinetId);
@@ -61,48 +157,62 @@ function renderApiRoutes(apiRoutes, cabinets, areas, lights) {
     const routeLights = lights.filter(light =>
       String(apiValue(light, 'maTuyen', 'MaTuyen') || '').trim() === id
     );
-    const rawStatus = apiValue(route, 'trangThaiHoatDong', 'TrangThaiHoatDong');
-    const status = Number(rawStatus) === 1
-      ? 'Hoạt động'
-      : Number(rawStatus) === 0
-        ? 'Ngừng hoạt động'
-        : 'Chưa xác định';
-    const statusClass = status === 'Hoạt động'
-      ? 'bg-sky-50 text-brand-600 border-sky-200'
-      : 'bg-slate-100 text-slate-600 border-slate-200';
+    const activeLights = routeLights.filter(light =>
+      Number(apiValue(light, 'trangThaiHoatDong', 'TrangThaiHoatDong')) === 1
+    ).length;
+    const rate = routeLights.length
+      ? Number((activeLights * 100 / routeLights.length).toFixed(1))
+      : 0;
     const rawLength = apiValue(route, 'chieuDai', 'ChieuDai');
     const length = rawLength === null || rawLength === undefined ? NaN : Number(rawLength);
-    const lengthText = Number.isFinite(length) ? `${(length / 1000).toFixed(2)} km` : '—';
+
+    const record = {
+      id,
+      raw: route,
+      name: String(apiValue(route, 'tenTuyen', 'TenTuyen') || id),
+      cabinetId,
+      cabinetName: String(apiValue(cabinet, 'tenTu', 'TenTu') || cabinetId || '—'),
+      areaId,
+      areaName: areaNames.get(areaId) || areaId || '—',
+      length: Number.isFinite(length) ? length : null,
+      lights: routeLights.length,
+      rate,
+      status: statusLabel(apiValue(route, 'trangThaiHoatDong', 'TrangThaiHoatDong'))
+    };
+    routeLookup.set(id, record);
+    return record;
+  });
+
+  tbody.replaceChildren();
+  routesData.forEach(record => {
+    const lengthText = record.length !== null ? `${(record.length / 1000).toFixed(2)} km` : '—';
     const row = document.createElement('tr');
     row.className = 'route-row hover:bg-slate-50/80 transition-colors';
-    row.dataset.id = id;
+    row.dataset.id = record.id;
     row.innerHTML = `
-      <td class="py-3.5 px-4 text-center"><input class="row-checkbox rounded border-slate-300 text-brand focus:ring-brand/30 cursor-pointer" type="checkbox" value="${escapeHtml(id)}"></td>
-      <td class="py-3.5 px-3 font-semibold text-slate-800"><a href="route-detail.html?id=${encodeURIComponent(id)}" class="hover:text-primary font-bold">${escapeHtml(id)}</a></td>
-      <td class="py-3.5 px-4 font-semibold text-slate-800"><a href="route-detail.html?id=${encodeURIComponent(id)}" class="hover:text-primary hover:underline">${escapeHtml(apiValue(route, 'tenTuyen', 'TenTuyen') || id)}</a></td>
-      <td class="py-3.5 px-3 text-slate-600 font-semibold">${escapeHtml(apiValue(cabinet, 'tenTu', 'TenTu') || cabinetId || '—')}</td>
-      <td class="py-3.5 px-4 text-slate-600">${escapeHtml(areaNames.get(areaId) || areaId || '—')}</td>
+      <td class="py-3.5 px-4 text-center"><input class="row-checkbox rounded border-slate-300 text-brand focus:ring-brand/30 cursor-pointer" type="checkbox" value="${escapeHtml(record.id)}"></td>
+      <td class="py-3.5 px-3 font-semibold text-slate-800"><a href="route-detail.html?id=${encodeURIComponent(record.id)}" class="hover:text-primary font-bold">${escapeHtml(record.id)}</a></td>
+      <td class="py-3.5 px-4 font-semibold text-slate-800"><a href="route-detail.html?id=${encodeURIComponent(record.id)}" class="hover:text-primary hover:underline">${escapeHtml(record.name)}</a></td>
+      <td class="py-3.5 px-3 text-slate-600 font-semibold">${escapeHtml(record.cabinetName)}</td>
+      <td class="py-3.5 px-4 text-slate-600">${escapeHtml(record.areaName)}</td>
       <td class="py-3.5 px-3 text-right">${escapeHtml(lengthText)}</td>
-      <td class="py-3.5 px-3 text-right">${routeLights.length}</td>
-      <td class="py-3.5 px-6"><div class="flex items-center gap-3"><span class="font-bold text-slate-800 text-[11px] w-9 text-right">${routeLights.length ? '—' : '0%'}</span><div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden"><div class="bg-primary h-1.5 rounded-full" style="width:${routeLights.length ? 0 : 0}%"></div></div></div></td>
-      <td class="py-3.5 px-4 text-center"><span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold border ${statusClass}">${escapeHtml(status)}</span></td>
-      <td class="py-3.5 px-4 text-center"><div class="flex items-center justify-center gap-1.5"><a href="route-detail.html?id=${encodeURIComponent(id)}" class="p-1.5 text-slate-400 hover:text-primary rounded-lg" aria-label="Xem ${escapeHtml(id)}"><i class="fa-regular fa-eye"></i></a><button type="button" data-route-action="edit" data-route-id="${escapeHtml(id)}" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg" aria-label="Chỉnh sửa ${escapeHtml(id)}"><i class="fa-regular fa-pen-to-square"></i></button><button type="button" data-route-action="menu" data-route-id="${escapeHtml(id)}" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg" aria-label="Tác vụ ${escapeHtml(id)}"><i class="fa-solid fa-ellipsis-vertical"></i></button></div></td>
+      <td class="py-3.5 px-3 text-right">${record.lights}</td>
+      <td class="py-3.5 px-6"><div class="flex items-center gap-3"><span class="font-bold text-slate-800 text-[11px] w-9 text-right">${record.rate}%</span><div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden"><div class="bg-primary h-1.5 rounded-full" style="width:${record.rate}%"></div></div></div></td>
+      <td class="py-3.5 px-4 text-center">${statusPillHtml(record.status)}</td>
+      <td class="py-3.5 px-4 text-center"><div class="flex items-center justify-center gap-1.5"><a href="route-detail.html?id=${encodeURIComponent(record.id)}" class="p-1.5 text-slate-400 hover:text-primary rounded-lg" aria-label="Xem ${escapeHtml(record.id)}"><i class="fa-regular fa-eye"></i></a><button type="button" data-route-action="edit" data-route-id="${escapeHtml(record.id)}" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg" aria-label="Chỉnh sửa ${escapeHtml(record.id)}"><i class="fa-regular fa-pen-to-square"></i></button><button type="button" data-route-action="menu" data-route-id="${escapeHtml(record.id)}" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg" aria-label="Tác vụ ${escapeHtml(record.id)}"><i class="fa-solid fa-ellipsis-vertical"></i></button></div></td>
     `;
     tbody.appendChild(row);
   });
 
   updateTotalCount();
   const display = document.getElementById('pageRangeDisplay');
-  if (display) display.textContent = apiRoutes.length ? `1 - ${apiRoutes.length}` : '0 - 0';
-  const activeCount = apiRoutes.filter(route =>
-    Number(apiValue(route, 'trangThaiHoatDong', 'TrangThaiHoatDong')) === 1
-  ).length;
+  if (display) display.textContent = routesData.length ? `1 - ${routesData.length}` : '0 - 0';
   const stableKpi = document.getElementById('kpiStableRoutes');
   const issueKpi = document.getElementById('kpiIssueRoutes');
   const maintenanceKpi = document.getElementById('kpiMaintRoutes');
-  if (stableKpi) stableKpi.textContent = String(activeCount);
+  if (stableKpi) stableKpi.textContent = String(routesData.filter(route => route.status === 'Hoạt động').length);
   if (issueKpi) issueKpi.textContent = '—';
-  if (maintenanceKpi) maintenanceKpi.textContent = '—';
+  if (maintenanceKpi) maintenanceKpi.textContent = String(routesData.filter(route => route.status === 'Ngừng hoạt động').length);
 }
 
 async function loadRoutesFromApi() {
@@ -121,10 +231,56 @@ async function loadRoutesFromApi() {
       showToast('Backend chưa có tuyến; đang hiển thị danh sách demo.', 'warning');
       return;
     }
+    populateFilterOptions(areas, cabinets);
+    populateRouteFormSelects(cabinets, areas);
     renderApiRoutes(routes, cabinets, areas, lights);
   } catch (error) {
     console.warn('Không tải được tuyến từ API; giữ danh sách demo.', error);
     showToast('Không kết nối được Backend tuyến; đang hiển thị danh sách demo.', 'warning');
+  }
+}
+
+function populateRouteFormSelects(cabinets, areas) {
+  const newCabinet = document.getElementById('newRouteCabinet');
+  if (newCabinet) {
+    newCabinet.replaceChildren();
+    cabinets.forEach(cabinet => {
+      const id = String(apiValue(cabinet, 'maTu', 'MaTu') || '').trim();
+      const name = String(apiValue(cabinet, 'tenTu', 'TenTu') || '').trim();
+      if (!id) return;
+      const option = document.createElement('option');
+      option.value = id;
+      option.textContent = name ? `${name} (${id})` : id;
+      newCabinet.appendChild(option);
+    });
+  }
+
+  const newArea = document.getElementById('newRouteArea');
+  if (newArea) {
+    newArea.replaceChildren();
+    areas.forEach(area => {
+      const id = String(apiValue(area, 'maKhuVuc', 'MaKhuVuc') || '').trim();
+      const name = String(apiValue(area, 'tenPhuongXa', 'TenPhuongXa') || '').trim();
+      if (!id || !name) return;
+      const option = document.createElement('option');
+      option.value = name;
+      option.textContent = name;
+      newArea.appendChild(option);
+    });
+  }
+
+  const editCabinet = document.getElementById('editRouteCabinet');
+  if (editCabinet) {
+    editCabinet.replaceChildren();
+    cabinets.forEach(cabinet => {
+      const id = String(apiValue(cabinet, 'maTu', 'MaTu') || '').trim();
+      const name = String(apiValue(cabinet, 'tenTu', 'TenTu') || '').trim();
+      if (!id) return;
+      const option = document.createElement('option');
+      option.value = id;
+      option.textContent = name ? `${name} (${id})` : id;
+      editCabinet.appendChild(option);
+    });
   }
 }
 
@@ -182,7 +338,7 @@ function openEditModal(code, name, cab, area, length, points, status) {
   document.getElementById('editRouteArea').value = area;
   document.getElementById('editRouteLength').value = length;
   document.getElementById('editRoutePoints').value = points;
-  document.getElementById('editRouteStatus').value = status;
+  document.getElementById('editRouteStatus').value = status === 'Hoạt động' ? '1' : '0';
   document.getElementById('editModalSub').textContent = `Mã tuyến: ${code}`;
   editRouteModal.classList.remove('hidden');
 }
@@ -193,7 +349,7 @@ function toggleActionMenu(e, code) {
   activeMenuCode = code;
   const rowActionMenu = document.getElementById('rowActionMenu');
   if (!rowActionMenu) return;
-  document.getElementById('actionViewDetail').href = `route-detail.html?id=${code}`;
+  document.getElementById('actionViewDetail').href = `route-detail.html?id=${encodeURIComponent(code)}`;
 
   const rect = e.currentTarget.getBoundingClientRect();
   rowActionMenu.style.top = `${rect.bottom + 6}px`;
@@ -211,7 +367,7 @@ function updateTotalCount() {
   if (totalDisplay) totalDisplay.textContent = rows;
 }
 
-function handleCreateRoute(e) {
+async function handleCreateRoute(e) {
   e.preventDefault();
   const code = document.getElementById('newRouteCode').value.trim();
   if (findRouteRow(code)) {
@@ -219,123 +375,107 @@ function handleCreateRoute(e) {
     return;
   }
   const name = document.getElementById('newRouteName').value.trim();
-  const cab = document.getElementById('newRouteCabinet').value;
-  const area = document.getElementById('newRouteArea').value;
-  const length = parseFloat(document.getElementById('newRouteLength').value).toFixed(1);
-  const points = parseInt(document.getElementById('newRoutePoints').value);
-  const status = document.getElementById('newRouteStatus').value;
+  const cabinetId = document.getElementById('newRouteCabinet').value;
+  const lengthKm = parseFloat(document.getElementById('newRouteLength').value);
+  const statusCode = Number(document.getElementById('newRouteStatus').value);
 
-  let statusPill = '';
-  if (status === 'Hoạt động') {
-    statusPill = `
-      <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold border" style="background-color: rgb(232, 240, 254); color: rgb(26, 115, 232); border-color: rgb(194, 218, 248);">
-        <span class="w-1.5 h-1.5 rounded-full mr-1.5" style="background-color: rgb(26, 115, 232);"></span>
-        Hoạt động
-      </span>
-    `;
-  } else if (status === 'Bảo trì') {
-    statusPill = `
-      <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>
-        Bảo trì
-      </span>
-    `;
-  } else {
-    statusPill = `
-      <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
-        Sự cố
-      </span>
-    `;
+  if (!window.api) {
+    showToast('Chưa nạp API client; không thể tạo tuyến trên Backend.', 'warning');
+    return;
   }
 
-  const tr = document.createElement('tr');
-  tr.className = 'route-row hover:bg-slate-50/80 transition-colors';
-  tr.dataset.id = code;
-  tr.innerHTML = `
-    <td class="py-3.5 px-4 text-center">
-      <input class="row-checkbox rounded border-slate-300 text-brand focus:ring-brand/30 cursor-pointer" type="checkbox" value="${escapeHtml(code)}">
-    </td>
-    <td class="py-3.5 px-3 font-semibold text-slate-800">
-      <a href="route-detail.html?id=${encodeURIComponent(code)}" class="hover:text-primary font-bold">${escapeHtml(code)}</a>
-    </td>
-    <td class="py-3.5 px-4 font-semibold text-slate-800">
-      <a href="route-detail.html?id=${encodeURIComponent(code)}" class="hover:text-primary hover:underline">${escapeHtml(name)}</a>
-    </td>
-    <td class="py-3.5 px-3 text-slate-600 font-semibold">${escapeHtml(cab)}</td>
-    <td class="py-3.5 px-4 text-slate-600">${escapeHtml(area)}</td>
-    <td class="py-3.5 px-3 text-right">${length} km</td>
-    <td class="py-3.5 px-3 text-right">${points}</td>
-    <td class="py-3.5 px-6">
-      <div class="flex items-center gap-3">
-        <span class="font-bold text-slate-800 text-[11px] w-9 text-right">100%</span>
-        <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-          <div class="bg-primary h-1.5 rounded-full" style="width: 100%"></div>
-        </div>
-      </div>
-    </td>
-    <td class="py-3.5 px-4 text-center">${statusPill}</td>
-    <td class="py-3.5 px-4 text-center">
-      <div class="flex items-center justify-center gap-1.5">
-        <a href="route-detail.html?id=${code}" class="p-1.5 text-slate-400 hover:text-primary rounded-lg transition-colors"><i class="fa-regular fa-eye"></i></a>
-        <button type="button" data-route-action="edit" data-route-id="${escapeHtml(code)}" aria-label="Chỉnh sửa tuyến ${escapeHtml(code)}" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg transition-colors"><i class="fa-regular fa-pen-to-square"></i></button>
-        <button type="button" data-route-action="menu" data-route-id="${escapeHtml(code)}" aria-label="Tác vụ tuyến ${escapeHtml(code)}" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg transition-colors"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-      </div>
-    </td>
-  `;
-
-  document.getElementById('routesTableBody')?.prepend(tr);
-  closeAddModal();
-  updateTotalCount();
-  showToast(`Đã thêm tuyến ${name} (${code}) vào danh sách demo; chưa lưu lên Backend.`, 'warning');
+  try {
+    await window.api.post('/TuyenChieuSang', {
+      maTuyen: code,
+      tenTuyen: name,
+      viTri: document.getElementById('newRouteArea')?.value || '',
+      maTu: cabinetId,
+      trangThaiHoatDong: statusCode,
+      chieuDai: Number.isFinite(lengthKm) ? Math.round(lengthKm * 1000) : null
+    });
+    showToast(`Đã tạo tuyến ${name} (${code}) trên Backend.`);
+    closeAddModal();
+    await loadRoutesFromApi();
+  } catch (error) {
+    console.warn('Không tạo được tuyến trên Backend.', error);
+    showToast(error.message || 'Không tạo được tuyến trên Backend.', 'warning');
+  }
 }
 
-function handleUpdateRoute(e) {
+async function handleUpdateRoute(e) {
   e.preventDefault();
   const code = document.getElementById('editRouteCode').value;
-  const name = document.getElementById('editRouteName').value;
-  const cab = document.getElementById('editRouteCabinet').value;
-  const area = document.getElementById('editRouteArea').value;
-  const length = document.getElementById('editRouteLength').value;
-  const points = document.getElementById('editRoutePoints').value;
-  const status = document.getElementById('editRouteStatus').value;
+  const name = document.getElementById('editRouteName').value.trim();
+  const cabinetId = document.getElementById('editRouteCabinet').value;
+  const area = document.getElementById('editRouteArea').value.trim();
+  const lengthKm = parseFloat(document.getElementById('editRouteLength').value);
+  const statusCode = Number(document.getElementById('editRouteStatus').value);
 
-  const row = findRouteRow(code);
-  if (row) {
-    row.children[2].querySelector('a').textContent = name;
-    row.children[3].textContent = cab;
-    row.children[4].textContent = area;
-    row.children[5].textContent = `${length} km`;
-    row.children[6].textContent = points;
-
-    let statusPill = '';
-    if (status === 'Hoạt động') {
-      statusPill = `
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold border" style="background-color: rgb(232, 240, 254); color: rgb(26, 115, 232); border-color: rgb(194, 218, 248);">
-          <span class="w-1.5 h-1.5 rounded-full mr-1.5" style="background-color: rgb(26, 115, 232);"></span>
-          Hoạt động
-        </span>
-      `;
-    } else if (status === 'Bảo trì') {
-      statusPill = `
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-          <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>
-          Bảo trì
-        </span>
-      `;
-    } else {
-      statusPill = `
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-          <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
-          Sự cố
-        </span>
-      `;
-    }
-    row.children[8].innerHTML = statusPill;
+  if (!window.api) {
+    showToast('Chưa nạp API client; không thể cập nhật tuyến trên Backend.', 'warning');
+    return;
   }
 
-  closeEditModal();
-  showToast(`Đã cập nhật tuyến ${name} trong danh sách demo; chưa lưu lên Backend.`, 'warning');
+  try {
+    await window.api.put(`/TuyenChieuSang/${encodeURIComponent(code)}`, {
+      maTuyen: code,
+      tenTuyen: name,
+      viTri: area,
+      maTu: cabinetId,
+      trangThaiHoatDong: statusCode,
+      chieuDai: Number.isFinite(lengthKm) ? Math.round(lengthKm * 1000) : null
+    });
+    showToast(`Đã cập nhật tuyến ${name} (${code}) trên Backend.`);
+    closeEditModal();
+    await loadRoutesFromApi();
+  } catch (error) {
+    console.warn('Không cập nhật được tuyến trên Backend.', error);
+    showToast(error.message || 'Không cập nhật được tuyến trên Backend.', 'warning');
+  }
+}
+
+async function deleteRouteById(code) {
+  if (!window.api) {
+    const row = findRouteRow(code);
+    row?.remove();
+    updateTotalCount();
+    showToast(`Đã xoá tuyến ${code} khỏi danh sách demo.`, 'warning');
+    return;
+  }
+  try {
+    await window.api.delete(`/TuyenChieuSang/${encodeURIComponent(code)}`);
+    showToast(`Đã xoá tuyến ${code} trên Backend.`);
+    await loadRoutesFromApi();
+  } catch (error) {
+    console.warn(`Không xoá được tuyến ${code}.`, error);
+    showToast(error.message || `Không xoá được tuyến ${code} trên Backend.`, 'warning');
+  }
+}
+
+async function setRouteStatus(code, statusCode) {
+  const record = routeLookup.get(code);
+  if (!record) return;
+  try {
+    if (window.api) {
+      await window.api.put(`/TuyenChieuSang/${encodeURIComponent(code)}`, {
+        maTuyen: code,
+        tenTuyen: record.name,
+        viTri: record.areaName,
+        maTu: record.cabinetId,
+        trangThaiHoatDong: statusCode,
+        chieuDai: record.length
+      });
+    }
+    const row = findRouteRow(code);
+    if (row && row.children[8]) {
+      row.children[8].innerHTML = statusPillHtml(statusLabel(statusCode));
+    }
+    record.status = statusLabel(statusCode);
+    showToast(`Đã đổi trạng thái tuyến ${code} thành ${statusLabel(statusCode)}.`);
+  } catch (error) {
+    console.warn(`Không đổi được trạng thái tuyến ${code}.`, error);
+    showToast(error.message || `Không đổi được trạng thái tuyến ${code}.`, 'warning');
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -374,7 +514,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Update Row Highlight Styling
     document.querySelectorAll('.route-row').forEach(row => {
       const cb = row.querySelector('.row-checkbox');
       if (cb && cb.checked) {
@@ -406,59 +545,40 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Batch Operations
-  document.getElementById('btnBatchActive')?.addEventListener('click', () => {
-    const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
+  document.getElementById('btnBatchActive')?.addEventListener('click', async () => {
+    const checkedBoxes = [...document.querySelectorAll('.row-checkbox:checked')];
     if (checkedBoxes.length === 0) {
       showToast('Vui lòng chọn ít nhất 1 tuyến để kích hoạt', 'warning');
       return;
     }
-    checkedBoxes.forEach(cb => {
-      const row = cb.closest('tr');
-      const statusCell = row.children[8];
-      statusCell.innerHTML = `
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold border" style="background-color: rgb(232, 240, 254); color: rgb(26, 115, 232); border-color: rgb(194, 218, 248);">
-          <span class="w-1.5 h-1.5 rounded-full mr-1.5" style="background-color: rgb(26, 115, 232);"></span>
-          Hoạt động
-        </span>
-      `;
-    });
-    showToast(`Đã đổi trạng thái ${checkedBoxes.length} tuyến trong danh sách demo; chưa cập nhật Backend.`, 'warning');
+    for (const cb of checkedBoxes) {
+      await setRouteStatus(cb.value, 1);
+    }
   });
 
-  document.getElementById('btnBatchInactive')?.addEventListener('click', () => {
-    const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
+  document.getElementById('btnBatchInactive')?.addEventListener('click', async () => {
+    const checkedBoxes = [...document.querySelectorAll('.row-checkbox:checked')];
     if (checkedBoxes.length === 0) {
       showToast('Vui lòng chọn ít nhất 1 tuyến để ngừng hoạt động', 'warning');
       return;
     }
-    checkedBoxes.forEach(cb => {
-      const row = cb.closest('tr');
-      const statusCell = row.children[8];
-      statusCell.innerHTML = `
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-          <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
-          Ngừng hoạt động
-        </span>
-      `;
-    });
-    showToast(`Đã đổi trạng thái ${checkedBoxes.length} tuyến trong danh sách demo; chưa cập nhật Backend.`, 'warning');
+    for (const cb of checkedBoxes) {
+      await setRouteStatus(cb.value, 0);
+    }
   });
 
-  document.getElementById('btnBatchDelete')?.addEventListener('click', () => {
-    const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
+  document.getElementById('btnBatchDelete')?.addEventListener('click', async () => {
+    const checkedBoxes = [...document.querySelectorAll('.row-checkbox:checked')];
     if (checkedBoxes.length === 0) {
       showToast('Vui lòng chọn ít nhất 1 tuyến để xoá', 'warning');
       return;
     }
-    if (confirm(`Xoá ${checkedBoxes.length} tuyến khỏi danh sách demo? Backend sẽ không bị thay đổi.`)) {
-      checkedBoxes.forEach(cb => {
-        const row = cb.closest('tr');
-        row.remove();
-      });
-      updateSelectedCount();
-      updateTotalCount();
-      showToast(`Đã xoá ${checkedBoxes.length} tuyến khỏi danh sách demo; Backend không bị thay đổi.`, 'warning');
+    if (!confirm(`Xoá ${checkedBoxes.length} tuyến khỏi hệ thống?`)) return;
+    for (const cb of checkedBoxes) {
+      await deleteRouteById(cb.value);
     }
+    updateSelectedCount();
+    updateTotalCount();
   });
 
   // Filter & Search handling
@@ -479,10 +599,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const matchKeyword = !keyword || code.includes(keyword) || name.includes(keyword) || ar.toLowerCase().includes(keyword);
       const matchArea = !area || ar.includes(area);
-      const matchCab = !cabinet || cab.includes(cabinet);
+      const matchCabinet = !cabinet || cab.includes(cabinet);
       const matchStatus = !status || st.includes(status);
 
-      if (matchKeyword && matchArea && matchCab && matchStatus) {
+      if (matchKeyword && matchArea && matchCabinet && matchStatus) {
         row.style.display = '';
         visibleCount++;
       } else {
@@ -543,14 +663,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (routeAction === 'edit') {
+      const record = routeLookup.get(routeId);
       openEditModal(
         routeId,
         row.children[2].textContent.trim(),
-        row.children[3].textContent.trim(),
-        row.children[4].textContent.trim(),
-        row.children[5].textContent.replace(' km', '').trim(),
+        record?.cabinetId || row.children[3].textContent.trim(),
+        record?.areaName || row.children[4].textContent.trim(),
+        record?.length !== null && record?.length !== undefined
+          ? (record.length / 1000).toFixed(2)
+          : row.children[5].textContent.replace(' km', '').trim(),
         row.children[6].textContent.trim(),
-        row.children[8].textContent.trim()
+        row.children[8].textContent.includes('Hoạt động') ? 'Hoạt động' : 'Ngừng hoạt động'
       );
     }
   });
@@ -558,41 +681,35 @@ document.addEventListener('DOMContentLoaded', () => {
     rowActionMenu?.classList.add('hidden');
   });
 
-  document.getElementById('actionQuickToggle')?.addEventListener('click', () => {
-    if (activeMenuCode) {
-      const row = findRouteRow(activeMenuCode);
-      const statusCell = row?.children[8];
-      if (!statusCell) return;
-      const isActive = statusCell.textContent.includes('Hoạt động');
-      statusCell.innerHTML = isActive
-        ? '<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">Ngừng hoạt động</span>'
-        : '<span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold border bg-sky-50 text-brand-600 border-sky-200">Hoạt động</span>';
-      showToast(`Đã đổi trạng thái tuyến ${activeMenuCode} trong bản demo.`, 'info');
-    }
+  document.getElementById('actionQuickToggle')?.addEventListener('click', async () => {
+    if (!activeMenuCode) return;
+    const record = routeLookup.get(activeMenuCode);
+    const nextStatus = record?.status === 'Hoạt động' ? 0 : 1;
+    await setRouteStatus(activeMenuCode, nextStatus);
   });
 
   document.getElementById('actionEdit')?.addEventListener('click', () => {
-    if (activeMenuCode) {
-      const row = findRouteRow(activeMenuCode);
-      if (row) {
-        const name = row.children[2].textContent.trim();
-        const cab = row.children[3].textContent.trim();
-        const area = row.children[4].textContent.trim();
-        const length = row.children[5].textContent.replace(' km', '').trim();
-        const points = row.children[6].textContent.trim();
-        const status = row.children[8].textContent.trim();
-        openEditModal(activeMenuCode, name, cab, area, length, points, status);
-      }
-    }
+    if (!activeMenuCode) return;
+    const row = findRouteRow(activeMenuCode);
+    if (!row) return;
+    const record = routeLookup.get(activeMenuCode);
+    openEditModal(
+      activeMenuCode,
+      row.children[2].textContent.trim(),
+      record?.cabinetId || row.children[3].textContent.trim(),
+      record?.areaName || row.children[4].textContent.trim(),
+      record?.length !== null && record?.length !== undefined
+        ? (record.length / 1000).toFixed(2)
+        : row.children[5].textContent.replace(' km', '').trim(),
+      row.children[6].textContent.trim(),
+      row.children[8].textContent.includes('Hoạt động') ? 'Hoạt động' : 'Ngừng hoạt động'
+    );
   });
 
-  document.getElementById('actionDeleteSingle')?.addEventListener('click', () => {
-    if (activeMenuCode && confirm(`Bạn có chắc muốn xoá tuyến ${activeMenuCode}?`)) {
-      const row = findRouteRow(activeMenuCode);
-      if (row) row.remove();
-      updateTotalCount();
-      showToast(`Đã xoá tuyến ${activeMenuCode} khỏi danh sách demo; Backend không bị thay đổi.`, 'warning');
-    }
+  document.getElementById('actionDeleteSingle')?.addEventListener('click', async () => {
+    if (!activeMenuCode) return;
+    if (!confirm(`Bạn có chắc muốn xoá tuyến ${activeMenuCode}?`)) return;
+    await deleteRouteById(activeMenuCode);
   });
 
   // Excel & Print Toolbar
@@ -628,5 +745,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     showToast(hiddenColumns === 0 ? 'Đã ẩn cột thao tác.' : 'Đã hiện lại cột thao tác.', 'info');
   });
+
   loadRoutesFromApi();
 });

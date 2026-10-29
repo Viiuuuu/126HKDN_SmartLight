@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartLight - Chi tiết tủ điều khiển T3 Nguyễn Tất Thành</title>
+  <meta name="description" content="Chi tiết giám sát SCADA đo lường 3 pha, điều khiển đóng cắt và nhật ký vận hành tủ điều khiển T3 Nguyễn Tất Thành - SmartLight EVNCPC.">
+
+  <!-- Google Fonts: Plus Jakarta Sans & Nunito chuẩn theo index.html -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Canonical Stylesheets từ index.html -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Tailwind CSS CDN bổ trợ cho nội dung SCADA chi tiết -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#e0edff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#0f2b48',
+              navy: '#0f2b48',
+            },
+            primary: '#1d4ed8',
+            'primary-dark': '#0f2b48',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Nunito', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Bảo tồn layout chuẩn theo style.css của index.html */
+    body {
+      background-color: var(--bg-page);
+      font-family: var(--font-sans);
+    }
+    
+    /* Đảm bảo trang có đủ padding dưới để không bị thanh footer che khuất */
+    .page-content-detail {
+      padding: 20px 28px 75px !important;
+    }
+
+    /* Fixed Status Footer đồng bộ chuẩn: bắt đầu từ sau sidebar trên desktop */
+    .system-status-footer {
+      position: fixed;
+      bottom: 0;
+      left: var(--sidebar-width);
+      right: 0;
+      height: 36px;
+      background: #ffffff;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 11px;
+      color: #64748b;
+      z-index: 30;
+      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    @media (max-width: 1024px) {
+      .system-status-footer {
+        left: 0;
+        padding: 0 12px;
+        font-size: 10px;
+        overflow-x: auto;
+      }
+      .page-content-detail {
+        padding: 16px 16px 85px !important;
+      }
+    }
+
+    /* Pulse animation cho chấm trạng thái */
+    .status-dot-pulse {
+      animation: pulseDot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(1.15); }
+    }
+
+    /* Sparkline wave chuyển động mượt mà */
+    .sparkline-wave {
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      animation: waveFlow 3s linear infinite;
+    }
+    @keyframes waveFlow {
+      from { stroke-dashoffset: 200; }
+      to { stroke-dashoffset: 0; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dashboard-wrapper">
+
+    <!-- ==================== SIDEBAR (ĐỒNG BỘ 100% THEO INDEX.HTML) ==================== -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Brand / Logo -->
+      <div class="sidebar-brand">
+        <div class="brand-logo-wrap">
+          <img src="images/logo.png" alt="SmartLight EVNCPC Logo" class="brand-logo-img">
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-name">SmartLight</h1>
+          <span class="brand-sub">MUNICIPAL IOT</span>
+        </div>
+        <button class="btn-close-sidebar" id="btnCloseSidebar" aria-label="Đóng menu">✕</button>
+      </div>
+
+      <!-- Navigation Menus -->
+      <nav class="sidebar-nav">
+        <!-- Section 1: GIÁM SÁT & ĐIỀU HÀNH -->
+        <div class="nav-group">
+          <div class="nav-group-title">GIÁM SÁT &amp; ĐIỀU HÀNH</div>
+          <ul class="nav-list">
+            <li>
+              <a href="index.html" class="nav-link" data-nav="dashboard">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                  </svg>
+                </span>
+                <span class="nav-label">Dashboard (Tổng quan)</span>
+              </a>
+            </li>
+            <li>
+              <a href="map.html" class="nav-link" data-nav="map">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Bản đồ giám sát</span>
+              </a>
+            </li>
+            <li>
+              <a href="control.html" class="nav-link" data-nav="control">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Điều khiển chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="schedules.html" class="nav-link" data-nav="schedule">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Lịch vận hành</span>
+              </a>
+            </li>
+            <li>
+              <a href="alerts.html" class="nav-link" data-nav="alerts">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Cảnh báo sự cố</span>
+                <span class="nav-badge" id="sidebarAlertCount">18</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 2: HẠ TẦNG CHIẾU SÁNG -->
+        <div class="nav-group">
+          <div class="nav-group-title">HẠ TẦNG CHIẾU SÁNG</div>
+          <ul class="nav-list">
+            <li>
+              <a href="areas.html" class="nav-link" data-nav="areas">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18"></path>
+                    <path d="M5 21V7l8-4v18"></path>
+                    <path d="M19 21V11l-6-3"></path>
+                    <path d="M9 9v.01"></path>
+                    <path d="M9 12v.01"></path>
+                    <path d="M9 15v.01"></path>
+                    <path d="M9 18v.01"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Khu vực chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="cabinets.html" class="nav-link active" data-nav="cabinets">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v5l3 3"></path>
+                    <path d="M9 12h6"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Tủ chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="routes.html" class="nav-link" data-nav="routes">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="6" cy="19" r="3"></circle>
+                    <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>
+                    <circle cx="18" cy="5" r="3"></circle>
+                  </svg>
+                </span>
+                <span class="nav-label">Tuyến chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="light-detail.html" class="nav-link" data-nav="lights">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                    <path d="M9 18h6"/>
+                    <path d="M10 22h4"/>
+                  </svg>
+                </span>
+                <span class="nav-label">Điểm đèn</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 3: QUẢN TRỊ & BÁO CÁO -->
+        <div class="nav-group">
+          <div class="nav-group-title">QUẢN TRỊ &amp; BÁO CÁO</div>
+          <ul class="nav-list">
+            <li>
+              <a href="#users" class="nav-link" data-nav="users">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Quản lý người dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="#roles" class="nav-link" data-nav="roles">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Phân quyền</span>
+              </a>
+            </li>
+            <li>
+              <a href="reports.html" class="nav-link" data-nav="reports">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Báo cáo &amp; thống kê</span>
+              </a>
+            </li>
+            <li>
+              <a href="activity-log.html" class="nav-link" data-nav="logs">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </span>
+                <span class="nav-label">Nhật ký hệ thống</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Central Gateway Badge chân Sidebar -->
+      <div style="padding: 12px 14px; margin: 12px 16px 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700; color: #334155;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span>Central Gateway</span>
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: #10b981;" class="status-dot-pulse"></span>
+          </div>
+          <span style="font-family: var(--font-mono); color: #059669;">99.8%</span>
+        </div>
+        <div style="font-size: 10px; color: #94a3b8; margin-top: 2px;">Đang kết nối</div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTAINER (ĐỒNG BỘ 100% THEO INDEX.HTML) ==================== -->
+    <div class="main-container">
+      
+      <!-- Top Header Bar chuẩn index.html -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="btnToggleMobileSidebar" aria-label="Mở menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          
+          <!-- Search Bar -->
+          <div class="search-box">
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <input 
+              type="text" 
+              class="search-input" 
+              id="topSearchInput" 
+              placeholder="Tìm nhanh tủ điện, điểm đèn, sự cố..." 
+              autocomplete="off"
+            >
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Realtime Clock / Date -->
+          <div class="system-time-display">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="topbarLiveClock">Thứ Năm, 22/10/2026</span>
+          </div>
+
+          <!-- Notification Bell -->
+          <div class="notification-wrapper">
+            <button class="btn-icon-topbar" id="btnNotifications" aria-label="Thông báo hệ thống" title="Thông báo hệ thống">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span class="notification-badge-dot"></span>
+            </button>
+
+            <!-- Notification Popover -->
+            <div class="notification-dropdown" id="notificationDropdown">
+              <div class="dropdown-header">
+                <strong>Thông báo mới (3)</strong>
+                <button class="btn-text-subtle" id="btnMarkAllRead">Đọc tất cả</button>
+              </div>
+              <ul class="dropdown-list">
+                <li class="notification-item unread">
+                  <span class="noti-indicator danger"></span>
+                  <div>
+                    <p class="noti-title">Sự cố điện áp Tuyến TL - 05</p>
+                    <small class="noti-time">12 phút trước</small>
+                  </div>
+                </li>
+                <li class="notification-item unread">
+                  <span class="noti-indicator warning"></span>
+                  <div>
+                    <p class="noti-title">Tủ CS - 07 cảnh báo mở cửa</p>
+                    <small class="noti-time">45 phút trước</small>
+                  </div>
+                </li>
+                <li class="notification-item">
+                  <span class="noti-indicator info"></span>
+                  <div>
+                    <p class="noti-title">Đồng bộ dữ liệu IoT Gateway thành công</p>
+                    <small class="noti-time">2 giờ trước</small>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- User Profile Chip -->
+          <div class="user-profile-wrapper">
+            <button class="user-profile-btn" id="btnUserProfile" aria-label="Hồ sơ người dùng">
+              <div class="user-avatar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="user-meta">
+                <span class="user-name">Nguyễn Văn Minh</span>
+                <span class="user-role">Quản trị hệ thống</span>
+              </div>
+              <span class="user-action-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </span>
+            </button>
+
+            <!-- User Menu Dropdown -->
+            <div class="user-dropdown" id="userDropdown">
+              <div class="user-dropdown-info">
+                <strong>Nguyễn Văn Minh</strong>
+                <small>quantri@smartlight.evncpc.vn</small>
+              </div>
+              <hr class="dropdown-divider">
+              <a href="#profile" class="user-menu-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Hồ sơ cá nhân</span>
+              </a>
+              <a href="#settings" class="user-menu-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Cấu hình thiết bị</span>
+              </a>
+              <hr class="dropdown-divider">
+              <a href="login.html" class="user-menu-item logout-link" id="linkLogout">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Đăng xuất</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ==================== MAIN PAGE CONTENT ==================== -->
+      <main class="page-content page-content-detail space-y-4">
+
+        <!-- ==================== BREADCRUMB ==================== -->
+        <nav class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-1">
+          <span class="flex items-center gap-1.5 text-slate-500 hover:text-brand-600 transition">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <a href="areas.html">Hạ tầng chiếu sáng</a>
+          </span>
+          <span class="text-slate-300">›</span>
+          <a href="cabinets.html" class="hover:text-brand-600 transition">Tủ chiếu sáng</a>
+          <span class="text-slate-300">›</span>
+          <span class="text-slate-800 font-bold" id="breadCabinetName">Chi tiết tủ T3 Nguyễn Tất Thành</span>
+        </nav>
+
+        <!-- ==================== TITLE & MAIN ACTIONS HEADER ==================== -->
+        <section class="bg-white rounded-2xl p-4 md:p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+          <!-- Left: Title, Badges & Metadata -->
+          <div>
+            <div class="flex flex-wrap items-center gap-2.5">
+              <h1 class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight" id="dispCabinetName">
+                Tủ điều khiển T3 Nguyễn Tất Thành
+              </h1>
+              
+              <!-- Badge: Online Status -->
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-pulse"></span>
+                <span>Online (Vận hành bình thường)</span>
+              </span>
+
+              <!-- Badge: 4G Network Signal -->
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-brand-700 border border-blue-200">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M2 20h.01M7 20v-4M12 20v-8M17 20V4"></path>
+                </svg>
+                <span id="dispCabinetDevice">4G VIETTEL (Sóng 4/4)</span>
+              </span>
+            </div>
+
+            <!-- Sub Metadata Line -->
+            <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500 mt-2 font-medium">
+              <span>MÃ: <strong class="font-mono text-brand-700 font-bold" id="dispCabinetCode">TU - NTT - 03</strong></span>
+              <span class="text-slate-300">•</span>
+              <span>Khu vực: <strong class="text-slate-700" id="dispCabinetArea">Đội Thanh Khê</strong></span>
+              <span class="text-slate-300">•</span>
+              <span>Phường/Xã: <strong class="text-slate-700" id="dispCabinetAreaName">Chưa có dữ liệu</strong></span>
+              <span class="text-slate-300">•</span>
+              <span class="font-mono text-slate-600 flex items-center gap-1">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                <span id="dispCabinetGps">16.0718° N, 108.1942° E</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Right: Operation Action Buttons -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Nút 1: Đồng bộ tức thời -->
+            <button id="btnSyncImmediate" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition shadow-sm">
+              <span id="syncSpinIcon" class="text-amber-600 flex items-center">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+              </span>
+              <span>Đồng bộ tức thời</span>
+            </button>
+
+            <!-- Nút 2: Chế độ DIM Dropdown -->
+            <div class="relative inline-block text-left" id="dropdownDimWrap">
+              <button id="btnDimDropdown" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition shadow-sm">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Chế độ DIM</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              
+              <!-- Popover Menu DIM -->
+              <div id="dimMenu" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-white shadow-xl border border-slate-100 py-1.5 z-30 font-medium text-xs">
+                <div class="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chọn mức tiết giảm:</div>
+                <button class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-blue-50 hover:text-brand-600 flex items-center justify-between" onclick="setCabinetDim(100)">
+                  <span>⚡ 100% (Độ sáng tối đa)</span>
+                </button>
+                <button class="w-full text-left px-3.5 py-2 text-brand-700 font-bold bg-blue-50/60 flex items-center justify-between" onclick="setCabinetDim(70)">
+                  <span>💡 70% (Tiết kiệm ban đêm)</span>
+                  <span class="text-xs">✓</span>
+                </button>
+                <button class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-blue-50 hover:text-brand-600 flex items-center justify-between" onclick="setCabinetDim(50)">
+                  <span>🌙 50% (Khung 23h - 04h)</span>
+                </button>
+                <button class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-blue-50 hover:text-brand-600 flex items-center justify-between" onclick="setCabinetDim(30)">
+                  <span>🌑 30% (Sương mù/rạng sáng)</span>
+                </button>
+                <hr class="my-1 border-slate-100">
+                <button class="w-full text-left px-3.5 py-2 text-rose-600 hover:bg-rose-50 flex items-center justify-between" onclick="setCabinetDim(0)">
+                  <span>🚫 Tắt toàn bộ đèn (0%)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Nút 3: Đóng / Cắt KĐT (Màu đỏ khẩn cấp) -->
+            <button id="btnToggleContactor" class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 active:bg-rose-800 rounded-xl transition shadow-sm shadow-rose-600/30">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span>Đóng / Cắt KĐT</span>
+            </button>
+
+            <!-- Nút 4: Sửa thông tin -->
+            <button id="btnEditCabinet" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition shadow-sm">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              <span>Sửa thông tin</span>
+            </button>
+
+            <!-- Nút 5: Quay lại danh sách -->
+            <a href="cabinets.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition shadow-sm">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              <span>Quay lại</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ==================== 2 COLUMNS: SCADA 3 PHA & CHỈ SỐ VẬN HÀNH ==================== -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+          <!-- ==================== CỘT TRÁI: SCADA 3 PHA THỜI GIAN THỰC (COL 8) ==================== -->
+          <div class="lg:col-span-8 bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] flex flex-col justify-between">
+            <div>
+              <!-- Header Card SCADA -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-sm">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-sm md:text-base font-extrabold text-slate-900 tracking-tight">
+                      Thông số SCADA Điện Áp 3 Pha Thời Gian Thực
+                    </h2>
+                    <p class="text-[11px] text-slate-400 font-medium">Biến dòng Class 0.5S • Chu kỳ: 2s</p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 status-dot-pulse"></span>
+                    <span>RT - POLL: 2400 baud</span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- 3 Pha Grid Cards -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 my-4">
+                
+                <!-- Pha 1 (L1) -->
+                <div class="p-3.5 rounded-xl border border-slate-200/90 bg-[#fafcff] hover:border-brand-500/50 transition">
+                  <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+                    <span class="font-bold text-slate-700 text-[11px]">Pha 1 (L1)</span>
+                    <span class="text-slate-400">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 6v6l4 2"></path>
+                      </svg>
+                    </span>
+                  </div>
+                  <div class="flex items-baseline gap-1 my-1">
+                    <span class="text-2xl md:text-3xl font-extrabold font-mono text-slate-900 tracking-tight" id="dispL1V">240.3</span>
+                    <span class="text-xs font-bold text-slate-500">V</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-1 pt-2 mt-2 border-t border-slate-200/60 text-[11px] font-mono text-slate-600">
+                    <div>
+                      <span class="text-slate-400 block text-[10px]">I:</span>
+                      <strong class="text-slate-800" id="dispL1A">3.0A</strong>
+                    </div>
+                    <div>
+                      <span class="text-slate-400 block text-[10px]">f:</span>
+                      <strong class="text-slate-800" id="dispL1Hz">50.0Hz</strong>
+                    </div>
+                    <div>
+                      <span class="text-slate-400 block text-[10px]">P:</span>
+                      <strong class="text-brand-700" id="dispL1P">0.72kW</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Pha 2 (L2) -->
+                <div class="p-3.5 rounded-xl border border-slate-200/90 bg-[#fafcff] hover:border-brand-500/50 transition">
+                  <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+                    <span class="font-bold text-slate-700 text-[11px]">Pha 2 (L2)</span>
+                    <span class="text-slate-400">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 6v6l4 2"></path>
+                      </svg>
+                    </span>
+                  </div>
+                  <div class="flex items-baseline gap-1 my-1">
+                    <span class="text-2xl md:text-3xl font-extrabold font-mono text-slate-900 tracking-tight" id="dispL2V">236.6</span>
+                    <span class="text-xs font-bold text-slate-500">V</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-1 pt-2 mt-2 border-t border-slate-200/60 text-[11px] font-mono text-slate-600">
+                    <div>
+                      <span class="text-slate-400 block text-[10px]">I:</span>
+                      <strong class="text-slate-800" id="dispL2A">3.0A</strong>
+                    </div>
+                    <div>
+                      <span class="text-slate-400 block text-[10px]">f:</span>
+                      <strong class="text-slate-800" id="dispL2Hz">50.1Hz</strong>
+                    </div>
+                    <div>
+                      <span class="text-slate-400 block text-[10px]">P:</span>
+                      <strong class="text-brand-700" id="dispL2P">0.71kW</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Pha 3 (L3) -->
+                <div class="p-3.5 rounded-xl border border-slate-200/90 bg-[#fafcff] hover:border-brand-500/50 transition">
+                  <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+                    <span class="font-bold text-slate-700 text-[11px]">Pha 3 (L3)</span>
+                    <span class="text-slate-400">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 6v6l4 2"></path>
+                      </svg>
+                    </span>
+                  </div>
+                  <div class="flex items-baseline gap-1 my-1">
+                    <span class="text-2xl md:text-3xl font-extrabold font-mono text-slate-900 tracking-tight" id="dispL3V">238.3</span>
+                    <span class="text-xs font-bold text-slate-500">V</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-1 pt-2 mt-2 border-t border-slate-200/60 text-[11px] font-mono text-slate-600">
+                    <div>
+                      <span class="text-slate-400 block text-[10px]">I:</span>
+                      <strong class="text-slate-800" id="dispL3A">3.0A</strong>
+                    </div>
+                    <div>
+                      <span class="text-slate-400 block text-[10px]">f:</span>
+                      <strong class="text-slate-800" id="dispL3Hz">49.9Hz</strong>
+                    </div>
+                    <div>
+                      <span class="text-slate-400 block text-[10px]">P:</span>
+                      <strong class="text-brand-700" id="dispL3P">0.71kW</strong>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- SCADA Sub-metrics & Sparkline Sine Waveform -->
+            <div class="pt-3 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+              <div class="flex flex-wrap items-center gap-2 text-slate-600 font-medium">
+                <span class="flex items-center gap-1.5 text-slate-700 font-bold">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-brand-600">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                  </svg>
+                  <span>Cân bằng tải:</span>
+                  <strong class="text-emerald-700 font-mono">98.2%</strong>
+                </span>
+                <span class="text-slate-300">•</span>
+                <span>Độ lệch cực đại: <strong class="font-mono text-slate-800">0.02A</strong></span>
+                <span class="text-slate-300">•</span>
+                <span>Dòng rò tiếp địa: <strong class="font-mono text-emerald-700">12mA (An toàn)</strong></span>
+              </div>
+
+              <!-- Sparkline Sine Waveform -->
+              <div class="flex items-center gap-1 self-end md:self-auto">
+                <svg width="90" height="24" viewBox="0 0 90 24" fill="none" class="opacity-80">
+                  <path d="M 0 12 Q 15 2, 30 12 T 60 12 T 90 12" stroke="#059669" stroke-width="2" fill="none" stroke-linecap="round" class="sparkline-wave"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== CỘT PHẢI: CHỈ SỐ VẬN HÀNH TỦ (COL 4) ==================== -->
+          <div class="lg:col-span-4 bg-white rounded-2xl p-5 border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] flex flex-col justify-between">
+            <div>
+              <!-- Header Card Chỉ Số Vận Hành -->
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-blue-50 text-brand-600 flex items-center justify-center">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                      <line x1="8" y1="21" x2="16" y2="21"></line>
+                      <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                  </div>
+                  <h2 class="text-sm font-extrabold text-slate-900 tracking-tight">Chỉ Số Vận Hành Tủ</h2>
+                </div>
+                <span class="text-[11px] font-mono text-slate-400 font-semibold">FW: v2059</span>
+              </div>
+
+              <!-- Grid 2 Cột x 3 Hàng -->
+              <div class="grid grid-cols-2 gap-y-3.5 gap-x-4 py-3.5 text-xs">
+                
+                <!-- Item 1: cos(phi) -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-slate-500 font-medium">
+                    <span class="text-slate-400">⏱️</span>
+                    <span>cos(φ)</span>
+                  </div>
+                  <strong class="font-mono text-slate-900 text-sm font-bold" id="dispCosPhi">0.90</strong>
+                </div>
+
+                <!-- Item 2: Tải P -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-slate-500 font-medium">
+                    <span class="text-amber-500">⚡</span>
+                    <span>Tải P</span>
+                  </div>
+                  <strong class="font-mono text-slate-900 text-sm font-bold" id="dispTotalP">2.14 kW</strong>
+                </div>
+
+                <!-- Item 3: Lũy kế E -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-slate-500 font-medium">
+                    <span class="text-emerald-500">💡</span>
+                    <span>Lũy kế E</span>
+                  </div>
+                  <strong class="font-mono text-slate-900 text-sm font-bold" id="dispTotalE">148.2 kWh</strong>
+                </div>
+
+                <!-- Item 4: Nhiệt độ -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-slate-500 font-medium">
+                    <span class="text-orange-500">🌡️</span>
+                    <span>Nhiệt độ</span>
+                  </div>
+                  <strong class="font-mono text-orange-600 text-sm font-bold" id="dispTemp">34°C</strong>
+                </div>
+
+                <!-- Item 5: Cửa tủ -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-slate-500 font-medium">
+                    <span class="text-slate-400">🔒</span>
+                    <span>Cửa tủ</span>
+                  </div>
+                  <span class="font-bold text-emerald-600 text-xs">Đang đóng</span>
+                </div>
+
+                <!-- Item 6: Pin RTC -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-slate-500 font-medium">
+                    <span class="text-slate-400">🔋</span>
+                    <span>Pin RTC</span>
+                  </div>
+                  <strong class="font-mono text-slate-800 text-xs font-semibold">12.6V</strong>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Footer Card: Trạng thái chế độ tự động RTC & GSM OK -->
+            <div class="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs font-bold">
+              <div class="flex items-center gap-1.5 text-slate-800">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="text-[11px] tracking-tight">TỰ ĐỘNG THEO LỊCH (AUTO RTC)</span>
+              </div>
+              <div class="flex items-center gap-1 text-emerald-600 font-mono text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 status-dot-pulse"></span>
+                <span>GSM/COM5 OK</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ==================== TABS & FILTER BAR & TABLE SECTION ==================== -->
+        <section class="bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] overflow-hidden">
+          
+          <!-- Tab Bar Headers -->
+          <div class="flex items-center gap-2 px-4 pt-4 border-b border-slate-200">
+            <!-- Tab 1: Nhật ký hoạt động (Active) -->
+            <button id="tabBtnLogs" class="px-4 py-2.5 text-xs font-extrabold rounded-t-xl bg-slate-900 text-white transition flex items-center gap-2 shadow-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Nhật ký hoạt động</span>
+            </button>
+
+            <!-- Tab 2: Sự kiện & Cảnh báo (Badge 6) -->
+            <button id="tabBtnEvents" class="px-4 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-2 rounded-t-xl hover:bg-slate-50">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-amber-500">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              <span>Sự kiện &amp; Cảnh báo</span>
+              <span class="px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-600 text-white leading-none">6</span>
+            </button>
+          </div>
+
+          <!-- Filter Bar Controls -->
+          <div class="p-4 bg-slate-50/50 border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <!-- Left Filters -->
+            <div class="flex flex-wrap items-center gap-2.5">
+              
+              <!-- Từ ngày -->
+              <div class="flex items-center gap-1.5 text-slate-600">
+                <span>Từ:</span>
+                <div class="relative inline-flex items-center">
+                  <input type="text" id="filterFromDate" value="14:33 23/02/18" class="pl-2.5 pr-7 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-mono text-slate-700 w-36 focus:outline-none focus:border-brand-500">
+                  <span class="absolute right-2 text-slate-400 pointer-events-none text-xs">📅</span>
+                </div>
+              </div>
+
+              <!-- Đến ngày -->
+              <div class="flex items-center gap-1.5 text-slate-600">
+                <span>Đến:</span>
+                <div class="relative inline-flex items-center">
+                  <input type="text" id="filterToDate" value="14:33 23/02/18" class="pl-2.5 pr-7 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-mono text-slate-700 w-36 focus:outline-none focus:border-brand-500">
+                  <span class="absolute right-2 text-slate-400 pointer-events-none text-xs">📅</span>
+                </div>
+              </div>
+
+              <!-- Nút Xem -->
+              <button id="btnViewFilter" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span>Xem</span>
+              </button>
+
+              <!-- Search Input -->
+              <div class="relative min-w-[220px]">
+                <input 
+                  type="text" 
+                  id="filterSearchLog" 
+                  placeholder="Tìm nội dung, người gửi..." 
+                  class="pl-8 pr-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-700 w-full focus:outline-none focus:border-brand-500"
+                >
+                <span class="absolute left-2.5 top-2 text-slate-400">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </span>
+              </div>
+
+            </div>
+
+            <!-- Right Actions -->
+            <div class="flex items-center gap-2">
+              <button id="btnExportExcel" class="px-3 py-1.5 bg-white hover:bg-emerald-50 border border-emerald-500/80 text-emerald-700 font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="8" y1="13" x2="16" y2="13"></line>
+                  <line x1="8" y1="17" x2="16" y2="17"></line>
+                </svg>
+                <span>Xuất Excel</span>
+              </button>
+
+              <button id="btnClearList" class="px-3 py-1.5 text-rose-600 hover:bg-rose-50 border border-transparent rounded-lg font-bold transition">
+                Xóa DS
+              </button>
+
+              <label class="inline-flex items-center gap-1.5 text-slate-700 font-bold cursor-pointer select-none pl-1">
+                <input type="checkbox" id="chkAutoFilter" checked class="rounded border-slate-300 text-brand-600 focus:ring-0">
+                <span>Lọc</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Table Container -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider">
+                  <th class="py-3 px-3 text-center w-12">STT</th>
+                  <th class="py-3 px-3 w-44">THỜI GIAN GỬI</th>
+                  <th class="py-3 px-3 w-36">NGƯỜI GỬI</th>
+                  <th class="py-3 px-3 w-48">TÊN TỦ</th>
+                  <th class="py-3 px-3 w-56">LOẠI LỆNH / TRẠNG THÁI</th>
+                  <th class="py-3 px-4">NỘI DUNG CHI TIẾT THAO TÁC &amp; DỮ LIỆU PHẢN HỒI</th>
+                </tr>
+              </thead>
+              <tbody id="logsTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Javascript renders 11 rows -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table Pagination Footer (Nằm gọn bên trong Card, không bao giờ bị đè) -->
+          <div class="p-3.5 border-t border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500">
+            <div class="flex items-center gap-4">
+              <span>Hiển thị <strong class="text-slate-800" id="dispPageRange">1 - 11</strong> trên <strong class="text-slate-800" id="dispTotalRows">11</strong></span>
+              
+              <div class="flex items-center gap-1.5">
+                <span>Dòng/trang:</span>
+                <select id="selectPageSize" class="bg-slate-50 border border-slate-200 rounded px-2 py-0.5 font-medium text-slate-700 focus:outline-none">
+                  <option value="11" selected>11</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex items-center gap-1 self-end sm:self-auto font-mono">
+              <button class="px-2 py-1 rounded border border-slate-200 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition" title="Đầu trang">|&lt;</button>
+              <button class="px-2 py-1 rounded border border-slate-200 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition" title="Trang trước">&lt;</button>
+              <button class="px-3 py-1 rounded bg-slate-900 text-white font-bold">1</button>
+              <button class="px-3 py-1 rounded border border-slate-200 hover:bg-slate-50 text-slate-700">2</button>
+              <button class="px-2 py-1 rounded border border-slate-200 text-slate-700 hover:bg-slate-50 transition" title="Trang sau">&gt;</button>
+              <button class="px-2 py-1 rounded border border-slate-200 text-slate-700 hover:bg-slate-50 transition" title="Cuối trang">&gt;|</button>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+      <!-- ==================== FIXED SYSTEM STATUS FOOTER (ĐÃ SỬA KHÔNG BỊ KHUẤT) ==================== -->
+      <footer class="system-status-footer">
+        <!-- Left KPI Indicators -->
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-1.5 font-semibold text-slate-700">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-pulse"></span>
+            <span>Tủ Online: <strong>902 / 950 (94.9%)</strong></span>
+          </div>
+          <span class="text-slate-300 hidden sm:inline">•</span>
+          <div class="flex items-center gap-1.5 font-semibold text-rose-600">
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+            <span>Cảnh báo: <strong>18</strong></span>
+          </div>
+          <span class="text-slate-300 hidden sm:inline">•</span>
+          <div class="flex items-center gap-1.5 font-semibold text-slate-500">
+            <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+            <span>Mất kết nối: <strong>3</strong></span>
+          </div>
+        </div>
+
+        <!-- Right CMS Meta & Realtime Clock -->
+        <div class="flex items-center gap-4 text-slate-500">
+          <span class="hidden md:inline">Phiên bản CMS: <strong class="text-slate-700 font-mono">v3.4.1 (Đà Nẵng G03)</strong></span>
+          <span class="text-slate-300 hidden md:inline">•</span>
+          <span class="hidden lg:inline">Người dùng: <strong class="text-slate-700">Nguyễn Văn Minh (Admin)</strong></span>
+          <span class="text-slate-300 hidden lg:inline">•</span>
+          <div class="flex items-center gap-1 font-mono font-bold text-slate-700">
+            <span>Cập nhật:</span>
+            <span id="bottomClock">18:42:15</span>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- ==================== MODAL ĐÓNG / CẮT KHỞI ĐỘNG TỪ (KĐT) ==================== -->
+  <div id="modalContactor" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-rose-50">
+        <div class="flex items-center gap-2.5 text-rose-700 font-extrabold text-sm">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span>Xác nhận Đóng / Cắt Contactor KĐT</span>
+        </div>
+        <button class="p-1 text-slate-400 hover:text-slate-700" onclick="closeContactorModal()">✕</button>
+      </div>
+      <div class="p-5 space-y-3 text-xs text-slate-600">
+        <p class="font-medium">
+          Bạn đang yêu cầu phát lệnh điều khiển trực tiếp tới tủ <strong class="text-slate-900">T3 Nguyễn Tất Thành</strong> (Mã: <code>TU-NTT-03</code>).
+        </p>
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-800 text-[11px] leading-relaxed">
+          ⚠️ <strong>Cảnh báo an toàn điện:</strong> Thao tác này sẽ đóng/ngắt tải công suất lớn (2.14 kW - 3 pha). Xin vui lòng kiểm tra an toàn lưới trước khi thực thi!
+        </div>
+        <div class="space-y-2 pt-1">
+          <label class="block font-bold text-slate-700">Chọn hành động điều khiển:</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" class="p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 text-emerald-800 font-bold hover:bg-emerald-100 text-center transition" onclick="executeContactorAction('CLOSE')">
+              ⚡ ĐÓNG TẤT CẢ KĐT
+            </button>
+            <button type="button" class="p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50/50 text-rose-800 font-bold hover:bg-rose-100 text-center transition" onclick="executeContactorAction('OPEN')">
+              🛑 CẮT KHẨN CẤP
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+        <button class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition" onclick="closeContactorModal()">Hủy bỏ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL CHỈNH SỬA THÔNG TIN TỦ ==================== -->
+  <div id="modalEdit" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <span>✏️ Chỉnh sửa thông số tủ điều khiển</span>
+        </h3>
+        <button class="p-1 text-slate-400 hover:text-slate-700" onclick="closeEditModal()">✕</button>
+      </div>
+      <form id="formEditCabinet" class="p-5 space-y-3.5 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Tên tủ điều khiển</label>
+          <input type="text" id="editCabinetName" value="Tủ điều khiển T3 Nguyễn Tất Thành" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800 font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Mã định danh</label>
+            <input type="text" id="editCabinetCode" value="TU - NTT - 03" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-800">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Đội quản lý khu vực</label>
+            <input type="text" id="editCabinetArea" value="Đội Thanh Khê" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Toạ độ GPS (Lat, Long)</label>
+            <input type="text" id="editCabinetGps" value="16.0718, 108.1942" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-800">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Nhà mạng viễn thông</label>
+            <select class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800">
+              <option value="viettel" selected>Viettel 4G IoT (Sóng 4/4)</option>
+              <option value="vinaphone">Vinaphone M2M</option>
+              <option value="mobifone">Mobifone 4G</option>
+            </select>
+          </div>
+        </div>
+        <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" class="px-3.5 py-2 text-slate-600 hover:bg-slate-100 rounded-xl transition" onclick="closeEditModal()">Hủy</button>
+          <button type="submit" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition shadow-sm">Lưu cập nhật</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Mobile Overlay Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script src="js/api-config.js"></script>
+  <script src="js/cabinets-detail.js"></script>
+</body>
+</html>

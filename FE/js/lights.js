@@ -1,3 +1,8 @@
+/**
+ * SmartLight Municipal IoT - Lights (điểm đèn) Management Logic (lights.html)
+ * Nguồn dữ liệu: API /DiemDen, /TuyenChieuSang, /TuChieuSang, /KhuVuc
+ */
+
 const fallbackLights = [
   { id: 'LD-0001', name: 'Đèn LED đường Lê Duẩn', type: 'LED 120W', route: 'TL-03', location: '48 Lê Duẩn, Hải Châu', power: 120, dim: 80, status: 'Hoạt động' },
   { id: 'LD-0002', name: 'Đèn LED đường Bạch Đằng', type: 'LED 150W', route: 'TL-01', location: 'Đường Bạch Đằng, Hải Châu', power: 150, dim: 100, status: 'Hoạt động' },
@@ -5,6 +10,9 @@ const fallbackLights = [
 ];
 
 let lights = [];
+let routeLookup = new Map();
+let cabinetLookup = new Map();
+let areaLookup = new Map();
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, character => ({
@@ -16,27 +24,32 @@ function escapeHtml(value) {
   })[character]);
 }
 
+function apiValue(record, camelName, pascalName) {
+  return record?.[camelName] ?? record?.[pascalName];
+}
+
 function normalizeLight(item) {
-  const rawStatus = item.trangThaiHoatDong ?? item.TrangThaiHoatDong;
+  const rawStatus = apiValue(item, 'trangThaiHoatDong', 'TrangThaiHoatDong');
   const status = typeof rawStatus === 'string'
     ? rawStatus
-    : rawStatus === undefined
+    : rawStatus === undefined || rawStatus === null
       ? 'Chưa xác định'
       : Number(rawStatus) === 1
         ? 'Hoạt động'
         : Number(rawStatus) === 0
           ? 'Đang tắt'
-          : `Trạng thái ${rawStatus}`;
+          : 'Cảnh báo';
 
   return {
-    id: String(item.maDen ?? item.MaDen ?? ''),
-    name: String(item.tenDen ?? item.TenDen ?? 'Điểm đèn'),
-    type: String(item.loaiBongDen ?? item.LoaiBongDen ?? 'Điểm đèn LED'),
-    route: String(item.maTuyen ?? item.MaTuyen ?? ''),
-    location: String(item.viTri ?? item.ViTri ?? ''),
-    power: Number(item.congSuat ?? item.CongSuat ?? 0),
-    dim: Number(item.doSang ?? item.DoSang ?? 0),
-    status
+    id: String(apiValue(item, 'maDen', 'MaDen') || ''),
+    name: String(apiValue(item, 'tenDen', 'TenDen') || 'Điểm đèn'),
+    type: String(apiValue(item, 'loaiBongDen', 'LoaiBongDen') || 'Điểm đèn LED'),
+    route: String(apiValue(item, 'maTuyen', 'MaTuyen') || ''),
+    location: String(apiValue(item, 'viTri', 'ViTri') || ''),
+    power: Number(apiValue(item, 'congSuat', 'CongSuat') ?? 0),
+    dim: Number(apiValue(item, 'doSang', 'DoSang') ?? 0),
+    status,
+    raw: item
   };
 }
 
@@ -44,7 +57,7 @@ function getVisibleLights() {
   const keyword = document.getElementById('lightSearchInput').value.trim().toLocaleLowerCase('vi');
   const status = document.getElementById('lightStatusFilter').value;
   return lights.filter(light => {
-    const searchable = `${light.id} ${light.name} ${light.type} ${light.route} ${light.location}`.toLocaleLowerCase('vi');
+    const searchable = `${light.id} ${light.name} ${light.type} ${light.routeName} ${light.location}`.toLocaleLowerCase('vi');
     return (!keyword || searchable.includes(keyword)) && (status === 'all' || light.status === status);
   });
 }
@@ -79,7 +92,11 @@ function renderLights() {
       <tr class="hover:bg-slate-50">
         <td class="whitespace-nowrap px-4 py-3 font-mono font-bold text-blue-800">${escapeHtml(light.id)}</td>
         <td class="px-4 py-3 font-semibold text-slate-800">${escapeHtml(light.name)}</td>
-        <td class="px-4 py-3">${escapeHtml(light.route || '—')}</td>
+        <td class="px-4 py-3">
+          ${light.routeName
+            ? `<a href="route-detail.html?id=${encodeURIComponent(light.route)}" class="font-semibold text-blue-800 hover:underline">${escapeHtml(light.routeName)}</a>`
+            : escapeHtml(light.route || '—')}
+        </td>
         <td class="px-4 py-3 text-slate-600">${escapeHtml(light.location || '—')}</td>
         <td class="px-4 py-3 text-right font-mono">${escapeHtml(light.power)} W</td>
         <td class="px-4 py-3"><span class="rounded-full px-2.5 py-1 text-xs font-semibold ${statusClass}">${escapeHtml(light.status)}</span></td>
@@ -89,31 +106,84 @@ function renderLights() {
   }).join('');
 }
 
+function populateStatusFilter() {
+  const select = document.getElementById('lightStatusFilter');
+  if (!select) return;
+  const currentValue = select.value;
+  const available = ['Hoạt động', 'Đang tắt', 'Cảnh báo', 'Chưa xác định'];
+  select.replaceChildren();
+  const allOption = document.createElement('option');
+  allOption.value = 'all';
+  allOption.textContent = 'Tất cả trạng thái';
+  select.appendChild(allOption);
+  available.forEach(status => {
+    const option = document.createElement('option');
+    option.value = status;
+    option.textContent = status;
+    select.appendChild(option);
+  });
+  select.value = currentValue && [...select.options].some(option => option.value === currentValue)
+    ? currentValue
+    : 'all';
+}
+
 async function loadLights() {
   const notice = document.getElementById('lightsDataNotice');
   notice.hidden = true;
 
   try {
-    const result = await window.api.get('/DiemDen');
+    if (!window.api) throw new Error('Chưa nạp API client.');
+
+    const [result, routes, cabinets, areas] = await Promise.all([
+      window.api.get('/DiemDen'),
+      window.api.get('/TuyenChieuSang'),
+      window.api.get('/TuChieuSang'),
+      window.api.get('/KhuVuc')
+    ]);
     if (!Array.isArray(result)) throw new TypeError('API DiemDen phải trả về một danh sách.');
-    lights = result.length ? result.map(normalizeLight) : fallbackLights;
+
+    routeLookup = new Map((routes || []).map(route => [
+      String(apiValue(route, 'maTuyen', 'MaTuyen') || '').trim(),
+      route
+    ]));
+    cabinetLookup = new Map((cabinets || []).map(cabinet => [
+      String(apiValue(cabinet, 'maTu', 'MaTu') || '').trim(),
+      cabinet
+    ]));
+    areaLookup = new Map((areas || []).map(area => [
+      String(apiValue(area, 'maKhuVuc', 'MaKhuVuc') || '').trim(),
+      area
+    ]));
+
+    lights = (result.length ? result : fallbackLights).map(normalizeLight);
+    lights.forEach(light => {
+      const route = routeLookup.get(light.route);
+      light.routeName = route ? String(apiValue(route, 'tenTuyen', 'TenTuyen') || light.route) : '';
+      const cabinet = route ? cabinetLookup.get(String(apiValue(route, 'maTu', 'MaTu') || '').trim()) : null;
+      light.cabinetId = cabinet ? String(apiValue(cabinet, 'maTu', 'MaTu') || '') : '';
+      light.cabinetName = cabinet ? String(apiValue(cabinet, 'tenTu', 'TenTu') || '') : '';
+      const area = cabinet ? areaLookup.get(String(apiValue(cabinet, 'maKhuVuc', 'MaKhuVuc') || '').trim()) : null;
+      light.areaName = area ? String(apiValue(area, 'tenPhuongXa', 'TenPhuongXa') || '') : '';
+    });
+
     if (!result.length) {
       notice.textContent = 'Backend chưa có dữ liệu điểm đèn; đang hiển thị dữ liệu mô phỏng.';
       notice.hidden = false;
     }
   } catch (error) {
     console.warn('Không tải được điểm đèn từ API; dùng dữ liệu mô phỏng.', error);
-    lights = fallbackLights;
+    lights = fallbackLights.map(normalizeLight);
     notice.textContent = 'Không kết nối được Backend; đang hiển thị dữ liệu mô phỏng.';
     notice.hidden = false;
   }
 
+  populateStatusFilter();
   renderLights();
 }
 
 function exportLightsCsv() {
   const rows = getVisibleLights().map(light => [
-    light.id, light.name, light.type, light.route, light.location, light.power, light.dim, light.status
+    light.id, light.name, light.type, light.routeName || light.route, light.location, light.power, light.dim, light.status
   ]);
   const quote = value => `"${String(value ?? '').replace(/"/g, '""')}"`;
   const csv = [

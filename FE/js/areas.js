@@ -1,9 +1,10 @@
 /**
  * SmartLight Municipal IoT - Areas Management Logic (areas.html)
+ * Nguồn dữ liệu: API /KhuVuc, /TuChieuSang, /TuyenChieuSang, /DiemDen
  */
 
-// Master Areas Data (From Screenshot 1)
-let areasData = [
+// Dữ liệu mô phỏng dùng làm fallback khi Backend không sẵn sàng
+let fallbackAreasData = [
   {
     id: "KV-01",
     name: "Hải Châu",
@@ -77,6 +78,8 @@ let areasData = [
     updated: "14/10/2024 10:10"
   }
 ];
+
+let areasData = [...fallbackAreasData];
 let editingAreaId = null;
 
 function escapeHtml(value) {
@@ -87,6 +90,10 @@ function escapeHtml(value) {
     '"': '&quot;',
     "'": '&#39;'
   })[character]);
+}
+
+function readApiField(item, camelCase, pascalCase) {
+  return item?.[camelCase] ?? item?.[pascalCase];
 }
 
 function openRequestedAreaEdit() {
@@ -104,6 +111,9 @@ function updateAreaStats() {
   document.getElementById('statActiveAreas').textContent = active;
   document.getElementById('statMaintenanceAreas').textContent = maintenance;
   document.getElementById('statAlertAreas').textContent = alerts;
+
+  const totalBadge = document.querySelector('.pagination-footer-total');
+  if (totalBadge) totalBadge.textContent = total;
 }
 
 function openAreaModal(area = null) {
@@ -117,6 +127,9 @@ function openAreaModal(area = null) {
   editingAreaId = area?.id || null;
   title.textContent = area ? `Chỉnh sửa khu vực ${area.id}` : 'Thêm khu vực chiếu sáng mới';
   submit.textContent = area ? 'Lưu thay đổi' : 'Tạo khu vực';
+
+  const codeInput = document.getElementById('areaCodeInput');
+  if (codeInput) codeInput.readOnly = Boolean(area);
 
   if (area) {
     document.getElementById('areaCodeInput').value = area.id;
@@ -133,11 +146,9 @@ function closeAreaModal() {
   const modal = document.getElementById('modalAddArea');
   modal?.classList.add('hidden');
   modal?.classList.remove('flex');
+  const codeInput = document.getElementById('areaCodeInput');
+  if (codeInput) codeInput.readOnly = false;
   editingAreaId = null;
-}
-
-function readApiField(item, camelCase, pascalCase) {
-  return item?.[camelCase] ?? item?.[pascalCase];
 }
 
 async function loadAreasFromApi() {
@@ -188,18 +199,20 @@ async function loadAreasFromApi() {
         : onlineCabinets > 0
           ? 'Có cảnh báo'
           : 'Bảo trì';
+      const updatedRaw = readApiField(area, 'ngayCapNhat', 'NgayCapNhat') || readApiField(area, 'ngayTao', 'NgayTao');
 
       return {
         id,
         name: String(readApiField(area, 'tenPhuongXa', 'TenPhuongXa') || id),
         district: String(readApiField(area, 'tenPhuongXa', 'TenPhuongXa') || ''),
+        description: String(readApiField(area, 'moTa', 'MoTa') || ''),
         cabinets: areaCabinets.length,
         routes: areaRoutes.length,
         lamps: areaLights.length,
         rate,
         alerts: 0,
         status,
-        updated: new Date().toLocaleString('vi-VN')
+        updated: updatedRaw ? new Date(updatedRaw).toLocaleString('vi-VN') : '—'
       };
     });
     renderAreasTable();
@@ -218,8 +231,8 @@ function showToast(message, type = 'success') {
   if (!container) return;
   const toast = document.createElement('div');
   toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg border text-xs font-semibold transition-all transform translate-y-2 opacity-0 duration-300 ${
-    type === 'success' 
-      ? 'bg-slate-900 text-white border-slate-800' 
+    type === 'success'
+      ? 'bg-slate-900 text-white border-slate-800'
       : 'bg-rose-900 text-white border-rose-800'
   }`;
   const marker = document.createElement('span');
@@ -228,26 +241,11 @@ function showToast(message, type = 'success') {
   text.textContent = message;
   toast.append(marker, text);
   container.appendChild(toast);
-  
+
   requestAnimationFrame(() => {
     toast.classList.remove('translate-y-2', 'opacity-0');
   });
-  document.getElementById('areasTableBody')?.addEventListener('click', (event) => {
-    const actionButton = event.target.closest('button[data-action]');
-    if (actionButton) {
-      event.stopPropagation();
-      const { action, areaId } = actionButton.dataset;
-      if (action === 'edit') editArea(areaId);
-      if (action === 'delete') showMoreAreaMenu(areaId);
-      return;
-    }
 
-    const row = event.target.closest('tr.area-row');
-    if (row && !event.target.closest('input, a')) {
-      window.location.href = `area-detail.html?id=${encodeURIComponent(row.dataset.areaId)}`;
-    }
-  });
-  
   setTimeout(() => {
     toast.classList.add('opacity-0', 'translate-y-2');
     setTimeout(() => toast.remove(), 300);
@@ -278,6 +276,8 @@ function renderAreasTable() {
   if (countEl) {
     countEl.textContent = filtered.length > 0 ? `1 - ${filtered.length}` : '0';
   }
+  const totalBadge = document.querySelector('.pagination-footer-total');
+  if (totalBadge) totalBadge.textContent = filtered.length;
 
   if (filtered.length === 0) {
     tbody.innerHTML = `
@@ -339,7 +339,7 @@ function renderAreasTable() {
         <td class="py-3.5 px-4 text-center font-mono font-bold ${item.rate >= 95 ? 'text-emerald-600' : 'text-amber-600'}">${item.rate}%</td>
         <td class="py-3.5 px-4 text-center">${alertBadge}</td>
         <td class="py-3.5 px-4 text-center whitespace-nowrap">${statusBadge}</td>
-        <td class="py-3.5 px-4 text-center font-mono text-[11px] text-slate-500 whitespace-nowrap">${item.updated}</td>
+        <td class="py-3.5 px-4 text-center font-mono text-[11px] text-slate-500 whitespace-nowrap">${escapeHtml(item.updated)}</td>
         <td class="py-3.5 px-4 text-center" onclick="event.stopPropagation()">
           <div class="flex items-center justify-center gap-1">
             <a href="area-detail.html?id=${encodeURIComponent(item.id)}" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-100 transition" title="Xem chi tiết">
@@ -367,14 +367,29 @@ function editArea(id) {
   openAreaModal(area);
 }
 
-function showMoreAreaMenu(id) {
-  const areaIndex = areasData.findIndex(item => item.id === id);
-  if (areaIndex < 0) return;
-  if (!confirm(`Xóa khu vực ${id} khỏi danh sách demo?`)) return;
-  areasData.splice(areaIndex, 1);
-  renderAreasTable();
-  updateAreaStats();
-  showToast(`Đã xóa khu vực ${id} khỏi dữ liệu demo.`);
+async function showMoreAreaMenu(id) {
+  const area = areasData.find(item => item.id === id);
+  if (!area) return;
+  if (!confirm(`Xóa khu vực ${id} (${area.name}) khỏi hệ thống?`)) return;
+
+  if (!window.api) {
+    areasData = areasData.filter(item => item.id !== id);
+    renderAreasTable();
+    updateAreaStats();
+    showToast(`Đã xóa khu vực ${id} khỏi dữ liệu mô phỏng.`);
+    return;
+  }
+
+  try {
+    await window.api.delete(`/KhuVuc/${encodeURIComponent(id)}`);
+    areasData = areasData.filter(item => item.id !== id);
+    renderAreasTable();
+    updateAreaStats();
+    showToast(`Đã xóa khu vực ${id} trên Backend.`);
+  } catch (error) {
+    console.warn(`Không xóa được khu vực ${id}.`, error);
+    showToast(error.message || `Không xóa được khu vực ${id} trên Backend.`, 'error');
+  }
 }
 
 // Live Clock
@@ -397,50 +412,109 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById(id)?.addEventListener('click', closeAreaModal);
   });
 
-  document.getElementById('formAddArea')?.addEventListener('submit', (e) => {
+  document.getElementById('formAddArea')?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const submitButton = document.getElementById('areaSubmitButton');
     const id = document.getElementById('areaCodeInput').value.trim();
     const name = document.getElementById('areaNameInput').value.trim();
     const district = document.getElementById('areaDistrictInput').selectedOptions[0]?.textContent.trim() || '';
     const status = document.getElementById('areaStatusInput').value;
-    const duplicate = areasData.some(item => item.id.toLowerCase() === id.toLowerCase() && item.id !== editingAreaId);
 
+    if (!id || !name) {
+      showToast('Mã khu vực và tên khu vực không được để trống.', 'error');
+      return;
+    }
+
+    const duplicate = areasData.some(item => item.id.toLowerCase() === id.toLowerCase() && item.id !== editingAreaId);
     if (duplicate) {
       showToast(`Mã khu vực ${id} đã tồn tại.`, 'error');
       document.getElementById('areaCodeInput').focus();
       return;
     }
 
-    if (editingAreaId) {
-      const area = areasData.find(item => item.id === editingAreaId);
-      if (!area) {
-        showToast('Không tìm thấy khu vực cần cập nhật.', 'error');
-        return;
-      }
-      area.name = name;
-      area.district = district;
-      area.status = status;
-      area.updated = new Date().toLocaleString('vi-VN');
-      showToast(`Đã cập nhật ${id} trong dữ liệu demo.`);
-    } else {
-      areasData.unshift({
-        id,
-        name,
-        district,
-        cabinets: 0,
-        routes: 0,
-        lamps: 0,
-        rate: 0,
-        alerts: 0,
-        status,
-        updated: new Date().toLocaleString('vi-VN')
-      });
-      showToast(`Đã thêm ${id} vào dữ liệu demo.`);
+    const previousLabel = submitButton?.textContent;
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'Đang lưu...';
     }
 
-    closeAreaModal();
-    renderAreasTable();
-    updateAreaStats();
+    try {
+      if (window.api) {
+        if (editingAreaId) {
+          await window.api.put(`/KhuVuc/${encodeURIComponent(editingAreaId)}`, {
+            maKhuVuc: editingAreaId,
+            tenPhuongXa: name,
+            moTa: district
+          });
+          const target = areasData.find(item => item.id === editingAreaId);
+          if (target) {
+            target.name = name;
+            target.district = district;
+            target.status = status;
+            target.updated = new Date().toLocaleString('vi-VN');
+          }
+          showToast(`Đã cập nhật khu vực ${editingAreaId} trên Backend.`);
+        } else {
+          await window.api.post('/KhuVuc', {
+            maKhuVuc: id,
+            tenPhuongXa: name,
+            moTa: district
+          });
+          areasData.unshift({
+            id,
+            name,
+            district,
+            description: district,
+            cabinets: 0,
+            routes: 0,
+            lamps: 0,
+            rate: 0,
+            alerts: 0,
+            status,
+            updated: new Date().toLocaleString('vi-VN')
+          });
+          showToast(`Đã tạo khu vực ${id} trên Backend.`);
+        }
+      } else {
+        if (editingAreaId) {
+          const area = areasData.find(item => item.id === editingAreaId);
+          if (area) {
+            area.name = name;
+            area.district = district;
+            area.status = status;
+            area.updated = new Date().toLocaleString('vi-VN');
+          }
+          showToast(`Đã cập nhật ${id} trong dữ liệu mô phỏng.`);
+        } else {
+          areasData.unshift({
+            id,
+            name,
+            district,
+            description: district,
+            cabinets: 0,
+            routes: 0,
+            lamps: 0,
+            rate: 0,
+            alerts: 0,
+            status,
+            updated: new Date().toLocaleString('vi-VN')
+          });
+          showToast(`Đã thêm ${id} vào dữ liệu mô phỏng.`);
+        }
+      }
+
+      closeAreaModal();
+      renderAreasTable();
+      updateAreaStats();
+    } catch (error) {
+      console.warn('Không lưu được khu vực lên Backend.', error);
+      showToast(error.message || 'Không lưu được khu vực lên Backend.', 'error');
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = previousLabel;
+      }
+    }
   });
 
   // Select All Checkbox
@@ -474,6 +548,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setInterval(updateClock, 1000);
   updateClock();
+
+  document.getElementById('areasTableBody')?.addEventListener('click', (event) => {
+    const actionButton = event.target.closest('button[data-action]');
+    if (actionButton) {
+      event.stopPropagation();
+      const { action, areaId } = actionButton.dataset;
+      if (action === 'edit') editArea(areaId);
+      if (action === 'delete') showMoreAreaMenu(areaId);
+      return;
+    }
+
+    const row = event.target.closest('tr.area-row');
+    if (row && !event.target.closest('input, a')) {
+      window.location.href = `area-detail.html?id=${encodeURIComponent(row.dataset.areaId)}`;
+    }
+  });
 
   // Initial render
   renderAreasTable();

@@ -6,6 +6,7 @@
 const routeParams = new URLSearchParams(window.location.search);
 const currentRouteCode = routeParams.get('id') || 'TL-001';
 let currentRouteName = 'Nguyễn Văn Linh';
+let routeStatusCode = 1;
 
 function updateLiveClock() {
   const now = new Date();
@@ -59,6 +60,7 @@ async function loadRouteDetails() {
     const areaName = String(area?.tenPhuongXa ?? area?.TenPhuongXa ?? areaId ?? 'Chưa xác định');
     const statusValue = Number(route.trangThaiHoatDong ?? route.TrangThaiHoatDong);
     const status = statusValue === 1 ? 'Đang hoạt động' : statusValue === 0 ? 'Ngừng hoạt động' : 'Chưa xác định';
+    routeStatusCode = statusValue === 1 ? 1 : 0;
 
     document.title = `Chi tiết tuyến ${currentRouteCode} - ${name} | SmartLight`;
     setRouteText('detailRouteTitle', `Tuyến ${currentRouteCode}: ${name}`);
@@ -68,7 +70,7 @@ async function loadRouteDetails() {
     setRouteText('headerCabinetName', cabinetLabel);
     const cabinetLink = document.getElementById('headerCabinetName');
     if (cabinetLink && cabinetId) {
-      cabinetLink.setAttribute('href', `cabinets-detail.html?code=${encodeURIComponent(cabinetId)}`);
+      cabinetLink.setAttribute('href', `device-detail.html?id=${encodeURIComponent(cabinetId)}&type=${encodeURIComponent('Tủ chiếu sáng')}`);
     }
     setRouteText('infoArea', areaName);
     setRouteText('headerAreaName', areaName);
@@ -85,6 +87,11 @@ async function loadRouteDetails() {
       statusBadge.textContent = status;
     }
 
+    setRouteText('infoRouteCode', currentRouteCode);
+    setRouteText('calibrateRouteSubtitle', `Tuyến ${currentRouteCode} - ${name}`);
+    setRouteText('editRouteCodeLabel', `Mã tuyến: ${currentRouteCode}`);
+    setRouteText('exportRouteSubtitle', `${currentRouteCode} - ${name}`);
+    setRouteText('routeMapSubtitle', `| ${name}, ${areaName}`);
     const editInputs = {
       modalInputRouteName: name,
       modalInputCabinet: cabinetId,
@@ -97,10 +104,166 @@ async function loadRouteDetails() {
       const input = document.getElementById(id);
       if (input) input.value = value;
     });
+
+    populateCabinetSelect(cabinets, cabinetId);
+
+    renderRouteSegments(points);
+    await Promise.all([
+      loadRouteEnergy(points),
+      loadRouteLogs(points)
+    ]);
   } catch (error) {
     console.warn(`Không tải được tuyến ${currentRouteCode} từ API.`, error);
     showToast(`Không tải được dữ liệu tuyến ${currentRouteCode}; đang hiển thị thông tin demo.`, 'warning');
   }
+}
+
+function populateCabinetSelect(cabinets, selectedId) {
+  const select = document.getElementById('modalInputCabinet');
+  if (!select) return;
+  select.replaceChildren();
+  cabinets.forEach(cabinet => {
+    const id = String(cabinet.maTu ?? cabinet.MaTu ?? '').trim();
+    if (!id) return;
+    const name = String(cabinet.tenTu ?? cabinet.TenTu ?? id);
+    const option = document.createElement('option');
+    option.value = id;
+    option.textContent = `${name} (${id})`;
+    select.appendChild(option);
+  });
+  if (selectedId) select.value = selectedId;
+}
+
+function renderRouteSegments(points) {
+  const tbody = document.getElementById('routeSegmentsBody');
+  if (!tbody) return;
+
+  const groups = 3;
+  const chunkSize = Math.max(1, Math.ceil(points.length / groups));
+  const rows = [];
+
+  for (let index = 0; index < groups; index += 1) {
+    const chunk = points.slice(index * chunkSize, (index + 1) * chunkSize);
+    if (!chunk.length) continue;
+    const activeCount = chunk.filter(point =>
+      Number(point.trangThaiHoatDong ?? point.TrangThaiHoatDong) === 1
+    ).length;
+    const rate = chunk.length ? Number((activeCount * 100 / chunk.length).toFixed(1)) : 0;
+    const dimValues = chunk
+      .map(point => Number(point.doSang ?? point.DoSang))
+      .filter(Number.isFinite);
+    const avgDim = dimValues.length
+      ? Math.round(dimValues.reduce((sum, value) => sum + value, 0) / dimValues.length)
+      : 0;
+
+    rows.push(`
+      <tr class="hover:bg-slate-50/70">
+        <td class="py-3.5 px-4 font-bold text-slate-800">Đoạn ${index + 1}</td>
+        <td class="py-3.5 px-4 text-slate-600">${chunk.length} điểm đèn đầu tiên của tuyến</td>
+        <td class="py-3.5 px-4 text-right font-semibold">${chunk.length}</td>
+        <td class="py-3.5 px-4 text-right">—</td>
+        <td class="py-3.5 px-4 text-center font-bold ${rate >= 95 ? 'text-primary' : rate >= 80 ? 'text-amber-600' : 'text-rose-600'}">${rate}%</td>
+        <td class="py-3.5 px-4 text-center">
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${rate >= 95 ? 'bg-emerald-50 text-emerald-700' : rate >= 80 ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-700'}">
+            ${avgDim}% sáng · ${activeCount}/${chunk.length} hoạt động
+          </span>
+        </td>
+      </tr>
+    `);
+  }
+
+  tbody.innerHTML = rows.length
+    ? rows.join('')
+    : '<tr><td colspan="6" class="py-8 text-center text-slate-400">Tuyến chưa có điểm đèn nào trên Backend.</td></tr>';
+}
+
+async function loadRouteEnergy(points) {
+  if (!window.api || !points.length) return;
+  try {
+    const readings = await Promise.all(points.map(point =>
+      window.api.get('/DuLieuGiamSatDen', {
+        maDen: String(point.maDen ?? point.MaDen ?? '').trim(),
+        limit: 1
+      }).catch(() => [])
+    ));
+
+    let totalPowerW = 0;
+    let totalEnergyKwh = 0;
+    readings.forEach(list => {
+      const latest = Array.isArray(list) ? list[0] : null;
+      if (!latest) return;
+      const power = Number(latest.congSuatThucTe ?? latest.CongSuatThucTe);
+      const energy = Number(latest.dienNang ?? latest.DienNang);
+      if (Number.isFinite(power)) totalPowerW += power;
+      if (Number.isFinite(energy)) totalEnergyKwh += energy;
+    });
+
+    if (!totalPowerW && !totalEnergyKwh) return;
+    const dailyKwh = totalPowerW > 0 ? Number((totalPowerW * 10 / 1000).toFixed(1)) : totalEnergyKwh;
+    const monthKwh = Number((dailyKwh * 30).toFixed(1));
+    const cost = Math.round(monthKwh * 2500);
+
+    const todayEl = document.getElementById('routeEnergyToday');
+    const monthEl = document.getElementById('routeEnergyMonth');
+    const costEl = document.getElementById('routeEnergyCost');
+    if (todayEl) todayEl.textContent = dailyKwh.toLocaleString('vi-VN');
+    if (monthEl) monthEl.textContent = monthKwh.toLocaleString('vi-VN');
+    if (costEl) costEl.textContent = cost.toLocaleString('vi-VN');
+  } catch (error) {
+    console.warn('Không tải được dữ liệu tiêu thụ điện của tuyến.', error);
+  }
+}
+
+// Nhật ký vận hành được dựng từ dữ liệu giám sát điểm đèn (DuLieuGiamSatDen - phạm vi TV1).
+// Lịch sử lệnh điều khiển thuộc endpoint LenhDieuKhien nên không được gọi ở module này.
+async function loadRouteLogs(points) {
+  const container = document.getElementById('routeLogsList');
+  if (!container || !window.api || !points?.length) return;
+  try {
+    const readings = await Promise.all(points.map(point =>
+      window.api.get('/DuLieuGiamSatDen', {
+        maDen: String(point.maDen ?? point.MaDen ?? '').trim(),
+        limit: 1
+      }).catch(() => [])
+    ));
+
+    const entries = readings.flat().filter(Boolean).map(reading => {
+      const time = reading.thoiGianDo ?? reading.ThoiGianDo;
+      const timeText = time ? new Date(time).toLocaleString('vi-VN') : '';
+      const dim = Number(reading.doSang ?? reading.DoSang);
+      const power = Number(reading.congSuatThucTe ?? reading.CongSuatThucTe);
+      const detail = Number.isFinite(dim) ? ` · Mức sáng ${dim}%` : '';
+      const summary = Number.isFinite(power) ? `Công suất thực tế ${power.toFixed(1)} W` : 'Có dữ liệu giám sát';
+      return { timeText, detail, summary };
+    });
+
+    if (!entries.length) return;
+
+    container.innerHTML = entries.map(entry => `
+      <div class="flex items-start gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-100">
+        <span class="w-2.5 h-2.5 rounded-full bg-primary mt-1.5"></span>
+        <div class="flex-1">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-800">Ghi nhận giám sát${escapeHtml(entry.detail)}</span>
+            <span class="text-[11px] text-slate-400">${escapeHtml(entry.timeText)}</span>
+          </div>
+          <p class="text-slate-500 text-[11px] mt-0.5">${escapeHtml(entry.summary)}</p>
+        </div>
+      </div>
+    `).join('');
+  } catch (error) {
+    console.warn('Không tải được nhật ký giám sát của tuyến.', error);
+  }
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[character]);
 }
 
 // 3. Toast Notification System
@@ -254,9 +417,9 @@ function closeEditRouteModal() {
 
 function handleSaveEditRoute(e) {
   e.preventDefault();
-  const name = document.getElementById('modalInputRouteName').value;
+  const name = document.getElementById('modalInputRouteName').value.trim();
   const cab = document.getElementById('modalInputCabinet').value;
-  const area = document.getElementById('modalInputArea').value;
+  const area = document.getElementById('modalInputArea').value.trim();
   const length = document.getElementById('modalInputLength').value;
   const points = document.getElementById('modalInputPoints').value;
 
@@ -267,8 +430,8 @@ function handleSaveEditRoute(e) {
   if (breadcrumb) breadcrumb.textContent = `Chi tiết tuyến ${currentRouteCode} - ${name}`;
   const infoRouteName = document.getElementById('infoRouteName');
   if (infoRouteName) infoRouteName.textContent = name;
-  const infoCabinet = document.getElementById('infoCabinet');
-  if (infoCabinet) infoCabinet.textContent = 'Tủ ' + cab;
+    const infoCabinet = document.getElementById('infoCabinet');
+  if (infoCabinet) infoCabinet.textContent = cab ? `Tủ ${cab}` : 'Chưa xác định';
   const headerCabinetName = document.getElementById('headerCabinetName');
   if (headerCabinetName) headerCabinetName.textContent = cab;
   const infoArea = document.getElementById('infoArea');
@@ -285,7 +448,26 @@ function handleSaveEditRoute(e) {
   if (headerRoutePoints) headerRoutePoints.textContent = points;
 
   closeEditRouteModal();
-  showToast('Đã cập nhật thông tin tuyến trong bản demo.');
+
+  if (!window.api) {
+    showToast('Đã cập nhật thông tin tuyến trong bản demo.', 'warning');
+    return;
+  }
+
+  const lengthKm = parseFloat(length);
+  window.api.put(`/TuyenChieuSang/${encodeURIComponent(currentRouteCode)}`, {
+    maTuyen: currentRouteCode,
+    tenTuyen: name,
+    viTri: area,
+    maTu: cab,
+    trangThaiHoatDong: Number(routeStatusCode),
+    chieuDai: Number.isFinite(lengthKm) ? Math.round(lengthKm * 1000) : null
+  }).then(() => {
+    showToast(`Đã cập nhật tuyến ${currentRouteCode} trên Backend.`);
+  }).catch(error => {
+    console.warn('Không cập nhật được tuyến trên Backend.', error);
+    showToast(error.message || 'Không cập nhật được tuyến trên Backend.', 'warning');
+  });
 }
 
 function closeExportModal() {
@@ -366,8 +548,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnToggleManagementText = document.getElementById('btnToggleManagementText');
   const detailStatusBadge = document.getElementById('detailStatusBadge');
 
-  document.getElementById('btnToggleManagement')?.addEventListener('click', () => {
+  document.getElementById('btnToggleManagement')?.addEventListener('click', async () => {
     isManaging = !isManaging;
+    const nextStatus = isManaging ? 1 : 0;
+    routeStatusCode = nextStatus;
     if (isManaging) {
       if (managementDot) managementDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
       if (managementText) managementText.textContent = 'Hoạt động';
@@ -376,7 +560,6 @@ document.addEventListener('DOMContentLoaded', () => {
         detailStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Đang hoạt động';
         detailStatusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
       }
-      showToast('Mô phỏng: tuyến được đánh dấu Hoạt động; Backend chưa được cập nhật.', 'warning');
     } else {
       if (managementDot) managementDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-400';
       if (managementText) managementText.textContent = 'Ngừng hoạt động';
@@ -385,7 +568,25 @@ document.addEventListener('DOMContentLoaded', () => {
         detailStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-400"></span> Ngừng hoạt động';
         detailStatusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200';
       }
-      showToast('Mô phỏng: tuyến được đánh dấu Ngừng hoạt động; Backend chưa được cập nhật.', 'warning');
+    }
+
+    if (!window.api) {
+      showToast(`Mô phỏng: tuyến được đánh dấu ${isManaging ? 'Hoạt động' : 'Ngừng hoạt động'}.`, 'warning');
+      return;
+    }
+
+    try {
+      await window.api.put(`/TuyenChieuSang/${encodeURIComponent(currentRouteCode)}`, {
+        maTuyen: currentRouteCode,
+        tenTuyen: currentRouteName,
+        viTri: document.getElementById('infoArea')?.textContent.trim() || '',
+        maTu: document.getElementById('modalInputCabinet')?.value || '',
+        trangThaiHoatDong: nextStatus
+      });
+      showToast(`Đã cập nhật trạng thái tuyến ${currentRouteCode} trên Backend.`);
+    } catch (error) {
+      console.warn('Không cập nhật được trạng thái tuyến.', error);
+      showToast(error.message || 'Không cập nhật được trạng thái tuyến trên Backend.', 'warning');
     }
   });
 
@@ -438,29 +639,5 @@ document.addEventListener('DOMContentLoaded', () => {
     exportModal?.classList.remove('hidden');
   });
 
-  // Check URL params for custom route id (e.g., route-detail.html?id=TL-002)
-  const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get('id');
-  if (id && id !== 'TL-001') {
-    const infoRouteCode = document.getElementById('infoRouteCode');
-    if (infoRouteCode) infoRouteCode.textContent = id;
-    const titleEl = document.getElementById('detailRouteTitle');
-    if (id === 'TL-002') {
-      if (titleEl) titleEl.textContent = `Chi tiết tuyến chiếu sáng: ${id} – Võ Nguyên Giáp`;
-      const infoRouteName = document.getElementById('infoRouteName');
-      if (infoRouteName) infoRouteName.textContent = 'Võ Nguyên Giáp';
-      const infoCabinet = document.getElementById('infoCabinet');
-      if (infoCabinet) infoCabinet.textContent = 'Tủ CS-02';
-      const headerCabinetName = document.getElementById('headerCabinetName');
-      if (headerCabinetName) headerCabinetName.textContent = 'CS-02';
-      const infoLength = document.getElementById('infoLength');
-      if (infoLength) infoLength.textContent = '5.6 km';
-      const headerRouteLength = document.getElementById('headerRouteLength');
-      if (headerRouteLength) headerRouteLength.textContent = '5.6 km';
-      const infoPoints = document.getElementById('infoPoints');
-      if (infoPoints) infoPoints.textContent = '412';
-      const headerRoutePoints = document.getElementById('headerRoutePoints');
-      if (headerRoutePoints) headerRoutePoints.textContent = '412';
-    }
-  }
+  // Dữ liệu tuyến lấy hoàn toàn từ API (loadRouteDetails), không hard-code theo id.
 });

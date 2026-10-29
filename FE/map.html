@@ -414,68 +414,8 @@
             <path d="M 450 240 L 480 310 L 550 370 L 630 390 L 670 480" fill="none" stroke="#bae6fd" stroke-width="2" opacity="0.6"/>
           </svg>
 
-          <!-- ==================== MAP NODES ==================== -->
-          <!-- Cabinet Node 1: TCS-04 (Hải Châu) -->
-          <div class="map-node" style="top: 180px; left: 380px;" data-id="TCS-04-HC" title="Tủ chiếu sáng TCS-04 (Hải Châu)">
-            <div class="node-ripple"></div>
-            <div class="cabinet-pin active">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="9"></circle>
-                <path d="M12 7v5l3 3"></path>
-                <path d="M9 12h6"></path>
-              </svg>
-            </div>
-            <span class="node-hover-label">TCS-04 (Hải Châu)</span>
-          </div>
-
-          <!-- Cabinet Node 2: TCS-09 (Sơn Trà - Warning) -->
-          <div class="map-node" style="top: 280px; left: 610px;" data-id="TCS-09-ST" title="Tủ chiếu sáng TCS-09 (Sơn Trà)">
-            <div class="cabinet-pin warning">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                <line x1="12" y1="9" x2="12" y2="13"></line>
-                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-              </svg>
-            </div>
-            <span class="node-hover-label" style="opacity: 1; color: #ea580c;">TCS-09 (Sụt áp pha B)</span>
-          </div>
-
-          <!-- Active Lamp Node (SELECTED: ĐĐ-185V-027 with Warm Coral Halo) -->
-          <div class="map-node selected" style="top: 370px; left: 550px;" data-id="DD-185V-027" title="Điểm đèn ĐĐ-185V-027">
-            <div class="lamp-halo-wrapper">
-              <div class="halo-bloom">
-                <div class="halo-inner-bulb">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7zM9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1z"/>
-                  </svg>
-                </div>
-              </div>
-              <span class="selected-badge-pill">ĐĐ-185V-027</span>
-            </div>
-          </div>
-
-          <!-- Additional Field Lamp Poles -->
-          <div class="map-node" style="top: 240px; left: 450px;" data-id="DD-084-ND" title="Điểm đèn ĐĐ-084-ND">
-            <div class="lamp-pin state-on"></div>
-          </div>
-          <div class="map-node" style="top: 310px; left: 480px;" data-id="DD-091-ND" title="Điểm đèn ĐĐ-091-ND">
-            <div class="lamp-pin state-on"></div>
-          </div>
-          <div class="map-node" style="top: 430px; left: 520px;" data-id="DD-112-TR" title="Điểm đèn ĐĐ-112-TR">
-            <div class="lamp-pin state-warning"></div>
-          </div>
-          <div class="map-node" style="top: 470px; left: 430px;" data-id="DD-201-CL" title="Điểm đèn ĐĐ-201-CL">
-            <div class="lamp-pin state-lost"></div>
-          </div>
-          <div class="map-node" style="top: 390px; left: 630px;" data-id="DD-054-CR" title="Điểm đèn ĐĐ-054-CR">
-            <div class="lamp-pin state-on"></div>
-          </div>
-          <div class="map-node" style="top: 480px; left: 670px;" data-id="DD-062-CR" title="Điểm đèn ĐĐ-062-CR">
-            <div class="lamp-pin state-on"></div>
-          </div>
-          <div class="map-node" style="top: 520px; left: 590px;" data-id="DD-140-TTL" title="Điểm đèn ĐĐ-140-TTL">
-            <div class="lamp-pin state-on"></div>
-          </div>
+          <!-- ==================== MAP NODES (rendered from API) ==================== -->
+          <div class="map-node-layer" id="mapDeviceLayer"></div>
 
           <!-- ==================== LEFT FLOATING FILTER PANEL ==================== -->
           <div class="floating-panel filter-panel" id="filterPanel">
@@ -546,14 +486,14 @@
                     <input type="checkbox" id="chkCabinet" checked>
                     <span>Tủ chiếu sáng</span>
                   </div>
-                  <span class="check-badge-count">42</span>
+                  <span class="check-badge-count" id="countCabinet">42</span>
                 </label>
                 <label class="check-item-box">
                   <div class="check-left-wrap">
                     <input type="checkbox" id="chkLamp" checked>
                     <span>Điểm đèn LED</span>
                   </div>
-                  <span class="check-badge-count">1.248</span>
+                  <span class="check-badge-count" id="countLamp">1.248</span>
                 </label>
               </div>
 
@@ -569,7 +509,7 @@
                     <span class="chip-dot dot-active" style="width: 7px; height: 7px;"></span>
                     <span>Hoạt động bình thường</span>
                   </div>
-                  <span class="check-badge-count">1.092</span>
+                  <span class="check-badge-count" id="countStatusNormal">1.092</span>
                 </label>
                 <label class="check-item-box">
                   <div class="check-left-wrap">
@@ -577,7 +517,7 @@
                     <span class="chip-dot dot-warning" style="width: 7px; height: 7px;"></span>
                     <span>Cảnh báo / Sụt áp</span>
                   </div>
-                  <span class="check-badge-count" style="color: #ea580c; font-weight: 700;">89</span>
+                  <span class="check-badge-count" id="countStatusWarning" style="color: #ea580c; font-weight: 700;">89</span>
                 </label>
                 <label class="check-item-box">
                   <div class="check-left-wrap">
@@ -585,7 +525,7 @@
                     <span class="chip-dot dot-danger" style="width: 7px; height: 7px;"></span>
                     <span>Mất kết nối / Hỏng</span>
                   </div>
-                  <span class="check-badge-count" style="color: #dc2626; font-weight: 700;">70</span>
+                  <span class="check-badge-count" id="countStatusLost" style="color: #dc2626; font-weight: 700;">70</span>
                 </label>
               </div>
 
@@ -706,7 +646,7 @@
                   </svg>
                   Cập nhật viễn trắc
                 </span>
-                <span class="prop-val">22/10/2026 14:25:10</span>
+                <span class="prop-val" id="metaUpdatedAt">22/10/2026 14:25:10</span>
               </div>
               <div class="prop-row">
                 <span class="prop-label">
@@ -715,7 +655,7 @@
                   </svg>
                   Điện áp pha U
                 </span>
-                <span class="prop-val">224.6 VAC</span>
+                <span class="prop-val" id="metaVoltage">224.6 VAC</span>
               </div>
             </div>
 
