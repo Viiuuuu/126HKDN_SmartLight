@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" class="h-full bg-slate-50">
+<html lang="vi">
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -26,19 +26,19 @@
         extend: {
           colors: {
             brand: {
-              50: '#eef6ff',
-              100: '#d9eaff',
-              500: '#1e6be6',
-              600: '#0066ff',
-              700: '#0b51c5',
-              800: '#0c3e98',
-              900: '#1a365d',
-              DEFAULT: '#2b5c8f',
-              dark: '#1e4369',
-              light: '#3b75b0',
+              50: '#eff6ff',
+              100: '#e0edff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#0f2b48',
+              DEFAULT: '#1d4ed8',
+              dark: '#0f2b48',
+              light: '#3b82f6',
             },
-            primary: '#074476',
-            'primary-container': '#2b5c8f',
+            primary: '#1d4ed8',
+            'primary-container': '#1e40af',
             pastel: {
               1: '#E7EDF7',
               2: '#D4E4F2',
@@ -59,7 +59,7 @@
   <link rel="stylesheet" href="css/route-detail.css">
 </head>
 
-<body class="h-full text-slate-800 flex overflow-hidden bg-slate-50">
+<body>
 
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
@@ -274,128 +274,194 @@
       </nav>
     </aside>
     <!-- END: Sidebar -->
-
     <!-- ==================== MAIN CONTAINER ==================== -->
-    <div class="main-container flex-1 flex flex-col h-screen overflow-hidden bg-[#f8fafc]">
+    <div class="main-container">
       
-      <!-- Topbar Header (Synchronized with areas.html & system) -->
-      <header class="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between flex-shrink-0 z-10 shadow-[0_1px_3px_rgba(0,0,0,0.02)]" data-purpose="topbar">
-        <!-- Search & Mobile Toggle in Topbar -->
-        <div class="flex items-center gap-3 w-80 lg:w-96">
-          <button class="mobile-menu-btn block lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100" id="btnToggleMobileSidebar" aria-label="Mở menu">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <!-- Top Header Bar chuẩn index.html -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="btnToggleMobileSidebar" aria-label="Mở menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="3" y1="12" x2="21" y2="12"></line>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
           </button>
-          <div class="relative flex-1">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <span class="material-symbols-outlined text-[18px]">search</span>
-            </div>
-            <input id="globalSearchInput" class="w-full pl-10 pr-12 py-2 bg-slate-100/70 hover:bg-slate-100 focus:bg-white text-xs border border-transparent focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 rounded-xl transition placeholder-slate-400 text-slate-700" placeholder="Tìm nhanh tuyến, tủ điện, sự cố... (Ctrl+K)" type="text">
-            <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-2xs pointer-events-none">⌘K</kbd>
+          <div class="search-box">
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <input type="text" class="search-input" id="topSearchInput" placeholder="Tìm nhanh tủ điện, điểm đèn, sự cố..." autocomplete="off">
           </div>
         </div>
 
-        <!-- Right Side Info & Profile -->
-        <div class="flex items-center gap-5">
-          <!-- System Clock -->
-          <div class="hidden xl:flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200/60">
-            <span class="material-symbols-outlined text-[16px] text-slate-400">schedule</span>
-            <span id="liveClockDisplay">Thứ Năm, 22/10/2026</span>
+        <div class="topbar-right">
+          <div class="system-time-display">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="topbarLiveClock">Thứ Năm, 22/10/2026</span>
           </div>
 
-          <!-- Notification Bell -->
-          <a href="alerts.html" class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition" title="Xem cảnh báo sự cố">
-            <span class="material-symbols-outlined text-[22px]">notifications</span>
-            <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">5</span>
-          </a>
-
-          <div class="h-6 w-px bg-slate-200"></div>
-
-          <!-- User Profile Dropdown -->
-          <div class="flex items-center gap-3 cursor-pointer group">
-            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow ring-2 ring-white">
-              <span class="material-symbols-outlined text-[18px] text-white">person</span>
+          <div class="notification-wrapper">
+            <button class="btn-icon-topbar" id="btnNotifications" aria-label="Thông báo hệ thống" title="Thông báo hệ thống">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span class="notification-badge-dot"></span>
+            </button>
+            <div class="notification-dropdown" id="notificationDropdown">
+              <div class="dropdown-header">
+                <strong>Thông báo mới (3)</strong>
+                <button class="btn-text-subtle" id="btnMarkAllRead">Đọc tất cả</button>
+              </div>
+              <ul class="dropdown-list">
+                <li class="notification-item unread">
+                  <span class="noti-indicator danger"></span>
+                  <div><p class="noti-title">Sự cố điện áp Tuyến TL-05</p><small class="noti-time">12 phút trước</small></div>
+                </li>
+                <li class="notification-item unread">
+                  <span class="noti-indicator warning"></span>
+                  <div><p class="noti-title">Tủ CS-07 cảnh báo mở cửa</p><small class="noti-time">45 phút trước</small></div>
+                </li>
+                <li class="notification-item">
+                  <span class="noti-indicator info"></span>
+                  <div><p class="noti-title">Đồng bộ dữ liệu IoT thành công</p><small class="noti-time">2 giờ trước</small></div>
+                </li>
+              </ul>
             </div>
-            <div class="text-left hidden sm:block">
-              <div class="text-xs font-bold text-slate-800 leading-tight group-hover:text-primary transition">Nguyễn Văn Minh</div>
-              <div class="text-[11px] text-slate-400 font-medium">Quản trị hệ thống</div>
+          </div>
+
+          <div class="user-profile-wrapper">
+            <button class="user-profile-btn" id="btnUserProfile" aria-label="Hồ sơ người dùng">
+              <div class="user-avatar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="user-meta">
+                <span class="user-name">Nguyễn Văn Minh</span>
+                <span class="user-role">Quản trị hệ thống</span>
+              </div>
+              <span class="user-action-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </span>
+            </button>
+            <div class="user-dropdown" id="userDropdown">
+              <div class="user-dropdown-info">
+                <strong>Nguyễn Văn Minh</strong>
+                <small>quantri@smartlight.evncpc.vn</small>
+              </div>
+              <hr class="dropdown-divider">
+              <a href="#profile" class="user-menu-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Hồ sơ cá nhân</span>
+              </a>
+              <hr class="dropdown-divider">
+              <a href="login.html" class="user-menu-item logout-link" id="linkLogout">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Đăng xuất</span>
+              </a>
             </div>
-            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 transition">expand_more</span>
           </div>
         </div>
       </header>
 
       <!-- Scrollable Main Content (Full responsive width matching areas.html) -->
-      <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-6 space-y-6">
+      <main class="page-content" style="padding-bottom: 75px;">
         
-        <!-- BEGIN: Route Detail Page Header -->
-        <section class="space-y-3" data-purpose="route-detail-header">
-          <!-- Breadcrumbs -->
-          <div class="flex items-center gap-2 text-[11px] text-slate-400 font-medium">
-            <a href="routes.html" class="hover:text-primary transition-colors flex items-center gap-1 font-semibold">
-              <span class="material-symbols-outlined text-[14px]">arrow_back</span>
-              <span>Tuyến chiếu sáng</span>
+        <!-- BEGIN: Route Detail Page Header (Thiết kế thoáng đãng, sang trọng, không rối mắt) -->
+        <section class="space-y-3.5" data-purpose="route-detail-header">
+          <!-- Breadcrumb Navigation -->
+          <nav class="flex items-center gap-2 text-xs font-medium text-slate-500">
+            <a href="routes.html" class="flex items-center gap-1.5 text-slate-500 hover:text-brand-600 transition font-semibold">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              <span>Quản lý tuyến</span>
             </a>
-            <span class="material-symbols-outlined text-[14px] text-slate-300">chevron_right</span>
-            <span class="text-primary font-semibold">Chi tiết tuyến chiếu sáng</span>
-          </div>
+            <span class="text-slate-300">/</span>
+            <span class="text-slate-700 font-bold" id="breadRouteName">Chi tiết tuyến TL-001 - Nguyễn Văn Linh</span>
+          </nav>
 
-          <!-- Title Row with Status Badge & Action Buttons (Exact as Image 2) -->
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <!-- Main Title & Action Row -->
+          <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-3 border-b border-slate-200/80">
+            <!-- Left: Route Title + Status Badges (Nằm cùng 1 hàng ngang cân đối, không rớt dòng) -->
             <div class="flex items-center flex-wrap gap-3">
-              <h1 class="text-xl lg:text-2xl font-bold text-slate-900 tracking-tight" id="detailRouteTitle">
-                Chi tiết tuyến chiếu sáng: <span class="font-extrabold text-primary">TL-001</span> – Nguyễn Văn Linh
+              <h1 class="text-2xl font-black text-slate-900 tracking-tight" id="detailRouteTitle">
+                Tuyến TL-001: Nguyễn Văn Linh
               </h1>
-              <span id="detailStatusBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span id="detailStatusBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Đang hoạt động
+                <span>Đang hoạt động</span>
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <span>Pha A • KĐT K1</span>
               </span>
             </div>
 
-            <!-- Action Buttons Group (Exact 4 buttons as in Screenshot 2) -->
+            <!-- Right: Action Buttons (Dàn 1 hàng ngang thanh lịch, không chồng 2 tầng gạch thô) -->
             <div class="flex items-center flex-wrap gap-2">
-              <button id="btnScrollToMap" class="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-primary transition-colors shadow-2xs">
-                <span class="material-symbols-outlined text-[16px] text-slate-500">map</span>
+              <button id="btnScrollToMap" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-brand-600 transition shadow-2xs">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
                 <span>Bản đồ tuyến</span>
               </button>
-              <button id="btnOpenCalibrateModal" class="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-primary transition-colors shadow-2xs">
-                <span class="material-symbols-outlined text-[16px] text-slate-500">tune</span>
-                <span>Hiệu chỉnh tuyến</span>
+              <button id="btnOpenCalibrateModal" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-brand-600 transition shadow-2xs">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>Hiệu chỉnh</span>
               </button>
-              <button id="btnOpenEditRouteModal" class="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-primary transition-colors shadow-2xs">
-                <span class="material-symbols-outlined text-[16px] text-slate-500">edit</span>
-                <span>Chỉnh sửa tuyến</span>
+              <button id="btnOpenEditRouteModal" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-brand-600 transition shadow-2xs">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span>Chỉnh sửa</span>
               </button>
-              <button id="btnOpenExportModal" class="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-primary transition-colors shadow-2xs">
-                <span class="material-symbols-outlined text-[16px] text-slate-500">download</span>
+              <button id="btnOpenExportModal" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-brand-600 transition shadow-2xs">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 <span>Xuất báo cáo</span>
               </button>
+              <a href="routes.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition shadow-2xs">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>
+                <span>Quay lại</span>
+              </a>
             </div>
           </div>
 
-          <!-- Metadata Strip Bar (Exact as in Screenshot 2) -->
-          <div class="flex items-center flex-wrap gap-4 lg:gap-6 text-xs text-slate-500 font-medium pt-1">
-            <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-[16px] text-slate-400">dns</span>
-              <span>Tủ chiếu sáng: <strong class="text-slate-800 font-bold" id="headerCabinetName">CS-01</strong></span>
+          <!-- Metadata Chips Bar (Trình bày dạng thẻ chip riêng biệt, rõ ràng, không bị dính chùm) -->
+          <div class="flex items-center flex-wrap gap-3 text-xs text-slate-600 pt-0.5">
+            <div class="flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
+              <span class="text-base leading-none">🗄️</span>
+              <span>Thuộc tủ: <a href="cabinets-detail.html?code=CS-01" class="text-brand-600 font-bold hover:underline" id="headerCabinetName">Tủ CS-01</a></span>
             </div>
-            <span class="text-slate-300">•</span>
-            <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-[16px] text-slate-400">location_on</span>
+            <div class="flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
+              <span class="text-base leading-none">📍</span>
               <span>Khu vực: <strong class="text-slate-800 font-bold" id="headerAreaName">Hải Châu, Đà Nẵng</strong></span>
             </div>
-            <span class="text-slate-300">•</span>
-            <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-[16px] text-slate-400">straighten</span>
-              <span>Chiều dài: <strong class="text-slate-800 font-bold" id="headerRouteLength">5.2 km</strong></span>
+            <div class="flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
+              <span class="text-base leading-none">📏</span>
+              <span>Chiều dài cáp: <strong class="text-slate-800 font-bold" id="headerRouteLength">5.2 km</strong></span>
             </div>
-            <span class="text-slate-300">•</span>
-            <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-[16px] text-slate-400">lightbulb</span>
-              <span>Số điểm đèn: <strong class="text-slate-800 font-bold" id="headerRoutePoints">348</strong></span>
+            <div class="flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
+              <span class="text-base leading-none">💡</span>
+              <span>Số bóng đèn: <strong class="text-slate-800 font-bold" id="headerRoutePoints">348</strong> điểm</span>
+            </div>
+            <div class="flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
+              <span class="text-base leading-none">⚡</span>
+              <span>Công suất phụ tải: <strong class="text-slate-800 font-bold">45.6 kW</strong></span>
             </div>
           </div>
         </section>
@@ -446,18 +512,15 @@
                     <span id="mainBrightnessDisplay" class="text-2xl font-black text-slate-900">70%</span>
                   </div>
 
-                  <!-- Custom Interactive Range Slider with Active Fill Track -->
-                  <div class="relative py-2.5">
-                    <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden absolute top-1/2 -translate-y-1/2 pointer-events-none">
-                      <div id="mainSliderFillTrack" class="h-full bg-primary rounded-full transition-all duration-75" style="width: 70%;"></div>
-                    </div>
-                    <input 
-                      type="range" 
-                      id="mainBrightnessSlider" 
-                      min="0" 
-                      max="100" 
-                      value="70" 
-                      class="w-full relative z-10 cursor-pointer"
+                  <!-- Clean Range Slider -->
+                  <div class="py-2.5">
+                    <input
+                      type="range"
+                      id="mainBrightnessSlider"
+                      min="0"
+                      max="100"
+                      value="70"
+                      class="smart-slider"
                     >
                   </div>
                 </div>
@@ -516,7 +579,7 @@
               <h3 class="text-xs font-bold text-slate-800 flex items-center gap-2">
                 <span class="material-symbols-outlined text-[18px] text-primary">map</span>
                 <span>Bản đồ tuyến</span>
-                <span class="text-[10px] font-normal text-slate-400">| Tuyến Nguyễn Văn Linh, Đà Nẵng</span>
+                <span class="text-[10px] font-normal text-slate-400" id="routeMapSubtitle">| Tuyến Nguyễn Văn Linh, Đà Nẵng</span>
               </h3>
               
               <!-- Map Top Tools: +, -, Fullscreen -->
@@ -835,18 +898,15 @@
                     <span id="quickBrightnessDisplay" class="font-bold text-slate-900">70%</span>
                   </div>
 
-                  <!-- Range Slider -->
-                  <div class="relative py-2.5">
-                    <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden absolute top-1/2 -translate-y-1/2 pointer-events-none">
-                      <div id="quickSliderFillTrack" class="h-full bg-primary rounded-full transition-all duration-75" style="width: 70%;"></div>
-                    </div>
-                    <input 
-                      type="range" 
-                      id="quickBrightnessSlider" 
-                      min="0" 
-                      max="100" 
-                      value="70" 
-                      class="w-full relative z-10 cursor-pointer"
+                  <!-- Clean Range Slider -->
+                  <div class="py-2.5">
+                    <input
+                      type="range"
+                      id="quickBrightnessSlider"
+                      min="0"
+                      max="100"
+                      value="70"
+                      class="smart-slider"
                     >
                   </div>
                 </div>
@@ -877,38 +937,7 @@
                     <th class="py-3 px-4 text-center">Trạng thái</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 text-slate-700 font-medium">
-                  <tr class="hover:bg-slate-50/70">
-                    <td class="py-3.5 px-4 font-bold text-slate-800">Đoạn 1 - Đầu Cầu Rồng</td>
-                    <td class="py-3.5 px-4 text-slate-600">Từ bờ sông Hàn đến Hoàng Diệu</td>
-                    <td class="py-3.5 px-4 text-right font-semibold">120</td>
-                    <td class="py-3.5 px-4 text-right">1.8 km</td>
-                    <td class="py-3.5 px-4 text-center font-bold text-primary">100%</td>
-                    <td class="py-3.5 px-4 text-center">
-                      <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">Tốt</span>
-                    </td>
-                  </tr>
-                  <tr class="hover:bg-slate-50/70">
-                    <td class="py-3.5 px-4 font-bold text-slate-800">Đoạn 2 - Trung tâm thương mại</td>
-                    <td class="py-3.5 px-4 text-slate-600">Từ Hoàng Diệu đến Nguyễn Tri Phương</td>
-                    <td class="py-3.5 px-4 text-right font-semibold">118</td>
-                    <td class="py-3.5 px-4 text-right">1.9 km</td>
-                    <td class="py-3.5 px-4 text-center font-bold text-primary">98%</td>
-                    <td class="py-3.5 px-4 text-center">
-                      <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">Tốt</span>
-                    </td>
-                  </tr>
-                  <tr class="hover:bg-slate-50/70">
-                    <td class="py-3.5 px-4 font-bold text-slate-800">Đoạn 3 - Cửa ngõ Sân bay</td>
-                    <td class="py-3.5 px-4 text-slate-600">Từ Nguyễn Tri Phương đến bùng binh Sân bay</td>
-                    <td class="py-3.5 px-4 text-right font-semibold">110</td>
-                    <td class="py-3.5 px-4 text-right">1.5 km</td>
-                    <td class="py-3.5 px-4 text-center font-bold text-amber-600">85%</td>
-                    <td class="py-3.5 px-4 text-center">
-                      <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700">Bảo trì 3 đèn</span>
-                    </td>
-                  </tr>
-                </tbody>
+                <tbody id="routeSegmentsBody" class="divide-y divide-slate-100 text-slate-700 font-medium">
               </table>
             </div>
           </div>
@@ -918,17 +947,17 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
               <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <span class="text-[11px] font-bold text-slate-400 uppercase">Hôm nay</span>
-                <p class="text-xl font-bold text-slate-800 mt-1">48.2 <span class="text-xs font-normal text-slate-500">kWh</span></p>
+                <p class="text-xl font-bold text-slate-800 mt-1"><span id="routeEnergyToday">48.2</span> <span class="text-xs font-normal text-slate-500">kWh</span></p>
                 <p class="text-[11px] text-emerald-600 mt-1">−8% so với định mức</p>
               </div>
               <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <span class="text-[11px] font-bold text-slate-400 uppercase">Tháng này (Lũy kế)</span>
-                <p class="text-xl font-bold text-slate-800 mt-1">1,420 <span class="text-xs font-normal text-slate-500">kWh</span></p>
+                <p class="text-xl font-bold text-slate-800 mt-1"><span id="routeEnergyMonth">1,420</span> <span class="text-xs font-normal text-slate-500">kWh</span></p>
                 <p class="text-[11px] text-emerald-600 mt-1">Tiết kiệm 18.5% điện năng</p>
               </div>
               <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <span class="text-[11px] font-bold text-slate-400 uppercase">Chi phí ước tính</span>
-                <p class="text-xl font-bold text-slate-800 mt-1">3,550,000 <span class="text-xs font-normal text-slate-500">VNĐ</span></p>
+                <p class="text-xl font-bold text-slate-800 mt-1"><span id="routeEnergyCost">3,550,000</span> <span class="text-xs font-normal text-slate-500">VNĐ</span></p>
                 <p class="text-[11px] text-slate-500 mt-1">Tính theo biểu giá EVN</p>
               </div>
             </div>
@@ -946,7 +975,7 @@
           <!-- TAB 4 CONTENT: Nhật ký vận hành -->
           <div id="tabContentLogs" class="p-6 hidden">
             <h4 class="text-xs font-bold text-slate-800 mb-3">Nhật ký tác động &amp; sự kiện vận hành tuyến</h4>
-            <div class="space-y-3 text-xs">
+            <div id="routeLogsList" class="space-y-3 text-xs">
               <div class="flex items-start gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-100">
                 <span class="w-2.5 h-2.5 rounded-full bg-primary mt-1.5"></span>
                 <div class="flex-1">
@@ -998,7 +1027,7 @@
           </div>
           <div>
             <h3 class="text-sm font-bold text-slate-800">Hiệu chỉnh thông số tuyến</h3>
-            <p class="text-[11px] text-slate-400">Tuyến TL-001 - Nguyễn Văn Linh</p>
+            <p class="text-[11px] text-slate-400" id="calibrateRouteSubtitle">Tuyến TL-001 - Nguyễn Văn Linh</p>
           </div>
         </div>
         <button onclick="closeCalibrateModal()" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center">
@@ -1054,7 +1083,7 @@
           </div>
           <div>
             <h3 class="text-sm font-bold text-slate-800">Chỉnh sửa thông tin tuyến</h3>
-            <p class="text-[11px] text-slate-400">Mã tuyến: TL-001</p>
+            <p class="text-[11px] text-slate-400" id="editRouteCodeLabel">Mã tuyến: TL-001</p>
           </div>
         </div>
         <button onclick="closeEditRouteModal()" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center">
@@ -1066,7 +1095,7 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Mã tuyến</label>
-            <input type="text" value="TL-001" disabled class="w-full px-3.5 py-2 bg-slate-100 border border-slate-200 rounded-xl font-bold text-slate-500 cursor-not-allowed">
+            <input id="modalRouteCodeInput" type="text" value="TL-001" disabled class="w-full px-3.5 py-2 bg-slate-100 border border-slate-200 rounded-xl font-bold text-slate-500 cursor-not-allowed">
           </div>
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Tên tuyến</label>
@@ -1118,7 +1147,7 @@
           </div>
           <div>
             <h3 class="text-sm font-bold text-slate-800">Xuất báo cáo tuyến</h3>
-            <p class="text-[11px] text-slate-400">TL-001 - Nguyễn Văn Linh</p>
+            <p class="text-[11px] text-slate-400" id="exportRouteSubtitle">TL-001 - Nguyễn Văn Linh</p>
           </div>
         </div>
         <button onclick="closeExportModal()" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center">
@@ -1161,6 +1190,31 @@
   </div>
 
   <!-- Route Detail Management Logic -->
+  <script src="js/api-config.js"></script>
   <script src="js/route-detail.js"></script>
+
+  <script>
+    (function() {
+      var days = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+      function tick() {
+        var now = new Date();
+        var el = document.getElementById('topbarLiveClock');
+        if (el) el.textContent = days[now.getDay()] + ', ' +
+          String(now.getDate()).padStart(2,'0') + '/' +
+          String(now.getMonth()+1).padStart(2,'0') + '/' + now.getFullYear();
+      }
+      tick();
+      setInterval(tick, 60000);
+      document.addEventListener('DOMContentLoaded', function() {
+        var btnN = document.getElementById('btnNotifications');
+        var ddN = document.getElementById('notificationDropdown');
+        var btnU = document.getElementById('btnUserProfile');
+        var ddU = document.getElementById('userDropdown');
+        if (btnN && ddN) btnN.addEventListener('click', function(e) { e.stopPropagation(); ddU && ddU.classList.remove('active'); ddN.classList.toggle('active'); });
+        if (btnU && ddU) btnU.addEventListener('click', function(e) { e.stopPropagation(); ddN && ddN.classList.remove('active'); ddU.classList.toggle('active'); });
+        document.addEventListener('click', function() { ddN && ddN.classList.remove('active'); ddU && ddU.classList.remove('active'); });
+      });
+    })();
+  </script>
 </body>
 </html>

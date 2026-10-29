@@ -24,7 +24,7 @@
           <div class="nav-group-title">Giám sát &amp; điều hành</div>
           <ul class="nav-list">
             <li><a class="nav-link" href="index.html"><span class="nav-icon material-symbols-outlined">dashboard</span><span class="nav-label">Dashboard (Tổng quan)</span></a></li>
-            <li><a class="nav-link active" href="map.html"><span class="nav-icon material-symbols-outlined">map</span><span class="nav-label">Bản đồ giám sát</span></a></li>
+            <li><a class="nav-link" href="map.html"><span class="nav-icon material-symbols-outlined">map</span><span class="nav-label">Bản đồ giám sát</span></a></li>
             <li><a class="nav-link" href="control.html"><span class="nav-icon material-symbols-outlined">tune</span><span class="nav-label">Điều khiển chiếu sáng</span></a></li>
             <li><a class="nav-link" href="schedules.html"><span class="nav-icon material-symbols-outlined">calendar_month</span><span class="nav-label">Lịch vận hành</span></a></li>
             <li><a class="nav-link" href="alerts.html"><span class="nav-icon material-symbols-outlined">warning</span><span class="nav-label">Cảnh báo sự cố</span><span class="nav-badge">12</span></a></li>
@@ -36,7 +36,7 @@
             <li><a class="nav-link" href="areas.html"><span class="nav-icon material-symbols-outlined">location_city</span><span class="nav-label">Khu vực chiếu sáng</span></a></li>
             <li><a class="nav-link" href="cabinets.html"><span class="nav-icon material-symbols-outlined">electrical_services</span><span class="nav-label">Tủ chiếu sáng</span></a></li>
             <li><a class="nav-link" href="routes.html"><span class="nav-icon material-symbols-outlined">alt_route</span><span class="nav-label">Tuyến chiếu sáng</span></a></li>
-            <li><a class="nav-link" href="lights.html"><span class="nav-icon material-symbols-outlined">lightbulb</span><span class="nav-label">Điểm đèn</span></a></li>
+            <li><a class="nav-link active" href="lights.html"><span class="nav-icon material-symbols-outlined">lightbulb</span><span class="nav-label">Điểm đèn</span></a></li>
           </ul>
         </div>
         <div class="nav-group">
@@ -53,7 +53,7 @@
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
     <div class="main-container">
-      <header class="detail-topbar">
+      <header class="topbar detail-topbar">
         <div class="detail-topbar-search">
           <button class="mobile-menu-btn" id="btnToggleMobileSidebar" type="button" aria-label="Mở menu"><span class="material-symbols-outlined">menu</span></button>
           <label class="global-search"><span class="material-symbols-outlined">search</span><input type="search" placeholder="Tìm nhanh trạm, tủ điện, điểm đèn, sự cố (Ctrl+K)..."></label>
@@ -173,6 +173,7 @@
     </div>
   </div>
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+  <script src="js/api-config.js"></script>
   <script src="js/device-detail.js"></script>
 </body>
 </html>
