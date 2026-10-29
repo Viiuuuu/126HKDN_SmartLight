@@ -1,4 +1,4 @@
-﻿
+
 IF EXISTS (SELECT * FROM sys.databases WHERE name = 'dbSmartLight')
 BEGIN
     USE master
@@ -452,9 +452,9 @@ INSERT INTO NguoiDung
 (maNguoiDung,tenDangNhap,matKhau,hoTen,ngaySinh,email,soDienThoai,maVaiTro,maKhuVuc)
 SELECT v.ma,v.tenDangNhap,@Hash,v.hoTen,CONVERT(DATE,v.ngaySinh),v.email,v.sdt,r.maVaiTro,v.maKhuVuc
 FROM (VALUES
- ('ND0001','admin_demo',N'Quản trị viên Demo','2000-01-01','admin.demo@smartlight.example','0900000001',N'Quản trị viên',NULL),
- ('ND0002','vanhanh_demo',N'Nhân viên Vận hành Demo','2001-02-15','vanhanh.demo@smartlight.example','0900000002',N'Nhân viên vận hành','KV001'),
- ('ND0003','kythuat_demo',N'Nhân viên Kỹ thuật Demo','2001-06-20','kythuat.demo@smartlight.example','0900000003',N'Nhân viên kỹ thuật','KV002')
+ ('ND0001','admin_demo',N'QTV Demo','2000-01-01','admin.demo@smartlight.example','0900000001',N'Quản trị viên',NULL),
+ ('ND0002','vanhanh_demo',N'NVVH Demo','2001-02-15','vanhanh.demo@smartlight.example','0900000002',N'Nhân viên vận hành','KV001'),
+ ('ND0003','kythuat_demo',N'NVKT Demo','2001-06-20','kythuat.demo@smartlight.example','0900000003',N'Nhân viên kỹ thuật','KV002')
 ) v(ma,tenDangNhap,hoTen,ngaySinh,email,sdt,tenVaiTro,maKhuVuc)
 JOIN VaiTro r ON r.tenVaiTro=v.tenVaiTro
 WHERE NOT EXISTS (SELECT 1 FROM NguoiDung u WHERE u.maNguoiDung=v.ma OR u.tenDangNhap=v.tenDangNhap);
@@ -507,8 +507,24 @@ CROSS JOIN (VALUES
 WHERE l.tenLich=N'Lịch đèn Bạch Đằng hàng ngày'
  AND NOT EXISTS (SELECT 1 FROM ChiTietLichVanHanh x WHERE x.maLich=l.maLich AND x.gioThucHien=v.gio AND x.hanhDong=v.hanhDong);
 
--- KHONG chen PhienDangNhap/LenhDieuKhien/NhatKyHeThong/CanhBao:
--- cac bang nay nen do chuc nang dang nhap, dieu khien va canh bao tao ra khi TEST.
+-- 14. CANH BAO: 3 canh bao mau dai dien cho tu, tuyen va diem den
+INSERT INTO CanhBao
+(maCauHinh,maTu,maTuyen,maDen,noiDung,mucDo,trangThaiXuLy,
+ thoiGianPhatSinh,thoiGianXuLy,ghiChuXuLy,maNguoiXuLy)
+SELECT c.maCauHinh,v.maTu,v.maTuyen,v.maDen,v.noiDung,v.mucDo,v.trangThai,
+       DATEADD(MINUTE,v.phutPhatSinh,GETDATE()),
+       CASE WHEN v.phutXuLy IS NOT NULL THEN DATEADD(MINUTE,v.phutXuLy,GETDATE()) ELSE NULL END,
+       v.ghiChu,v.maNguoiXuLy
+FROM (VALUES
+ (N'Mất kết nối tủ trên 5 phút',CAST('TC00003' AS CHAR(10)),CAST(NULL AS CHAR(10)),CAST(NULL AS CHAR(10)),N'Tủ Điện Biên Phủ 01 mất kết nối với hệ thống vượt quá 5 phút',CAST(2 AS TINYINT),CAST(0 AS TINYINT),-15,CAST(NULL AS INT),CAST(NULL AS NVARCHAR(255)),CAST(NULL AS CHAR(6))),
+ (N'Thiết bị không phản hồi sau 30 giây',CAST(NULL AS CHAR(10)),CAST('TCS00004' AS CHAR(10)),CAST(NULL AS CHAR(10)),N'Tuyến Điện Biên Phủ không phản hồi tín hiệu điều khiển sau 30 giây',CAST(2 AS TINYINT),CAST(1 AS TINYINT),-45,CAST(NULL AS INT),N'Kỹ thuật viên đang kiểm tra đường truyền và tủ điều khiển',CAST('ND0003' AS CHAR(6))),
+ (N'Nhiệt độ LED vượt 75 độ C',CAST(NULL AS CHAR(10)),CAST(NULL AS CHAR(10)),CAST('DEN00005' AS CHAR(10)),N'Nhiệt độ LED tại Đèn 2 Tháng 9 02 đạt 78.5°C vượt ngưỡng 75°C',CAST(3 AS TINYINT),CAST(2 AS TINYINT),-120,-30,N'Đã kiểm tra bộ tản nhiệt và hạ công suất chiếu sáng về 50%',CAST('ND0003' AS CHAR(6)))
+) v(tenCauHinh,maTu,maTuyen,maDen,noiDung,mucDo,trangThai,phutPhatSinh,phutXuLy,ghiChu,maNguoiXuLy)
+JOIN CauHinhCanhBao c ON c.tenCanhBao=v.tenCauHinh
+WHERE NOT EXISTS (SELECT 1 FROM CanhBao b WHERE b.noiDung=v.noiDung);
+
+-- KHONG chen PhienDangNhap/LenhDieuKhien/NhatKyHeThong:
+-- cac bang nay nen do chuc nang dang nhap va dieu khien tao ra khi TEST.
 GO
 -- KIEM TRA SO DONG CAC BANG DA CHEN
 SELECT * FROM KhuVuc
@@ -517,3 +533,5 @@ SELECT * FROM TuyenChieuSang
 SELECT * FROM DiemDen
 SELECT * FROM NguoiDung
 SELECT * FROM LichVanHanh
+SELECT * FROM CanhBao
+select * from PhienDangNhap

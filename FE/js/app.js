@@ -87,20 +87,33 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateClocks, 1000);
 
   // -------------------------------------------------------------------------
-  // 3. User Session Integration
+  // 3. User Session Integration (Cập nhật tên & vai trò đăng nhập ở Header)
   // -------------------------------------------------------------------------
-  try {
-    const sessionData = sessionStorage.getItem('smartlight_user_session');
-    if (sessionData) {
-      const user = JSON.parse(sessionData);
-      const userNameEl = document.querySelector('.user-name');
-      if (userNameEl && user.username) {
-        // Capitalize username if available
-        userNameEl.textContent = user.username.charAt(0).toUpperCase() + user.username.slice(1);
+  if (typeof window.syncHeaderUserInfo === 'function') {
+    window.syncHeaderUserInfo();
+  } else {
+    try {
+      const sessionData = sessionStorage.getItem('smartlight_user_session');
+      if (sessionData) {
+        const user = JSON.parse(sessionData);
+        const userNameEl = document.querySelector('.user-name');
+        const userRoleEl = document.querySelector('.user-role');
+        const dropdownNameEl = document.querySelector('.user-dropdown-info strong');
+        const dropdownEmailEl = document.querySelector('.user-dropdown-info small');
+
+        const displayName = user.fullName || user.hoTen || (user.username ? user.username.charAt(0).toUpperCase() + user.username.slice(1) : 'Quản trị viên');
+        const rawRole = user.role || user.vaiTro || 'Quản trị viên';
+        const displayRole = typeof window.formatRoleName === 'function' ? window.formatRoleName(rawRole) : rawRole;
+        const displayEmail = user.email || 'quantri@smartlight.evncpc.vn';
+
+        if (userNameEl && displayName) userNameEl.textContent = displayName;
+        if (userRoleEl && displayRole) userRoleEl.textContent = displayRole;
+        if (dropdownNameEl && displayName) dropdownNameEl.textContent = displayName;
+        if (dropdownEmailEl && displayEmail) dropdownEmailEl.textContent = displayEmail;
       }
+    } catch (err) {
+      console.warn('Session parsing error:', err);
     }
-  } catch (err) {
-    console.warn('Session parsing error:', err);
   }
 
   // -------------------------------------------------------------------------
@@ -410,11 +423,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Logout action
+  // Logout action (ATTT Cấp độ 3: gọi API hủy phiên và cập nhật thoiGianDangXuat)
   if (linkLogout) {
-    linkLogout.addEventListener('click', (e) => {
-      sessionStorage.removeItem('smartlight_user_session');
-      // allow normal redirect to login.html
+    linkLogout.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (typeof window.handleLogout === 'function') {
+        await window.handleLogout(e);
+      } else {
+        sessionStorage.removeItem('smartlight_user_session');
+        window.location.href = 'login.html';
+      }
     });
   }
 

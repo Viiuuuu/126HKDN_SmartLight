@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Chi tiết cảnh báo ALR-20241024-001 - SmartLight IoT Municipal System</title>
+  <title>Chi tiết cảnh báo sự cố - SmartLight IoT Municipal System</title>
   
   <!-- Google Fonts: Plus Jakarta Sans & Material Symbols Outlined -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -387,42 +387,42 @@
         </div>
 
         <!-- Compact Alert Summary Banner -->
-        <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm border-l-4 border-error flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div id="alertSummaryBanner" class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm border-l-4 border-error flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-error-container text-on-error-container flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-[26px]">crisis_alert</span>
+            <div id="alertSeverityIconBox" class="w-12 h-12 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[26px]" id="alertHeaderIcon">crisis_alert</span>
             </div>
             <div class="flex flex-col">
               <div class="flex flex-wrap items-center gap-2">
-                <h1 class="text-lg font-bold text-slate-900" id="alertDetailTitle">ALR-20241024-001: Quá dòng trên Tuyến 01</h1>
+                <h1 class="text-lg font-bold text-slate-900" id="alertDetailTitle">CB-00001: Cảnh báo sự cố</h1>
                 <span id="alertDetailCategory" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-primary">
-                  <span class="material-symbols-outlined text-[14px] mr-1">engineering</span>
-                  Sự cố Kỹ thuật
+                  <span class="material-symbols-outlined text-[14px] mr-1">warning</span>
+                  <span id="alertDetailCategoryText">Cảnh báo hệ thống</span>
                 </span>
-                <span id="alertDetailSeverity" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-error-container text-error">
-                  Mức độ Cao
+                <span id="alertDetailSeverity" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                  Mức độ 3 (Nghiêm trọng)
                 </span>
                 <span id="detailCurrentStatusBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
-                  Chưa tiếp nhận
+                  Chưa xử lý
                 </span>
               </div>
               <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-slate-500 font-medium">
                 <span class="flex items-center gap-1">
-                  <span class="material-symbols-outlined text-[16px] text-slate-400">electric_meter</span>
-                  <span id="alertDetailLocation">Tủ điều khiển A1 (Q. Ba Đình)</span>
+                  <span class="material-symbols-outlined text-[16px] text-slate-400" id="alertTargetIcon">electrical_services</span>
+                  <span id="alertDetailLocation">Đang nạp dữ liệu thiết bị...</span>
                 </span>
                 <span class="text-slate-300">•</span>
                 <span class="flex items-center gap-1">
                   <span class="material-symbols-outlined text-[16px] text-slate-400">schedule</span>
-                  <span id="alertDetailTime">09:15 24/10/2024 (IoT Sensor)</span>
+                  <span id="alertDetailTime">--</span>
                 </span>
               </div>
             </div>
           </div>
 
-          <div class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-error-container/40 text-error text-xs font-bold shrink-0 border border-error-container/60">
-            <span class="material-symbols-outlined text-[18px] animate-pulse">warning</span>
-            <span>Thời gian tồn đọng: 10h 27m</span>
+          <div id="alertDurationBadge" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-50 text-amber-800 text-xs font-bold shrink-0 border border-amber-200">
+            <span class="material-symbols-outlined text-[18px]">timelapse</span>
+            <span id="alertDurationText">Thời gian tồn đọng: --</span>
           </div>
         </div>
 
@@ -432,174 +432,93 @@
           <!-- Left Column (8 cols): Core Issue, Telemetry & Assets -->
           <div class="xl:col-span-8 flex flex-col gap-5">
             
-            <!-- Card 1: Core Issue & Recommended Action -->
-            <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col gap-3">
-              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="material-symbols-outlined text-primary text-[20px]">error</span>
-                  <h2 class="text-sm font-bold text-slate-900">Tóm tắt sự cố & Hướng xử lý</h2>
-                  <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-sky-50 text-primary text-[11px] font-bold">
-                    <span class="material-symbols-outlined text-[14px]">hardware</span>
-                    <span id="alertDetailGroup">Nhóm nghiệp vụ: Sự cố Kỹ thuật (Đội Kỹ thuật điện & Thiết bị)</span>
-                  </span>
-                </div>
-                <span class="px-2.5 py-0.5 rounded-full bg-error-container text-error text-[11px] font-bold shrink-0">
-                  Cần kiểm tra ngay
-                </span>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-                <div class="p-3.5 rounded-xl bg-error-container/30 border border-error-container/60 flex flex-col gap-1.5">
-                  <span class="text-xs text-error font-bold flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[16px]">bolt</span>
-                    <span id="alertIssueTitle">Dòng điện vượt ngưỡng an toàn</span>
-                  </span>
-                  <p id="alertIssueDescription" class="text-xs text-slate-600 leading-relaxed">
-                    Dòng pha A đo được <strong class="text-error font-bold">32.0 A</strong> (định mức: 25 A, vượt +28%). Pha B & Pha C bình thường. Khả năng rò điện hoặc ngắn mạch đầu nhánh lộ 01.
-                  </p>
-                </div>
-
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-1.5">
-                  <span class="text-xs text-secondary font-bold flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[16px]">health_and_safety</span>
-                    Khuyến nghị kỹ thuật
-                  </span>
-                  <p id="alertRecommendation" class="text-xs text-slate-600 leading-relaxed">
-                    Cắt điện lộ 01 từ xa nếu dòng tiếp tục vượt 35 A. Kỹ thuật viên hiện trường đo điện trở cách điện và kiểm tra mối nối trước khi cấp lại tải.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card 2: Minimalist Telemetry Grid -->
-            <div id="alertTelemetryCard" class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col gap-3">
+            <!-- Card 1: Core Issue & Configuration from DB -->
+            <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col gap-4">
               <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2">
-                  <span class="material-symbols-outlined text-primary text-[20px]">speed</span>
-                  <h2 class="text-sm font-bold text-slate-900">Thông số kỹ thuật thời gian thực</h2>
+                  <span class="material-symbols-outlined text-primary text-[20px]">crisis_alert</span>
+                  <h2 class="text-sm font-bold text-slate-900">Chi tiết sự cố & Cấu hình giám sát</h2>
                 </div>
-                <span class="inline-flex items-center gap-1.5 text-xs text-slate-400 font-medium">
-                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Online 5s/lần
+                <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold font-mono" id="alertCodeTag">
+                  Mã CB: #--
                 </span>
               </div>
 
-              <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-1">
-                <!-- Pha A (Quá tải) -->
-                <div class="p-3.5 rounded-xl bg-error-container/30 border border-error-container flex flex-col justify-between">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-error">Pha A</span>
-                    <span class="px-1.5 py-0.5 rounded-full bg-error text-white text-[10px] font-bold">Quá tải</span>
-                  </div>
-                  <div class="my-2">
-                    <span class="text-3xl font-extrabold text-error font-mono">32.0</span>
-                    <span class="text-xs font-bold text-error ml-0.5">A</span>
-                  </div>
-                  <span class="text-[11px] text-error font-medium">Đ/m: 25A (+28%)</span>
-                </div>
+              <!-- Nội dung cảnh báo (Trường noiDung từ bảng CanhBao) -->
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col gap-1.5">
+                <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px] text-rose-500">info</span>
+                  Nội dung cảnh báo phát sinh:
+                </span>
+                <p id="alertIssueDescription" class="text-xs text-slate-800 font-semibold leading-relaxed">
+                  --
+                </p>
+              </div>
 
-                <!-- Pha B -->
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-700">Pha B</span>
-                    <span class="text-[10px] text-slate-400 font-medium">Bình thường</span>
-                  </div>
-                  <div class="my-2">
-                    <span class="text-3xl font-extrabold text-slate-800 font-mono">24.5</span>
-                    <span class="text-xs text-slate-400 ml-0.5 font-bold">A</span>
-                  </div>
-                  <span class="text-[11px] text-slate-400">Đ/m: 25A (Chuẩn)</span>
+              <!-- Thông tin cấu hình từ bảng CauHinhCanhBao -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+                  <span class="text-[11px] text-slate-400 font-medium">Tên cấu hình</span>
+                  <span class="text-xs font-bold text-slate-800 mt-1" id="cfgTenCanhBao">--</span>
                 </div>
-
-                <!-- Pha C -->
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-700">Pha C</span>
-                    <span class="text-[10px] text-slate-400 font-medium">Bình thường</span>
-                  </div>
-                  <div class="my-2">
-                    <span class="text-3xl font-extrabold text-slate-800 font-mono">23.8</span>
-                    <span class="text-xs text-slate-400 ml-0.5 font-bold">A</span>
-                  </div>
-                  <span class="text-[11px] text-slate-400">Đ/m: 25A (Chuẩn)</span>
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+                  <span class="text-[11px] text-slate-400 font-medium">Mã loại cảnh báo</span>
+                  <span class="text-xs font-bold text-slate-800 mt-1 font-mono" id="cfgLoaiCanhBao">--</span>
                 </div>
-
-                <!-- Điện áp -->
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-700">Điện áp</span>
-                    <span class="material-symbols-outlined text-[16px] text-primary">electric_bolt</span>
-                  </div>
-                  <div class="my-2">
-                    <span class="text-3xl font-extrabold text-slate-800 font-mono">228</span>
-                    <span class="text-xs text-slate-400 ml-0.5 font-bold">V</span>
-                  </div>
-                  <span class="text-[11px] text-primary font-semibold">Dao động chuẩn</span>
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+                  <span class="text-[11px] text-slate-400 font-medium">Ngưỡng kích hoạt</span>
+                  <span class="text-xs font-bold text-primary mt-1 font-mono" id="cfgNguong">--</span>
                 </div>
-
-                <!-- Nhiệt độ tủ -->
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-amber-800">Nhiệt độ</span>
-                    <span class="material-symbols-outlined text-[16px] text-amber-600">thermostat</span>
-                  </div>
-                  <div class="my-2">
-                    <span class="text-3xl font-extrabold text-amber-800 font-mono">48</span>
-                    <span class="text-xs text-amber-600 ml-0.5 font-bold">°C</span>
-                  </div>
-                  <span class="text-[11px] text-amber-700 font-medium">Cảnh báo ấm</span>
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+                  <span class="text-[11px] text-slate-400 font-medium">Trạng thái quy tắc</span>
+                  <span class="text-xs font-bold mt-1" id="cfgDangBat">--</span>
                 </div>
               </div>
             </div>
 
-            <!-- Card 3: Impacted Infrastructure -->
-            <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col gap-3">
+            <!-- Card 2: Affected Device from DB (TuChieuSang / TuyenChieuSang / DiemDen) -->
+            <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col gap-4">
               <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary text-[20px]">hub</span>
-                  <h2 class="text-sm font-bold text-slate-900">Thiết bị & Tuyến đèn bị ảnh hưởng</h2>
+                  <h2 class="text-sm font-bold text-slate-900">Thiết bị phát sinh cảnh báo</h2>
                 </div>
-                <div class="flex items-center gap-2">
-                  <button id="btnOpenCabinetMap" class="h-8 px-3 rounded-lg bg-sky-50 text-primary hover:bg-sky-100 transition-all flex items-center gap-1 text-xs font-semibold" type="button">
-                    <span class="material-symbols-outlined text-[16px]">map</span>
-                    <span>Bản đồ tủ</span>
-                  </button>
-                  <a href="routes.html" class="h-8 px-3 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all flex items-center gap-1 text-xs font-semibold">
-                    <span class="material-symbols-outlined text-[16px]">route</span>
-                    <span>Xem tuyến</span>
-                  </a>
-                </div>
+                <button id="btnOpenCabinetMap" class="h-8 px-3 rounded-lg bg-sky-50 text-primary hover:bg-sky-100 transition-all flex items-center gap-1 text-xs font-semibold" type="button">
+                  <span class="material-symbols-outlined text-[16px]">location_on</span>
+                  <span>Xem vị trí</span>
+                </button>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+              <!-- Vùng hiển thị chi tiết thiết bị theo đúng DB (Tủ / Tuyến / Đèn) -->
+              <div id="deviceDetailsContainer" class="flex flex-col gap-3">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                   <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-sky-100 text-primary flex items-center justify-center shrink-0">
-                      <span class="material-symbols-outlined text-[20px]">electric_meter</span>
+                    <div class="w-10 h-10 rounded-xl bg-sky-100 text-primary flex items-center justify-center shrink-0" id="deviceIconWrapper">
+                      <span class="material-symbols-outlined text-[22px]" id="deviceMainIcon">electrical_services</span>
                     </div>
                     <div class="flex flex-col">
-                      <span class="text-xs font-bold text-slate-900 font-mono" id="alertCabinetName">Tủ điều khiển A1</span>
-                      <span class="text-[11px] text-slate-500" id="alertCabinetArea">Ngã tư Kim Mã - Liễu Giai • GW-BD-01</span>
+                      <span class="text-xs font-bold text-slate-900" id="deviceMainName">--</span>
+                      <span class="text-[11px] text-slate-500 font-medium" id="deviceSubInfo">--</span>
                     </div>
                   </div>
-                  <span id="alertCabinetStatus" class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold shrink-0">
-                    Online
+                  <span id="deviceStatusBadge" class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold shrink-0">
+                    --
                   </span>
                 </div>
 
-                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
-                      <span class="material-symbols-outlined text-[20px]">alt_route</span>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-xs font-bold text-slate-900" id="alertRouteName">Tuyến đèn TL-01</span>
-                      <span class="text-[11px] text-slate-500">2.4 km • LED 150W Smart Dimming</span>
-                    </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="deviceMetaGrid">
+                  <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+                    <span class="text-[11px] text-slate-400 font-medium">Mã thiết bị:</span>
+                    <span class="text-xs font-bold text-slate-800 mt-1 font-mono" id="deviceMetaCode">--</span>
                   </div>
-                  <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold shrink-0">
-                    248 đèn
-                  </span>
+                  <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+                    <span class="text-[11px] text-slate-400 font-medium">Vị trí / Địa chỉ:</span>
+                    <span class="text-xs font-bold text-slate-800 mt-1" id="deviceMetaAddress">--</span>
+                  </div>
+                  <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col">
+                    <span class="text-[11px] text-slate-400 font-medium">Tọa độ GPS:</span>
+                    <span class="text-xs font-bold text-slate-800 mt-1 font-mono" id="deviceMetaGps">--</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -609,69 +528,60 @@
           <!-- Right Column (4 cols): Dispatch & Timeline -->
           <div class="xl:col-span-4 flex flex-col gap-5">
             
-            <!-- Dispatch Form Card -->
+            <!-- Dispatch & Action Form Card (Chỉ các trường có trong bảng CanhBao) -->
             <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col gap-3">
               <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary text-[20px]">manage_accounts</span>
-                  <h2 class="text-sm font-bold text-slate-900">Điều phối & Xử lý</h2>
+                  <h2 class="text-sm font-bold text-slate-900">Xử lý & Điều phối</h2>
                 </div>
-                <span class="text-xs font-bold text-slate-400">Ca trực #2</span>
+                <span class="text-xs font-bold text-slate-400">dbSmartLight</span>
               </div>
 
-              <form id="formDispatch" class="flex flex-col gap-3.5 pt-1">
+              <form id="formDispatch" class="flex flex-col gap-3.5 pt-1" onsubmit="event.preventDefault()">
+                <!-- Trạng thái xử lý (trangThaiXuLy trong DB: 0, 1, 2) -->
                 <div class="flex flex-col gap-1">
-                  <label class="text-xs font-semibold text-slate-700">Phân nhóm xử lý & Tiếp nhận:</label>
+                  <label class="text-xs font-semibold text-slate-700">Trạng thái xử lý sự cố:</label>
                   <div class="relative">
-                    <select id="selectDispatchGroup" class="w-full h-9 pl-3 pr-8 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-xs appearance-none focus:outline-none focus:border-primary focus:bg-white cursor-pointer transition">
-                      <option selected value="field_tech">Sự cố Kỹ thuật - Đội Kỹ thuật hiện trường</option>
-                      <option value="ops_center">Sự cố Vận hành - Đội Vận hành & Giám sát trung tâm</option>
-                      <option value="third_party">Đơn vị bảo trì thiết bị ngoài (EVN / Nhà thầu)</option>
+                    <select id="selectStatus" class="w-full h-9 pl-3 pr-8 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-xs font-medium appearance-none focus:outline-none focus:border-primary focus:bg-white cursor-pointer transition">
+                      <option value="0">Chưa xử lý (Mới)</option>
+                      <option value="1">Đang xử lý</option>
+                      <option value="2">Đã xử lý (Hoàn thành)</option>
                     </select>
                     <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[18px]">expand_more</span>
                   </div>
                 </div>
 
+                <!-- Người xử lý (maNguoiXuLy trong DB liên kết bảng NguoiDung) -->
                 <div class="flex flex-col gap-1">
-                  <label class="text-xs font-semibold text-slate-700">Kỹ thuật viên phụ trách:</label>
+                  <label class="text-xs font-semibold text-slate-700">Nhân sự phụ trách xử lý (KTV):</label>
                   <div class="relative">
-                    <select id="selectTechnician" class="w-full h-9 pl-3 pr-8 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-xs appearance-none focus:outline-none focus:border-primary focus:bg-white cursor-pointer transition">
-                      <option selected value="1">KTV. Trần Văn Bình (Đội Ba Đình)</option>
-                      <option value="2">KTV. Lê Hoàng Long (Đội cơ động 1)</option>
-                      <option value="3">KTV. Phạm Quốc Hùng (Trực trạm)</option>
+                    <select id="selectTechnician" class="w-full h-9 pl-3 pr-8 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-xs font-medium appearance-none focus:outline-none focus:border-primary focus:bg-white cursor-pointer transition">
+                      <option value="">-- Chưa chỉ định nhân sự --</option>
                     </select>
                     <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[18px]">expand_more</span>
                   </div>
                 </div>
 
+                <!-- Ghi chú xử lý (ghiChuXuLy trong DB: nvarchar(255)) -->
                 <div class="flex flex-col gap-1">
-                  <label class="text-xs font-semibold text-slate-700">Mức độ ưu tiên:</label>
-                  <div class="relative">
-                    <select id="selectPriority" class="w-full h-9 pl-3 pr-8 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-xs appearance-none focus:outline-none focus:border-primary focus:bg-white cursor-pointer transition">
-                      <option selected value="high">Khẩn cấp - Trong 30 phút</option>
-                      <option value="medium">Ưu tiên cao - Trong 2 giờ</option>
-                      <option value="normal">Bình thường - Trong ngày</option>
-                    </select>
-                    <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[18px]">expand_more</span>
-                  </div>
+                  <label class="text-xs font-semibold text-slate-700">Ghi chú & Kết quả xử lý:</label>
+                  <textarea id="dispatchNotes" class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-xs placeholder:text-slate-400 focus:outline-none focus:border-primary focus:bg-white resize-none transition" rows="3" placeholder="Nhập biện pháp khắc phục hoặc kết quả kiểm tra hiện trường..."></textarea>
                 </div>
 
-                <div class="flex flex-col gap-1">
-                  <label class="text-xs font-semibold text-slate-700">Chỉ đạo xử lý / Ghi chú:</label>
-                  <textarea id="dispatchNotes" class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-xs placeholder:text-slate-400 focus:outline-none focus:border-primary focus:bg-white resize-none transition" rows="3">Kiểm tra đầu cáp nhánh lộ 01 tủ A1, đo tải rò pha A và khắc phục ngay.</textarea>
-                </div>
-
+                <!-- Action buttons -->
                 <div class="flex flex-col gap-2 pt-2">
-                  <button id="btnAcceptDispatch" class="w-full h-10 px-4 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-container transition-all flex items-center justify-center gap-1.5 shadow-sm" type="button">
-                    <span class="material-symbols-outlined text-[18px]">assignment_turned_in</span>
-                    <span id="btnAcceptText">Tiếp nhận xử lý</span>
+                  <button id="btnSaveDispatch" class="w-full h-10 px-4 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-container transition-all flex items-center justify-center gap-1.5 shadow-sm" type="button">
+                    <span class="material-symbols-outlined text-[18px]">save</span>
+                    <span>Lưu cập nhật</span>
                   </button>
+
                   <div class="grid grid-cols-2 gap-2">
-                    <button id="btnForwardDispatch" class="h-9 px-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition-all flex items-center justify-center gap-1" type="button">
-                      <span class="material-symbols-outlined text-[16px]">forward_to_inbox</span>
-                      <span>Chuyển xử lý</span>
+                    <button id="btnAcceptDispatch" class="h-9 px-2 rounded-xl bg-sky-50 border border-sky-200 text-primary hover:bg-sky-100 text-xs font-bold transition-all flex items-center justify-center gap-1" type="button">
+                      <span class="material-symbols-outlined text-[16px]">assignment_turned_in</span>
+                      <span id="btnAcceptText">Tiếp nhận</span>
                     </button>
-                    <button id="btnCloseIncident" class="h-9 px-2 rounded-xl bg-rose-50 border border-rose-200 text-error hover:bg-rose-100 text-xs font-bold transition-all flex items-center justify-center gap-1" type="button">
+                    <button id="btnCloseIncident" class="h-9 px-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 text-xs font-bold transition-all flex items-center justify-center gap-1" type="button">
                       <span class="material-symbols-outlined text-[16px]">check_circle</span>
                       <span>Đóng sự cố</span>
                     </button>
@@ -680,43 +590,18 @@
               </form>
             </div>
 
-            <!-- Concise Timeline Card -->
+            <!-- Real Timeline Card driven by DB timestamps -->
             <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col gap-3">
               <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-primary text-[20px]">timeline</span>
                   <h2 class="text-sm font-bold text-slate-900">Tiến trình sự cố</h2>
                 </div>
-                <span class="text-xs text-slate-400 font-semibold" id="timelineCountLabel">3 sự kiện</span>
+                <span class="text-xs text-slate-400 font-semibold" id="timelineCountLabel">--</span>
               </div>
 
               <div class="relative pl-5 space-y-4 pt-1 before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200" id="timelineContainer">
-                <div class="relative">
-                  <div class="absolute -left-5 top-1 w-3.5 h-3.5 rounded-full bg-error ring-2 ring-error-container"></div>
-                  <div class="flex flex-col">
-                    <span class="text-[11px] text-error font-bold font-mono">09:15 • 24/10</span>
-                    <span class="text-xs font-bold text-slate-800">Phát sinh cảnh báo tự động</span>
-                    <span class="text-[11px] text-slate-500">IoT kích hoạt quá dòng pha A &gt; 25A</span>
-                  </div>
-                </div>
-
-                <div class="relative">
-                  <div class="absolute -left-5 top-1 w-3.5 h-3.5 rounded-full bg-primary ring-2 ring-sky-200"></div>
-                  <div class="flex flex-col">
-                    <span class="text-[11px] text-primary font-bold font-mono">09:20 • 24/10</span>
-                    <span class="text-xs font-bold text-slate-800">Đã gửi SMS / Email khẩn</span>
-                    <span class="text-[11px] text-slate-500">Thông báo Trưởng ca và KTV phụ trách</span>
-                  </div>
-                </div>
-
-                <div class="relative" id="timelineCurrentNode">
-                  <div class="absolute -left-5 top-1 w-3.5 h-3.5 rounded-full bg-slate-300 ring-2 ring-slate-100"></div>
-                  <div class="flex flex-col">
-                    <span class="text-[11px] text-slate-400 font-bold">Hiện tại</span>
-                    <span class="text-xs font-bold text-slate-700" id="timelineCurrentStatusText">Chờ kỹ thuật viên tiếp nhận</span>
-                    <span class="text-[11px] text-slate-500">Sẵn sàng phân công xử lý</span>
-                  </div>
-                </div>
+                <!-- Timeline nodes dynamically generated in alert-detail.js -->
               </div>
             </div>
 
@@ -736,13 +621,13 @@
 
   <!-- ==================== MODALS ==================== -->
 
-  <!-- Modal: Vị trí tủ điện trên bản đồ (Quick Cabinet Modal) -->
+  <!-- Modal: Vị trí thiết bị trên bản đồ (Quick Device Modal) -->
   <div id="modalCabinetMap" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-xl">
       <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
         <div>
-          <h3 class="text-sm font-bold text-slate-900">Vị trí trạm tủ điều khiển A1</h3>
-          <p class="text-[11px] text-slate-400">Tọa độ GPS: 21.0315° N, 105.8142° E (Ngã tư Kim Mã - Liễu Giai)</p>
+          <h3 class="text-sm font-bold text-slate-900" id="mapModalTitle">Vị trí thiết bị phát sinh cảnh báo</h3>
+          <p class="text-[11px] text-slate-400" id="mapModalGps">Tọa độ GPS: --</p>
         </div>
         <button id="btnCloseMapModal" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition">✕</button>
       </div>
@@ -751,17 +636,17 @@
           <div class="absolute inset-0 bg-cover bg-center opacity-80" style="background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80');"></div>
           <div class="relative z-10 p-4 rounded-xl bg-white/95 backdrop-blur-sm border border-slate-200 shadow-lg flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-error text-white flex items-center justify-center shadow">
-              <span class="material-symbols-outlined text-[20px]">electric_meter</span>
+              <span class="material-symbols-outlined text-[20px]" id="mapModalIcon">crisis_alert</span>
             </div>
             <div>
-              <div class="text-xs font-bold text-slate-900">Tủ A1 - Tuyến 01 (Quá dòng)</div>
-              <div class="text-[11px] text-slate-500">Phụ trách: 248 điểm đèn • Gateway GW-BD-01</div>
+              <div class="text-xs font-bold text-slate-900" id="mapModalDeviceLabel">--</div>
+              <div class="text-[11px] text-slate-500" id="mapModalDeviceSub">--</div>
             </div>
           </div>
         </div>
       </div>
       <div class="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
-        <a href="map.html" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-container shadow-sm flex items-center gap-1">
+        <a id="linkMapLarge" href="map.html" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary-container shadow-sm flex items-center gap-1">
           <span class="material-symbols-outlined text-[16px]">open_in_new</span>
           <span>Mở trên bản đồ lớn</span>
         </a>
@@ -778,16 +663,19 @@
         </div>
         <h3 class="text-sm font-bold text-slate-900 mb-1">Xác nhận hoàn thành & đóng sự cố</h3>
         <p class="text-xs text-slate-500 leading-relaxed mb-4">
-          Bạn có chắc chắn muốn kết thúc xử lý cho sự cố <strong class="text-slate-800" id="closeIncidentAlertId">ALR-20241024-001</strong>? Trạng thái sẽ được cập nhật thành "Đã xử lý" và lưu vào nhật ký lưu trữ.
+          Bạn có chắc chắn muốn kết thúc xử lý cho sự cố <strong class="text-slate-800 font-mono" id="closeIncidentAlertId">CB-00001</strong>? Trạng thái sẽ được cập nhật thành "Đã xử lý" (trangThaiXuLy = 2) trong CSDL.
         </p>
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Kết luận nguyên nhân & biện pháp đã thực hiện</label>
-          <textarea id="closeNotes" class="w-full p-2.5 rounded-xl border border-slate-200 text-xs bg-slate-50 focus:bg-white focus:outline-none" rows="2" placeholder="VD: Đã siết lại ốc siết cáp pha A và đo tải ổn định ở mức 21A..."></textarea>
+          <textarea id="closeNotes" class="w-full p-2.5 rounded-xl border border-slate-200 text-xs bg-slate-50 focus:bg-white focus:outline-none" rows="3" placeholder="VD: Đã kiểm tra hiện trường, khắc phục hoàn tất và đo tải ổn định..."></textarea>
         </div>
       </div>
       <div class="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
         <button id="btnCancelCloseModal" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Hủy</button>
-        <button id="btnConfirmCloseModal" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm">Xác nhận đóng sự cố</button>
+        <button id="btnConfirmCloseModal" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">done_all</span>
+          <span>Xác nhận đóng sự cố</span>
+        </button>
       </div>
     </div>
   </div>
@@ -796,6 +684,7 @@
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- ==================== SCRIPT LOGIC ==================== -->
+  <script src="js/api-config.js"></script>
   <script src="js/alert-detail.js"></script>
 </body>
 </html>
