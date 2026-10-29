@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" class="h-full bg-slate-50">
+<html lang="vi">
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -23,16 +23,16 @@
         extend: {
           colors: {
             brand: {
-              50: '#eef6ff',
-              100: '#d9eaff',
-              500: '#1e6be6',
-              600: '#0066ff',
-              700: '#0b51c5',
-              800: '#0c3e98',
-              900: '#1a365d',
+              50: '#eff6ff',
+              100: '#e0edff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#0f2b48',
             },
-            primary: '#074476',
-            'primary-container': '#2b5c8f',
+            primary: '#1d4ed8',
+            'primary-container': '#1e40af',
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
@@ -46,7 +46,7 @@
   <link rel="stylesheet" href="css/area-detail.css">
 </head>
 
-<body class="h-full text-slate-800 flex overflow-hidden bg-slate-50">
+<body>
 
   <div class="dashboard-wrapper w-full flex">
     
@@ -256,61 +256,58 @@
       </nav>
     </aside>
     <!-- END: Sidebar -->
-
     <!-- BEGIN: Main Content Area -->
-    <div class="main-container flex-1 flex flex-col h-screen overflow-hidden bg-[#f8fafc]">
+    <div class="main-container">
       
       <!-- Topbar Header -->
-      <header class="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between flex-shrink-0 z-10 shadow-[0_1px_3px_rgba(0,0,0,0.02)]" data-purpose="topbar">
+      <header class="topbar" data-purpose="topbar">
         <!-- Search & Mobile Toggle in Topbar -->
-        <div class="flex items-center gap-3 w-80 lg:w-96">
-          <button class="mobile-menu-btn block lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100" id="btnToggleMobileSidebar" aria-label="Mở menu">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="btnToggleMobileSidebar" aria-label="Mở menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="3" y1="12" x2="21" y2="12"></line>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
           </button>
-          <div class="relative flex-1">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <span class="material-symbols-outlined text-[18px]">search</span>
-            </div>
-            <input class="w-full pl-10 pr-4 py-2 bg-slate-100/70 hover:bg-slate-100 focus:bg-white text-xs border border-transparent focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 rounded-xl transition placeholder-slate-400 text-slate-700" placeholder="Tìm nhanh trạm, tủ điện, lộ đèn, sự cố (Ctrl+K)..." type="text">
+          <div class="search-box">
+            <span class="search-icon material-symbols-outlined">search</span>
+            <input class="search-input" placeholder="Tìm nhanh trạm, tủ điện, lộ đèn, sự cố (Ctrl+K)..." type="text">
           </div>
         </div>
 
         <!-- Right Side Info & Profile -->
-        <div class="flex items-center gap-5">
+        <div class="topbar-right">
           <!-- System Clock -->
-          <div class="hidden xl:flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200/60">
-            <span class="material-symbols-outlined text-[16px] text-slate-400">schedule</span>
+          <div class="system-time-display">
+            <span class="material-symbols-outlined">schedule</span>
             <span id="liveClockDisplay">Thứ Năm, 22/10/2026</span>
           </div>
 
           <!-- Notification Bell -->
-          <a href="alerts.html" class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition" title="Xem 18 cảnh báo sự cố">
+          <a href="alerts.html" class="btn-icon-topbar" title="Xem 18 cảnh báo sự cố">
             <span class="material-symbols-outlined text-[22px]">notifications</span>
             <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">5</span>
           </a>
 
-          <div class="h-6 w-px bg-slate-200"></div>
-
           <!-- User Profile Dropdown -->
-          <div class="flex items-center gap-3 cursor-pointer group">
-            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow ring-2 ring-white">
-              <span class="material-symbols-outlined text-[18px] text-white">person</span>
+          <div class="user-profile-wrapper">
+            <div class="user-profile-btn">
+              <div class="user-avatar">
+                <span class="material-symbols-outlined">person</span>
+              </div>
+              <div class="user-meta">
+                <div class="user-name">Nguyễn Văn Minh</div>
+                <div class="user-role">Quản trị hệ thống</div>
+              </div>
+              <span class="user-action-icon material-symbols-outlined">expand_more</span>
             </div>
-            <div class="text-left hidden sm:block">
-              <div class="text-xs font-bold text-slate-800 leading-tight group-hover:text-primary transition">Nguyễn Văn Minh</div>
-              <div class="text-[11px] text-slate-400 font-medium">Quản trị hệ thống</div>
-            </div>
-            <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 transition">expand_more</span>
           </div>
         </div>
       </header>
 
       <!-- Scrollable Main Content -->
-      <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-6 space-y-6">
+      <main class="page-content flex-1 overflow-y-auto space-y-6">
         
         <!-- Top Breadcrumb & Action Bar -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -319,7 +316,7 @@
             <span class="text-slate-300">/</span>
             <a href="areas.html" class="hover:text-primary transition">Quản lý khu vực chiếu sáng</a>
             <span class="text-slate-300">/</span>
-            <span class="text-slate-800 font-bold">Chi tiết khu vực KV-01</span>
+            <span id="areaDetailBreadcrumb" class="text-slate-800 font-bold">Chi tiết khu vực KV-01</span>
           </div>
 
           <a href="areas.html" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-primary transition shadow-sm self-start sm:self-auto">
@@ -332,13 +329,13 @@
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
           <div>
             <div class="flex flex-wrap items-center gap-2.5">
-              <h1 class="text-2xl font-bold tracking-tight text-slate-900 font-sans">Chi tiết khu vực chiếu sáng: KV-01 – Hải Châu</h1>
+              <h1 id="areaDetailTitle" class="page-main-title">Chi tiết khu vực chiếu sáng: KV-01 – Hải Châu</h1>
               <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 Đang hoạt động
               </span>
             </div>
-            <p class="text-xs text-slate-500 font-medium mt-1">
+            <p id="areaDetailSummary" class="text-xs text-slate-500 font-medium mt-1">
               Khu vực trung tâm đô thị thuộc quận Hải Châu, TP. Đà Nẵng • Quản lý 18 tủ điều khiển và 2.580 điểm đèn.
             </p>
           </div>
@@ -922,6 +919,7 @@
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- Area Detail Logic -->
+  <script src="js/api-config.js"></script>
   <script src="js/area-detail.js"></script>
 </body>
 </html>

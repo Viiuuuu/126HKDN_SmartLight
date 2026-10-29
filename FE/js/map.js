@@ -233,6 +233,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  const requestedDistrict = new URLSearchParams(window.location.search).get('district');
+  const districtSelect = document.getElementById('selectDistrict');
+  if (requestedDistrict && districtSelect && [...districtSelect.options].some(option => option.value === requestedDistrict)) {
+    districtSelect.value = requestedDistrict;
+  }
+
   let selectedDevice = null;
 
   function displayDeviceDetail(id) {
@@ -314,18 +320,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnApplyFilter) {
     btnApplyFilter.addEventListener('click', () => {
-      showToast('Đã áp dụng bộ lọc dữ liệu bản đồ', 'success');
+      applyMapFilters();
     });
+  }
+
+  function applyMapFilters(notify = true) {
+    const district = document.getElementById('selectDistrict')?.value || 'all';
+    const districtNames = {
+      'hai-chau': 'Hải Châu',
+      'son-tra': 'Sơn Trà',
+      'thanh-khe': 'Thanh Khê',
+      'ngu-hanh-son': 'Ngũ Hành Sơn',
+      'cam-le': 'Cẩm Lệ',
+      'lien-chieu': 'Liên Chiểu'
+    };
+    const selectedDistrict = districtNames[district];
+    const showCabinets = document.getElementById('chkCabinet')?.checked !== false;
+    const showLamps = document.getElementById('chkLamp')?.checked !== false;
+    const showNormal = document.getElementById('chkStatusNormal')?.checked !== false;
+    const showWarning = document.getElementById('chkStatusWarning')?.checked !== false;
+    const showLost = document.getElementById('chkStatusLost')?.checked !== false;
+    const keyword = filterSearchInput?.value.trim().toLocaleLowerCase('vi') || '';
+    let visibleCount = 0;
+
+    mapNodes.forEach(node => {
+      const data = deviceDatabase[node.dataset.id];
+      if (!data) {
+        node.style.display = 'none';
+        return;
+      }
+
+      const matchesDistrict = !selectedDistrict || data.district.includes(selectedDistrict);
+      const matchesType = data.iconType === 'cabinet' ? showCabinets : showLamps;
+      const matchesStatus = data.statusClass === 'status-active'
+        ? showNormal
+        : data.statusClass === 'status-warning'
+          ? showWarning
+          : showLost;
+      const searchableText = `${data.id} ${data.code} ${data.type} ${data.district} ${data.route} ${data.location}`.toLocaleLowerCase('vi');
+      const matchesSearch = !keyword || searchableText.includes(keyword);
+      const visible = matchesDistrict && matchesType && matchesStatus && matchesSearch;
+
+      node.style.display = visible ? '' : 'none';
+      if (visible) visibleCount++;
+      if (!visible && node.classList.contains('selected')) {
+        node.classList.remove('selected');
+        selectedDevice = null;
+        deviceDetailCard?.classList.add('hidden');
+      }
+    });
+
+    if (notify) showToast(`Đang hiển thị ${visibleCount} thiết bị theo bộ lọc.`, 'success');
   }
 
   if (btnResetFilter) {
     btnResetFilter.addEventListener('click', () => {
       if (filterSearchInput) filterSearchInput.value = '';
-      const checkboxes = filterPanel.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach(c => c.checked = true);
-      const sel = document.getElementById('selectDistrict');
-      if (sel) sel.selectedIndex = 1;
-      showToast('Đã đặt lại bộ lọc bản đồ mặc định', 'success');
+      filterPanel?.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = true;
+      });
+      const districtSelect = document.getElementById('selectDistrict');
+      if (districtSelect) districtSelect.value = 'all';
+      applyMapFilters(false);
+      showToast('Đã đặt lại bộ lọc bản đồ.', 'success');
     });
   }
 
@@ -337,9 +394,92 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('chkStatusLost')
       ];
       statusBoxes.forEach(b => { if (b) b.checked = true; });
-      showToast('Đã chọn tất cả trạng thái', 'success');
+      applyMapFilters(false);
+      showToast('Đã chọn tất cả trạng thái.', 'success');
     });
   }
+
+  filterSearchInput?.addEventListener('keydown', event => {
+    if (event.key === 'Enter') applyMapFilters();
+  });
+  document.getElementById('selectDistrict')?.addEventListener('change', () => applyMapFilters(false));
+  document.getElementById('chkCabinet')?.addEventListener('change', () => applyMapFilters(false));
+  document.getElementById('chkLamp')?.addEventListener('change', () => applyMapFilters(false));
+  document.getElementById('chkStatusNormal')?.addEventListener('change', () => applyMapFilters(false));
+  document.getElementById('chkStatusWarning')?.addEventListener('change', () => applyMapFilters(false));
+  document.getElementById('chkStatusLost')?.addEventListener('change', () => applyMapFilters(false));
+  applyMapFilters(false);
+
+  async function loadMapInfrastructure() {
+    if (!window.api) return;
+    try {
+      const [areas, cabinets, routes, lamps] = await Promise.all([
+        window.api.get('/KhuVuc'),
+        window.api.get('/TuChieuSang'),
+        window.api.get('/TuyenChieuSang'),
+        window.api.get('/DiemDen')
+      ]);
+      if (![areas, cabinets, routes, lamps].every(Array.isArray)) {
+        throw new TypeError('API hạ tầng phải trả về danh sách thiết bị.');
+      }
+
+      const areaNames = new Map(areas.map(item => [
+        String(item.maKhuVuc ?? item.MaKhuVuc ?? '').trim(),
+        String(item.tenPhuongXa ?? item.TenPhuongXa ?? '').trim()
+      ]));
+      const cabinetById = new Map(cabinets.map(item => [
+        String(item.maTu ?? item.MaTu ?? '').trim(),
+        item
+      ]));
+      const routeById = new Map(routes.map(item => [
+        String(item.maTuyen ?? item.MaTuyen ?? '').trim(),
+        item
+      ]));
+      const apiDevices = [
+        ...cabinets.map(item => ({
+          id: String(item.maTu ?? item.MaTu ?? '').trim(),
+          type: 'Tủ điều khiển trung tâm',
+          district: areaNames.get(String(item.maKhuVuc ?? item.MaKhuVuc ?? '').trim()) || 'Chưa xác định',
+          route: '',
+          location: String(item.diaChi ?? item.DiaChi ?? 'Chưa có vị trí'),
+          status: (item.trangThaiKetNoi ?? item.TrangThaiKetNoi) ? 'Hoạt động' : 'Mất kết nối',
+          statusClass: (item.trangThaiKetNoi ?? item.TrangThaiKetNoi) ? 'status-active' : 'status-lost',
+          power: 'Chưa có dữ liệu',
+          dim: 'Chưa có dữ liệu',
+          iconType: 'cabinet'
+        })),
+        ...lamps.map(item => {
+          const routeId = String(item.maTuyen ?? item.MaTuyen ?? '').trim();
+          const route = routeById.get(routeId);
+          const cabinet = cabinetById.get(String(route?.maTu ?? route?.MaTu ?? '').trim());
+          const isActive = Number(item.trangThaiHoatDong ?? item.TrangThaiHoatDong) === 1;
+          return {
+            id: String(item.maDen ?? item.MaDen ?? '').trim(),
+            type: String(item.loaiBongDen ?? item.LoaiBongDen ?? 'Điểm đèn LED'),
+            district: areaNames.get(String(cabinet?.maKhuVuc ?? cabinet?.MaKhuVuc ?? '').trim()) || '',
+            route: String(route?.tenTuyen ?? route?.TenTuyen ?? routeId),
+            location: String(item.viTri ?? item.ViTri ?? 'Chưa có vị trí'),
+            status: isActive ? 'Hoạt động' : 'Chưa xác định',
+            statusClass: isActive ? 'status-active' : 'status-lost',
+            power: `${item.congSuat ?? item.CongSuat ?? '—'} W`,
+            dim: `${item.doSang ?? item.DoSang ?? '—'}%`,
+            iconType: 'lamp'
+          };
+        })
+      ];
+
+      apiDevices.forEach(item => {
+        const existing = deviceDatabase[item.id];
+        if (existing) Object.assign(existing, item, { code: item.id });
+      });
+      applyMapFilters(false);
+    } catch (error) {
+      console.warn('Không tải được dữ liệu bản đồ từ API; giữ dữ liệu mô phỏng.', error);
+      showToast('Không kết nối được Backend bản đồ; đang hiển thị thiết bị mô phỏng.', 'warning');
+    }
+  }
+
+  loadMapInfrastructure();
 
   // -------------------------------------------------------------------------
   // 5. Map Canvas Zoom & Satellite Layer Controls
@@ -424,13 +564,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnQuickControl) {
     btnQuickControl.addEventListener('click', () => {
-      showToast('Đã mở lệnh điều khiển Dimming / Bật Tắt cho node này', 'success');
+      if (!selectedDevice) {
+        showToast('Hãy chọn một thiết bị trước khi mở điều khiển.', 'warning');
+        return;
+      }
+
+      const params = new URLSearchParams({
+        id: selectedDevice.id,
+        type: selectedDevice.type,
+        district: selectedDevice.district,
+        route: selectedDevice.route,
+        location: selectedDevice.location,
+        status: selectedDevice.status,
+        power: selectedDevice.power,
+        dim: selectedDevice.dim
+      });
+      window.location.href = `device-detail.html?${params.toString()}`;
     });
   }
 
   if (btnDispatchPatrol) {
     btnDispatchPatrol.addEventListener('click', () => {
-      showToast('Đã gửi thông báo điều phối đội xe kỹ thuật Hải Châu - Sơn Trà', 'success');
+      showToast('Chức năng điều phối đội hiện chưa được kết nối API.', 'warning');
     });
   }
 
@@ -514,11 +669,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const iconSvg = type === 'success' 
       ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`
       : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
-
-    toast.innerHTML = `
-      ${iconSvg}
-      <span>${message}</span>
-    `;
+    const iconTemplate = document.createElement('template');
+    iconTemplate.innerHTML = iconSvg;
+    const text = document.createElement('span');
+    text.textContent = message;
+    toast.append(iconTemplate.content, text);
 
     toastContainer.appendChild(toast);
 

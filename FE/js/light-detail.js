@@ -1,4 +1,10 @@
 // ==================== JAVASCRIPT LOGIC FOR LIGHT POINT DETAIL ====================
+const lightParams = new URLSearchParams(window.location.search);
+const lightId = lightParams.get('id') || 'LD-0001';
+let currentRatedPower = Number.parseFloat(lightParams.get('power')) || 120;
+const initialDim = Number.parseFloat(lightParams.get('dim'));
+let currentBrightness = Number.isFinite(initialDim) ? initialDim : 80;
+let currentLightName = lightParams.get('location') || 'Đường Lê Duẩn - Điểm số 001';
 
 // Live System Clock update
 function updateClock() {
@@ -39,10 +45,12 @@ function showToast(message, type = 'success') {
   }
 
   toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-lg ${bgStyle} text-xs font-medium toast-anim pointer-events-auto transition-all`;
-  toast.innerHTML = `
-    <span class="material-symbols-outlined text-[18px] ${iconColor}">${icon}</span>
-    <span>${message}</span>
-  `;
+  const iconElement = document.createElement('span');
+  iconElement.className = `material-symbols-outlined text-[18px] ${iconColor}`;
+  iconElement.textContent = icon;
+  const text = document.createElement('span');
+  text.textContent = message;
+  toast.append(iconElement, text);
 
   container.appendChild(toast);
   setTimeout(() => {
@@ -66,7 +74,8 @@ function updateBrightness(val) {
   const telemetryCurrent = document.getElementById('telemetryCurrent');
 
   if (display) display.innerText = val + '%';
-  if (markerLabel) markerLabel.textContent = `LD-0001 (${val}%)`;
+  currentBrightness = val;
+  if (markerLabel) markerLabel.textContent = `${lightId} (${val}%)`;
 
   // Scale Light Beam SVG
   if (beam) {
@@ -78,8 +87,7 @@ function updateBrightness(val) {
   }
 
   // Calculate instantaneous power and current based on dimming
-  const maxPower = 120;
-  const power = val === 0 ? 0 : ((val / 100) * maxPower * 0.985).toFixed(1);
+  const power = val === 0 ? 0 : ((val / 100) * currentRatedPower * 0.985).toFixed(1);
   const current = val === 0 ? '0.00 A' : ((power / 224.6)).toFixed(2) + ' A';
 
   if (telemetryPower) telemetryPower.innerHTML = `${power} <span class="text-xs font-normal text-slate-500">W</span>`;
@@ -106,7 +114,7 @@ function setQuickDim(val) {
   if (range) {
     range.value = val;
     updateBrightness(val);
-    showToast(`Đã điều chỉnh mức sáng điểm đèn LD-0001 về ${val}%`);
+    showToast(`Mô phỏng: mức sáng điểm đèn ${lightId} là ${val}%. Chưa gửi lệnh thật.`, 'info');
   }
 }
 
@@ -185,28 +193,40 @@ formEditLight?.addEventListener('submit', (e) => {
     modalEditLight.classList.add('hidden');
     modalEditLight.classList.remove('flex');
   }
-  showToast('Cập nhật thông số điểm đèn LD-0001 thành công!');
+  currentLightName = newName;
+  currentRatedPower = Number.parseFloat(newPower) || currentRatedPower;
+  showToast('Đã cập nhật thông số trong bản demo; chưa lưu lên Backend.', 'warning');
 });
 
 // Action Bar triggers
 document.getElementById('btnPrintSpecs')?.addEventListener('click', () => {
-  showToast('Đang kết xuất biểu mẫu thông số kỹ thuật LD-0001 ra máy in...');
+  showToast(`Đang mở bản in thông số ${lightId}...`, 'info');
   setTimeout(() => window.print(), 600);
 });
 
-document.getElementById('btnShareLamp')?.addEventListener('click', () => {
-  navigator.clipboard?.writeText(window.location.href);
-  showToast('Đã sao chép liên kết thông số điểm đèn LD-0001 vào clipboard!');
+document.getElementById('btnShareLamp')?.addEventListener('click', async () => {
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('Trình duyệt không cấp quyền clipboard.');
+    await navigator.clipboard.writeText(window.location.href);
+    showToast(`Đã sao chép liên kết điểm đèn ${lightId}.`);
+  } catch (error) {
+    console.warn('Không thể sao chép liên kết điểm đèn:', error);
+    showToast('Không thể truy cập clipboard. Hãy sao chép liên kết trên thanh địa chỉ.', 'warning');
+  }
 });
 
-document.getElementById('btnSyncNow')?.addEventListener('click', () => {
+document.getElementById('btnSyncNow')?.addEventListener('click', async () => {
   const icon = document.getElementById('syncIcon');
   if (icon) icon.classList.add('animate-spin');
-  showToast('Đang đồng bộ tham số NB-IoT tức thời với máy chủ EVN...', 'info');
-  setTimeout(() => {
+  try {
+    await loadLightTelemetry();
+    showToast(`Đã tải lại dữ liệu giám sát ${lightId} từ Backend.`);
+  } catch (error) {
+    console.warn('Không tải được dữ liệu giám sát điểm đèn:', error);
+    showToast('Không thể đồng bộ dữ liệu. Kiểm tra Backend rồi thử lại.', 'warning');
+  } finally {
     if (icon) icon.classList.remove('animate-spin');
-    showToast('Đồng bộ dữ liệu tức thời thành công! RSSI: -78 dBm • Phản hồi: 45ms');
-  }, 1000);
+  }
 });
 
 // Map controls
@@ -214,23 +234,119 @@ document.getElementById('btnMapStreet')?.addEventListener('click', function() {
   this.className = 'px-3 py-1 rounded-lg bg-white text-primary text-xs font-bold shadow-2xs';
   const satBtn = document.getElementById('btnMapSatellite');
   if (satBtn) satBtn.className = 'px-3 py-1 rounded-lg text-slate-500 hover:text-slate-800 text-xs font-medium transition-colors';
-  showToast('Chuyển sang chế độ Sơ đồ phố GIS đô thị', 'info');
+  document.getElementById('mapWrapper')?.classList.remove('map-satellite-preview');
+  showToast('Đang xem sơ đồ minh họa; lớp GIS chưa được kết nối.', 'info');
 });
 
 document.getElementById('btnMapSatellite')?.addEventListener('click', function() {
   this.className = 'px-3 py-1 rounded-lg bg-white text-primary text-xs font-bold shadow-2xs';
   const streetBtn = document.getElementById('btnMapStreet');
   if (streetBtn) streetBtn.className = 'px-3 py-1 rounded-lg text-slate-500 hover:text-slate-800 text-xs font-medium transition-colors';
-  showToast('Chuyển sang chế độ ảnh vệ tinh độ phân giải cao', 'info');
+  document.getElementById('mapWrapper')?.classList.add('map-satellite-preview');
+  showToast('Lớp vệ tinh hiện chỉ là mô phỏng; chưa tải ảnh GIS.', 'info');
 });
 
+let mapZoom = 1;
+function updateMapZoom(delta) {
+  mapZoom = Math.max(0.8, Math.min(1.8, mapZoom + delta));
+  const mapSvg = document.querySelector('#mapWrapper svg');
+  if (mapSvg) mapSvg.style.transform = `scale(${mapZoom})`;
+  if (mapSvg) mapSvg.style.transformOrigin = 'center';
+}
+
 document.getElementById('btnZoomIn')?.addEventListener('click', () => {
-  showToast('Phóng to bản đồ GIS khu vực Lê Duẩn (+25%)', 'info');
+  updateMapZoom(0.15);
 });
 
 document.getElementById('btnZoomOut')?.addEventListener('click', () => {
-  showToast('Thu nhỏ bản đồ GIS khu vực Lê Duẩn (-25%)', 'info');
+  updateMapZoom(-0.15);
 });
+
+function setLightText(id, value) {
+  const element = document.getElementById(id);
+  if (!element) return;
+  if (element instanceof HTMLInputElement) element.value = value;
+  else element.textContent = value;
+}
+
+function applyLightRecord(record) {
+  const name = record.tenDen ?? record.TenDen ?? currentLightName;
+  const id = record.maDen ?? record.MaDen ?? lightId;
+  const location = record.viTri ?? record.ViTri ?? currentLightName;
+  const power = Number(record.congSuat ?? record.CongSuat);
+  const dim = Number(record.doSang ?? record.DoSang);
+  currentLightName = name;
+  if (Number.isFinite(power) && power > 0) currentRatedPower = power;
+  if (Number.isFinite(dim) && dim >= 0 && dim <= 100) currentBrightness = dim;
+
+  document.title = `Chi tiết điểm đèn: ${id} - SmartLight`;
+  setLightText('breadcrumbLampCode', id);
+  setLightText('lampCodeDisplay', id);
+  setLightText('heroLampTitle', `Điểm đèn: ${id}`);
+  setLightText('lampSubName', name);
+  setLightText('heroLocationText', location);
+  setLightText('editLampCode', id);
+  setLightText('editLampName', name);
+  setLightText('editLampPower', currentRatedPower);
+  const range = document.getElementById('dimming-range');
+  if (range) range.value = currentBrightness;
+  updateBrightness(currentBrightness);
+}
+
+async function loadLightTelemetry() {
+  const readings = await window.api.get('/DuLieuGiamSatDen', { maDen: lightId, limit: 1 });
+  if (!Array.isArray(readings)) throw new TypeError('API DuLieuGiamSatDen phải trả về danh sách.');
+  const latest = readings[0];
+  if (!latest) return;
+
+  const power = latest.congSuatThucTe ?? latest.CongSuatThucTe;
+  const current = latest.dongDien ?? latest.DongDien;
+  if (Number.isFinite(Number(power))) {
+    const powerEl = document.getElementById('telemetryPower');
+    if (powerEl) powerEl.textContent = `${Number(power).toFixed(1)} W`;
+  }
+  if (Number.isFinite(Number(current))) setLightText('telemetryCurrent', `${Number(current).toFixed(2)} A`);
+}
+
+async function loadLightDetail() {
+  if (!window.api) {
+    showToast('Chưa nạp API client; đang dùng thông tin mô phỏng.', 'warning');
+    return;
+  }
+
+  let record;
+  try {
+    record = await window.api.get(`/DiemDen/${encodeURIComponent(lightId)}`);
+    if (!record) throw new Error('API không trả về thông tin điểm đèn.');
+  } catch (error) {
+    console.warn(`Không tải được điểm đèn ${lightId} từ API; giữ dữ liệu dự phòng.`, error);
+    showToast(`Không tải được dữ liệu ${lightId}; đang hiển thị thông tin mô phỏng.`, 'warning');
+    return;
+  }
+
+  applyLightRecord(record);
+  try {
+    await loadLightTelemetry();
+  } catch (error) {
+    console.warn(`Không tải được telemetry của ${lightId}.`, error);
+    showToast('Thông tin điểm đèn đã tải; dữ liệu giám sát hiện chưa khả dụng.', 'warning');
+  }
+}
+
+const initialLightId = document.getElementById('editLampCode');
+if (initialLightId) initialLightId.value = lightId;
+setLightText('breadcrumbLampCode', lightId);
+setLightText('lampCodeDisplay', lightId);
+setLightText('heroLampTitle', `Điểm đèn: ${lightId}`);
+setLightText('lampSubName', currentLightName);
+setLightText('heroLocationText', currentLightName);
+setLightText('editLampName', currentLightName);
+setLightText('specRatedPower', `${currentRatedPower}W`);
+setLightText('mapMarkerLabel', `${lightId} (${currentBrightness}%)`);
+const initialBrightnessRange = document.getElementById('dimming-range');
+if (initialBrightnessRange) initialBrightnessRange.value = currentBrightness;
+updateBrightness(currentBrightness);
+loadLightDetail();
 
 // Mobile Sidebar Toggle
 const sidebar = document.getElementById('sidebar');

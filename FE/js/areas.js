@@ -3,7 +3,7 @@
  */
 
 // Master Areas Data (From Screenshot 1)
-const areasData = [
+let areasData = [
   {
     id: "KV-01",
     name: "Hải Châu",
@@ -77,6 +77,140 @@ const areasData = [
     updated: "14/10/2024 10:10"
   }
 ];
+let editingAreaId = null;
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[character]);
+}
+
+function openRequestedAreaEdit() {
+  const requestedId = new URLSearchParams(window.location.search).get('edit');
+  if (requestedId) editArea(requestedId);
+}
+
+function updateAreaStats() {
+  const total = areasData.length;
+  const active = areasData.filter(item => item.status === 'Hoạt động').length;
+  const maintenance = areasData.filter(item => item.status === 'Bảo trì').length;
+  const alerts = areasData.filter(item => item.status === 'Có cảnh báo').length;
+
+  document.getElementById('statTotalAreas').textContent = total;
+  document.getElementById('statActiveAreas').textContent = active;
+  document.getElementById('statMaintenanceAreas').textContent = maintenance;
+  document.getElementById('statAlertAreas').textContent = alerts;
+}
+
+function openAreaModal(area = null) {
+  const modal = document.getElementById('modalAddArea');
+  const form = document.getElementById('formAddArea');
+  const title = document.getElementById('areaModalTitle');
+  const submit = document.getElementById('areaSubmitButton');
+  if (!modal || !form || !title || !submit) return;
+
+  form.reset();
+  editingAreaId = area?.id || null;
+  title.textContent = area ? `Chỉnh sửa khu vực ${area.id}` : 'Thêm khu vực chiếu sáng mới';
+  submit.textContent = area ? 'Lưu thay đổi' : 'Tạo khu vực';
+
+  if (area) {
+    document.getElementById('areaCodeInput').value = area.id;
+    document.getElementById('areaNameInput').value = area.name;
+    document.getElementById('areaDistrictInput').value = area.district;
+    document.getElementById('areaStatusInput').value = area.status;
+  }
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeAreaModal() {
+  const modal = document.getElementById('modalAddArea');
+  modal?.classList.add('hidden');
+  modal?.classList.remove('flex');
+  editingAreaId = null;
+}
+
+function readApiField(item, camelCase, pascalCase) {
+  return item?.[camelCase] ?? item?.[pascalCase];
+}
+
+async function loadAreasFromApi() {
+  if (!window.api) {
+    openRequestedAreaEdit();
+    return;
+  }
+
+  try {
+    const [apiAreas, cabinets, routes, lights] = await Promise.all([
+      window.api.get('/KhuVuc'),
+      window.api.get('/TuChieuSang'),
+      window.api.get('/TuyenChieuSang'),
+      window.api.get('/DiemDen')
+    ]);
+    if (![apiAreas, cabinets, routes, lights].every(Array.isArray)) {
+      throw new TypeError('API hạ tầng phải trả về danh sách cho từng endpoint.');
+    }
+    if (!apiAreas.length) {
+      showToast('Backend chưa có dữ liệu khu vực; đang hiển thị danh sách mô phỏng.', 'error');
+      openRequestedAreaEdit();
+      return;
+    }
+
+    areasData = apiAreas.map(area => {
+      const id = String(readApiField(area, 'maKhuVuc', 'MaKhuVuc') || '').trim();
+      const areaCabinets = cabinets.filter(cabinet =>
+        String(readApiField(cabinet, 'maKhuVuc', 'MaKhuVuc') || '').trim() === id
+      );
+      const cabinetIds = new Set(areaCabinets.map(cabinet =>
+        String(readApiField(cabinet, 'maTu', 'MaTu') || '').trim()
+      ));
+      const areaRoutes = routes.filter(route =>
+        cabinetIds.has(String(readApiField(route, 'maTu', 'MaTu') || '').trim())
+      );
+      const routeIds = new Set(areaRoutes.map(route =>
+        String(readApiField(route, 'maTuyen', 'MaTuyen') || '').trim()
+      ));
+      const areaLights = lights.filter(light =>
+        routeIds.has(String(readApiField(light, 'maTuyen', 'MaTuyen') || '').trim())
+      );
+      const onlineCabinets = areaCabinets.filter(cabinet =>
+        Boolean(readApiField(cabinet, 'trangThaiKetNoi', 'TrangThaiKetNoi'))
+      ).length;
+      const rate = areaCabinets.length ? Number((onlineCabinets * 100 / areaCabinets.length).toFixed(1)) : 0;
+      const status = !areaCabinets.length || onlineCabinets === areaCabinets.length
+        ? 'Hoạt động'
+        : onlineCabinets > 0
+          ? 'Có cảnh báo'
+          : 'Bảo trì';
+
+      return {
+        id,
+        name: String(readApiField(area, 'tenPhuongXa', 'TenPhuongXa') || id),
+        district: String(readApiField(area, 'tenPhuongXa', 'TenPhuongXa') || ''),
+        cabinets: areaCabinets.length,
+        routes: areaRoutes.length,
+        lamps: areaLights.length,
+        rate,
+        alerts: 0,
+        status,
+        updated: new Date().toLocaleString('vi-VN')
+      };
+    });
+    renderAreasTable();
+    updateAreaStats();
+    openRequestedAreaEdit();
+  } catch (error) {
+    console.warn('Không tải được dữ liệu khu vực từ API; dùng dữ liệu mô phỏng.', error);
+    showToast('Không kết nối được Backend khu vực; đang hiển thị dữ liệu mô phỏng.', 'error');
+    openRequestedAreaEdit();
+  }
+}
 
 // Toast Alert
 function showToast(message, type = 'success') {
@@ -88,14 +222,30 @@ function showToast(message, type = 'success') {
       ? 'bg-slate-900 text-white border-slate-800' 
       : 'bg-rose-900 text-white border-rose-800'
   }`;
-  toast.innerHTML = `
-    <span class="w-2 h-2 rounded-full ${type === 'success' ? 'bg-emerald-400' : 'bg-rose-400'}"></span>
-    <span>${message}</span>
-  `;
+  const marker = document.createElement('span');
+  marker.className = `w-2 h-2 rounded-full ${type === 'success' ? 'bg-emerald-400' : 'bg-rose-400'}`;
+  const text = document.createElement('span');
+  text.textContent = message;
+  toast.append(marker, text);
   container.appendChild(toast);
   
   requestAnimationFrame(() => {
     toast.classList.remove('translate-y-2', 'opacity-0');
+  });
+  document.getElementById('areasTableBody')?.addEventListener('click', (event) => {
+    const actionButton = event.target.closest('button[data-action]');
+    if (actionButton) {
+      event.stopPropagation();
+      const { action, areaId } = actionButton.dataset;
+      if (action === 'edit') editArea(areaId);
+      if (action === 'delete') showMoreAreaMenu(areaId);
+      return;
+    }
+
+    const row = event.target.closest('tr.area-row');
+    if (row && !event.target.closest('input, a')) {
+      window.location.href = `area-detail.html?id=${encodeURIComponent(row.dataset.areaId)}`;
+    }
   });
   
   setTimeout(() => {
@@ -176,13 +326,13 @@ function renderAreasTable() {
     }
 
     return `
-      <tr class="hover:bg-slate-50/80 transition-colors cursor-pointer" onclick="window.location.href='area-detail.html?id=${item.id}'">
+      <tr class="area-row hover:bg-slate-50/80 transition-colors cursor-pointer" data-area-id="${escapeHtml(item.id)}">
         <td class="py-3.5 px-4 text-center" onclick="event.stopPropagation()">
           <input type="checkbox" class="area-row-checkbox rounded border-slate-300 text-primary focus:ring-primary/20">
         </td>
-        <td class="py-3.5 px-4 font-mono font-bold text-primary whitespace-nowrap">${item.id}</td>
-        <td class="py-3.5 px-4 font-bold text-slate-900 whitespace-nowrap">${item.name}</td>
-        <td class="py-3.5 px-4 text-slate-600 whitespace-nowrap">${item.district}</td>
+        <td class="py-3.5 px-4 font-mono font-bold text-primary whitespace-nowrap">${escapeHtml(item.id)}</td>
+        <td class="py-3.5 px-4 font-bold text-slate-900 whitespace-nowrap">${escapeHtml(item.name)}</td>
+        <td class="py-3.5 px-4 text-slate-600 whitespace-nowrap">${escapeHtml(item.district)}</td>
         <td class="py-3.5 px-4 text-center font-mono font-semibold text-slate-800">${item.cabinets}</td>
         <td class="py-3.5 px-4 text-center font-mono font-semibold text-slate-800">${item.routes}</td>
         <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-800">${item.lamps.toLocaleString('vi-VN')}</td>
@@ -192,13 +342,13 @@ function renderAreasTable() {
         <td class="py-3.5 px-4 text-center font-mono text-[11px] text-slate-500 whitespace-nowrap">${item.updated}</td>
         <td class="py-3.5 px-4 text-center" onclick="event.stopPropagation()">
           <div class="flex items-center justify-center gap-1">
-            <a href="area-detail.html?id=${item.id}" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-100 transition" title="Xem chi tiết">
+            <a href="area-detail.html?id=${encodeURIComponent(item.id)}" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-100 transition" title="Xem chi tiết">
               <span class="material-symbols-outlined text-[17px]">visibility</span>
             </a>
-            <button onclick="editArea('${item.id}')" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-100 transition" title="Chỉnh sửa">
+            <button type="button" data-action="edit" data-area-id="${escapeHtml(item.id)}" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-100 transition" title="Chỉnh sửa">
               <span class="material-symbols-outlined text-[17px]">edit</span>
             </button>
-            <button onclick="showMoreAreaMenu('${item.id}')" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition" title="Tác vụ khác">
+            <button type="button" data-action="delete" data-area-id="${escapeHtml(item.id)}" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition" title="Xóa khu vực">
               <span class="material-symbols-outlined text-[17px]">more_vert</span>
             </button>
           </div>
@@ -208,13 +358,23 @@ function renderAreasTable() {
   }).join('');
 }
 
-// Actions
 function editArea(id) {
-  showToast(`Mở hộp thoại chỉnh sửa khu vực ${id}`);
+  const area = areasData.find(item => item.id === id);
+  if (!area) {
+    showToast(`Không tìm thấy khu vực ${id}.`, 'error');
+    return;
+  }
+  openAreaModal(area);
 }
 
 function showMoreAreaMenu(id) {
-  showToast(`Mở menu tùy chọn cho ${id}`);
+  const areaIndex = areasData.findIndex(item => item.id === id);
+  if (areaIndex < 0) return;
+  if (!confirm(`Xóa khu vực ${id} khỏi danh sách demo?`)) return;
+  areasData.splice(areaIndex, 1);
+  renderAreasTable();
+  updateAreaStats();
+  showToast(`Đã xóa khu vực ${id} khỏi dữ liệu demo.`);
 }
 
 // Live Clock
@@ -229,24 +389,58 @@ function updateClock() {
 
 document.addEventListener('DOMContentLoaded', () => {
   // Modal Add Area
-  const modalAdd = document.getElementById('modalAddArea');
   document.getElementById('btnOpenAddAreaModal')?.addEventListener('click', () => {
-    modalAdd?.classList.remove('hidden');
-    modalAdd?.classList.add('flex');
+    openAreaModal();
   });
 
   ['btnCloseAddAreaModal', 'btnCancelAddAreaModal'].forEach(id => {
-    document.getElementById(id)?.addEventListener('click', () => {
-      modalAdd?.classList.add('hidden');
-      modalAdd?.classList.remove('flex');
-    });
+    document.getElementById(id)?.addEventListener('click', closeAreaModal);
   });
 
   document.getElementById('formAddArea')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    modalAdd?.classList.add('hidden');
-    modalAdd?.classList.remove('flex');
-    showToast('Đã thêm mới khu vực chiếu sáng thành công!');
+    const id = document.getElementById('areaCodeInput').value.trim();
+    const name = document.getElementById('areaNameInput').value.trim();
+    const district = document.getElementById('areaDistrictInput').selectedOptions[0]?.textContent.trim() || '';
+    const status = document.getElementById('areaStatusInput').value;
+    const duplicate = areasData.some(item => item.id.toLowerCase() === id.toLowerCase() && item.id !== editingAreaId);
+
+    if (duplicate) {
+      showToast(`Mã khu vực ${id} đã tồn tại.`, 'error');
+      document.getElementById('areaCodeInput').focus();
+      return;
+    }
+
+    if (editingAreaId) {
+      const area = areasData.find(item => item.id === editingAreaId);
+      if (!area) {
+        showToast('Không tìm thấy khu vực cần cập nhật.', 'error');
+        return;
+      }
+      area.name = name;
+      area.district = district;
+      area.status = status;
+      area.updated = new Date().toLocaleString('vi-VN');
+      showToast(`Đã cập nhật ${id} trong dữ liệu demo.`);
+    } else {
+      areasData.unshift({
+        id,
+        name,
+        district,
+        cabinets: 0,
+        routes: 0,
+        lamps: 0,
+        rate: 0,
+        alerts: 0,
+        status,
+        updated: new Date().toLocaleString('vi-VN')
+      });
+      showToast(`Đã thêm ${id} vào dữ liệu demo.`);
+    }
+
+    closeAreaModal();
+    renderAreasTable();
+    updateAreaStats();
   });
 
   // Select All Checkbox
@@ -259,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('searchAreaInput')?.addEventListener('input', renderAreasTable);
   document.getElementById('filterStatus')?.addEventListener('change', renderAreasTable);
   document.getElementById('btnFilterToggle')?.addEventListener('click', () => {
-    showToast('Đang áp dụng bộ lọc nâng cao');
+    document.getElementById('filterStatus')?.focus();
   });
 
   // Mobile Sidebar Toggle
@@ -283,4 +477,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial render
   renderAreasTable();
+  updateAreaStats();
+  loadAreasFromApi();
 });

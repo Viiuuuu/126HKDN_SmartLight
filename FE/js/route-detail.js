@@ -3,15 +3,103 @@
  */
 
 // 1. Live Clock Sync matching system
+const routeParams = new URLSearchParams(window.location.search);
+const currentRouteCode = routeParams.get('id') || 'TL-001';
+let currentRouteName = 'Nguyễn Văn Linh';
+
 function updateLiveClock() {
   const now = new Date();
   const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
   const dayStr = days[now.getDay()];
   const dateStr = String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear();
   
-  const clockEl = document.getElementById('liveClockDisplay');
+  const clockEl = document.getElementById('liveClockDisplay') || document.getElementById('topbarLiveClock');
   if (clockEl) {
     clockEl.textContent = `${dayStr}, ${dateStr}`;
+  }
+}
+
+function setRouteText(id, value) {
+  const element = document.getElementById(id);
+  if (element) element.textContent = value;
+}
+
+async function loadRouteDetails() {
+  if (!window.api) return;
+  try {
+    const route = await window.api.get(`/TuyenChieuSang/${encodeURIComponent(currentRouteCode)}`);
+    if (!route) throw new Error('API không trả về thông tin tuyến.');
+    const cabinetId = String(route.maTu ?? route.MaTu ?? '').trim();
+    const [cabinets, areas, allPoints] = await Promise.all([
+      window.api.get('/TuChieuSang'),
+      window.api.get('/KhuVuc'),
+      window.api.get('/DiemDen')
+    ]);
+    if (![cabinets, areas, allPoints].every(Array.isArray)) {
+      throw new TypeError('API hạ tầng phải trả về danh sách hợp lệ.');
+    }
+
+    const cabinet = cabinets.find(item =>
+      String(item.maTu ?? item.MaTu ?? '').trim() === cabinetId
+    );
+    const areaId = String(cabinet?.maKhuVuc ?? cabinet?.MaKhuVuc ?? '').trim();
+    const area = areas.find(item =>
+      String(item.maKhuVuc ?? item.MaKhuVuc ?? '').trim() === areaId
+    );
+    const points = allPoints.filter(item =>
+      String(item.maTuyen ?? item.MaTuyen ?? '').trim() === currentRouteCode
+    );
+    const name = String(route.tenTuyen ?? route.TenTuyen ?? currentRouteName);
+    currentRouteName = name;
+    const lengthValue = route.chieuDai ?? route.ChieuDai;
+    const rawLength = lengthValue === null || lengthValue === undefined ? NaN : Number(lengthValue);
+    const length = Number.isFinite(rawLength) ? `${(rawLength / 1000).toFixed(2)} km` : '—';
+    const cabinetName = String(cabinet?.tenTu ?? cabinet?.TenTu ?? cabinetId ?? 'Chưa xác định');
+    const cabinetLabel = cabinetName.startsWith('Tủ ') ? cabinetName : `Tủ ${cabinetName}`;
+    const areaName = String(area?.tenPhuongXa ?? area?.TenPhuongXa ?? areaId ?? 'Chưa xác định');
+    const statusValue = Number(route.trangThaiHoatDong ?? route.TrangThaiHoatDong);
+    const status = statusValue === 1 ? 'Đang hoạt động' : statusValue === 0 ? 'Ngừng hoạt động' : 'Chưa xác định';
+
+    document.title = `Chi tiết tuyến ${currentRouteCode} - ${name} | SmartLight`;
+    setRouteText('detailRouteTitle', `Tuyến ${currentRouteCode}: ${name}`);
+    setRouteText('breadRouteName', `Chi tiết tuyến ${currentRouteCode} - ${name}`);
+    setRouteText('infoRouteName', name);
+    setRouteText('infoCabinet', cabinetLabel);
+    setRouteText('headerCabinetName', cabinetLabel);
+    const cabinetLink = document.getElementById('headerCabinetName');
+    if (cabinetLink && cabinetId) {
+      cabinetLink.setAttribute('href', `cabinets-detail.html?code=${encodeURIComponent(cabinetId)}`);
+    }
+    setRouteText('infoArea', areaName);
+    setRouteText('headerAreaName', areaName);
+    setRouteText('infoLength', length);
+    setRouteText('headerRouteLength', length);
+    setRouteText('infoPoints', points.length);
+    setRouteText('headerRoutePoints', points.length);
+
+    const statusBadge = document.getElementById('detailStatusBadge');
+    if (statusBadge) {
+      statusBadge.className = statusValue === 1
+        ? 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs'
+        : 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200 shadow-2xs';
+      statusBadge.textContent = status;
+    }
+
+    const editInputs = {
+      modalInputRouteName: name,
+      modalInputCabinet: cabinetId,
+      modalInputArea: areaName,
+      modalInputLength: Number.isFinite(rawLength) ? (rawLength / 1000).toFixed(2) : '',
+      modalInputPoints: points.length,
+      modalRouteCodeInput: currentRouteCode
+    };
+    Object.entries(editInputs).forEach(([id, value]) => {
+      const input = document.getElementById(id);
+      if (input) input.value = value;
+    });
+  } catch (error) {
+    console.warn(`Không tải được tuyến ${currentRouteCode} từ API.`, error);
+    showToast(`Không tải được dữ liệu tuyến ${currentRouteCode}; đang hiển thị thông tin demo.`, 'warning');
   }
 }
 
@@ -26,13 +114,17 @@ function showToast(message, type = 'success') {
   const borderColor = isSuccess ? 'border-emerald-200' : (isWarning ? 'border-amber-200' : 'border-blue-200');
 
   toast.className = `toast-anim pointer-events-auto flex items-center gap-3 px-4 py-3 bg-white border ${borderColor} rounded-xl shadow-xl text-xs font-medium text-slate-800`;
-  toast.innerHTML = `
-    <i class="fa-solid ${iconClass} text-base"></i>
-    <span>${message}</span>
-    <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600 ml-2">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-  `;
+  const icon = document.createElement('i');
+  icon.className = `fa-solid ${iconClass} text-base`;
+  const text = document.createElement('span');
+  text.textContent = message;
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button';
+  closeButton.className = 'text-slate-400 hover:text-slate-600 ml-2';
+  closeButton.setAttribute('aria-label', 'Đóng thông báo');
+  closeButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+  closeButton.addEventListener('click', () => toast.remove());
+  toast.append(icon, text, closeButton);
   container.appendChild(toast);
   setTimeout(() => {
     toast.style.opacity = '0';
@@ -49,20 +141,23 @@ function updateBrightness(val, triggerToast = false) {
   currentBrightness = parseInt(val);
   const mainSlider = document.getElementById('mainBrightnessSlider');
   const mainDisplay = document.getElementById('mainBrightnessDisplay');
-  const mainTrack = document.getElementById('mainSliderFillTrack');
-
   const quickSlider = document.getElementById('quickBrightnessSlider');
   const quickDisplay = document.getElementById('quickBrightnessDisplay');
-  const quickTrack = document.getElementById('quickSliderFillTrack');
 
-  if (mainSlider) mainSlider.value = currentBrightness;
-  if (quickSlider) quickSlider.value = currentBrightness;
+  // Cập nhật dải màu gradient trực tiếp trên thanh trượt (100% chuẩn, không bao giờ lệch track)
+  const bgGradient = `linear-gradient(to right, #1d4ed8 0%, #1d4ed8 ${currentBrightness}%, #e2e8f0 ${currentBrightness}%, #e2e8f0 100%)`;
+
+  if (mainSlider) {
+    mainSlider.value = currentBrightness;
+    mainSlider.style.background = bgGradient;
+  }
+  if (quickSlider) {
+    quickSlider.value = currentBrightness;
+    quickSlider.style.background = bgGradient;
+  }
 
   if (mainDisplay) mainDisplay.textContent = currentBrightness + '%';
   if (quickDisplay) quickDisplay.textContent = currentBrightness + '%';
-
-  if (mainTrack) mainTrack.style.width = currentBrightness + '%';
-  if (quickTrack) quickTrack.style.width = currentBrightness + '%';
 
   // Update Presets Active State in both places
   document.querySelectorAll('.preset-btn').forEach(btn => {
@@ -82,7 +177,7 @@ function updateBrightness(val, triggerToast = false) {
   });
 
   if (triggerToast) {
-    showToast(`Đã thiết lập mức sáng tuyến TL-001 về ${currentBrightness}%`);
+    showToast(`Mô phỏng: mức sáng tuyến ${currentRouteCode} được đặt thành ${currentBrightness}%. Chưa gửi lệnh thật.`);
   }
 }
 
@@ -106,13 +201,13 @@ function setPowerState(state) {
     if (powerIndicatorDot) powerIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
     if (btnTogglePowerText) btnTogglePowerText.textContent = 'Tắt tuyến';
     if (routeLinePath) routeLinePath.setAttribute('stroke', '#074476');
-    showToast('Đã BẬT hệ thống chiếu sáng tuyến TL-001');
+    showToast(`Mô phỏng: đã bật chiếu sáng tuyến ${currentRouteCode}. Chưa gửi lệnh thật.`, 'info');
   } else {
     if (powerStateText) powerStateText.textContent = 'Đã tắt';
     if (powerIndicatorDot) powerIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-300';
     if (btnTogglePowerText) btnTogglePowerText.textContent = 'Bật tuyến';
     if (routeLinePath) routeLinePath.setAttribute('stroke', '#94a3b8');
-    showToast('Đã TẮT toàn bộ chiếu sáng tuyến TL-001', 'info');
+    showToast(`Mô phỏng: đã tắt chiếu sáng tuyến ${currentRouteCode}. Chưa gửi lệnh thật.`, 'info');
   }
 }
 
@@ -149,7 +244,7 @@ function closeCalibrateModal() {
 
 function saveCalibration() {
   closeCalibrateModal();
-  showToast('Đã lưu cấu hình hiệu chỉnh tuyến thành công!');
+  showToast('Cấu hình hiệu chỉnh hiện chỉ được mô phỏng; chưa lưu lên máy chủ.', 'warning');
 }
 
 function closeEditRouteModal() {
@@ -165,8 +260,11 @@ function handleSaveEditRoute(e) {
   const length = document.getElementById('modalInputLength').value;
   const points = document.getElementById('modalInputPoints').value;
 
+  currentRouteName = name;
   const titleEl = document.getElementById('detailRouteTitle');
-  if (titleEl) titleEl.innerHTML = `Chi tiết tuyến chiếu sáng: <span class="font-extrabold text-primary">TL-001</span> – ${name}`;
+  if (titleEl) titleEl.textContent = `Tuyến ${currentRouteCode}: ${name}`;
+  const breadcrumb = document.getElementById('breadRouteName');
+  if (breadcrumb) breadcrumb.textContent = `Chi tiết tuyến ${currentRouteCode} - ${name}`;
   const infoRouteName = document.getElementById('infoRouteName');
   if (infoRouteName) infoRouteName.textContent = name;
   const infoCabinet = document.getElementById('infoCabinet');
@@ -187,7 +285,7 @@ function handleSaveEditRoute(e) {
   if (headerRoutePoints) headerRoutePoints.textContent = points;
 
   closeEditRouteModal();
-  showToast('Đã cập nhật thông tin tuyến thành công!');
+  showToast('Đã cập nhật thông tin tuyến trong bản demo.');
 }
 
 function closeExportModal() {
@@ -196,14 +294,37 @@ function closeExportModal() {
 }
 
 function downloadReport() {
+  const rows = [
+    ['Mã tuyến', currentRouteCode],
+    ['Tên tuyến', currentRouteName],
+    ['Tủ phụ trách', document.getElementById('infoCabinet')?.textContent || ''],
+    ['Khu vực', document.getElementById('infoArea')?.textContent || ''],
+    ['Chiều dài', document.getElementById('infoLength')?.textContent || ''],
+    ['Số điểm đèn', document.getElementById('infoPoints')?.textContent || '']
+  ];
+  const csv = rows.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `bao-cao-tuyen-${currentRouteCode}.csv`;
+  link.click();
+  URL.revokeObjectURL(link.href);
   closeExportModal();
-  showToast('Đang khởi tạo báo cáo tuyến TL-001...');
-  setTimeout(() => {
-    showToast('Đã tải xuống Bao_cao_tuyen_TL-001.pdf');
-  }, 1200);
+  showToast('Đã tải báo cáo tuyến dạng CSV.');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const titleEl = document.getElementById('detailRouteTitle');
+  const titleText = titleEl?.textContent.trim() || '';
+  currentRouteName = titleText.includes(':') ? titleText.split(':').slice(1).join(':').trim() : currentRouteName;
+  if (titleEl) titleEl.textContent = `Tuyến ${currentRouteCode}: ${currentRouteName}`;
+  const breadcrumb = document.getElementById('breadRouteName');
+  if (breadcrumb) breadcrumb.textContent = `Chi tiết tuyến ${currentRouteCode} - ${currentRouteName}`;
+  const routeCodeInput = document.getElementById('modalRouteCodeInput');
+  if (routeCodeInput) routeCodeInput.value = currentRouteCode;
+  loadRouteDetails();
+
+  updateBrightness(currentBrightness, false);
   setInterval(updateLiveClock, 1000);
   updateLiveClock();
 
@@ -230,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
   quickSlider?.addEventListener('input', (e) => updateBrightness(e.target.value));
 
   document.getElementById('btnApplyQuickDimming')?.addEventListener('click', () => {
-    showToast(`Đã áp dụng mức sáng ${currentBrightness}% cho toàn bộ tuyến Nguyễn Văn Linh!`);
+    showToast(`Mô phỏng: áp dụng mức sáng ${currentBrightness}% cho tuyến ${currentRouteCode}. Chưa gửi lệnh thật.`, 'info');
   });
 
   // Power Switch
@@ -255,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         detailStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Đang hoạt động';
         detailStatusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
       }
-      showToast('Tuyến đã được chuyển sang chế độ Hoạt động');
+      showToast('Mô phỏng: tuyến được đánh dấu Hoạt động; Backend chưa được cập nhật.', 'warning');
     } else {
       if (managementDot) managementDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-400';
       if (managementText) managementText.textContent = 'Ngừng hoạt động';
@@ -264,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
         detailStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-400"></span> Ngừng hoạt động';
         detailStatusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200';
       }
-      showToast('Tuyến đã chuyển sang trạng thái Ngừng hoạt động', 'warning');
+      showToast('Mô phỏng: tuyến được đánh dấu Ngừng hoạt động; Backend chưa được cập nhật.', 'warning');
     }
   });
 
@@ -325,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (infoRouteCode) infoRouteCode.textContent = id;
     const titleEl = document.getElementById('detailRouteTitle');
     if (id === 'TL-002') {
-      if (titleEl) titleEl.innerHTML = `Chi tiết tuyến chiếu sáng: <span class="font-extrabold text-primary">${id}</span> – Võ Nguyên Giáp`;
+      if (titleEl) titleEl.textContent = `Chi tiết tuyến chiếu sáng: ${id} – Võ Nguyên Giáp`;
       const infoRouteName = document.getElementById('infoRouteName');
       if (infoRouteName) infoRouteName.textContent = 'Võ Nguyên Giáp';
       const infoCabinet = document.getElementById('infoCabinet');

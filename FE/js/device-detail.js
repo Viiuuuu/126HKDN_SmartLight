@@ -10,15 +10,16 @@ const device = {
   dim: params.get('dim') || '70%'
 };
 
-const isCabinet = device.type.toLocaleLowerCase('vi').includes('tủ');
-const parsedKilowatts = device.power.match(/(\d+(?:[.,]\d+)?)\s*kW/i);
-const parsedWatts = device.power.match(/(\d+(?:[.,]\d+)?)\s*W/i);
-const ratedPower = parsedKilowatts
+let isCabinet = device.type.toLocaleLowerCase('vi').includes('tủ');
+let parsedKilowatts = device.power.match(/(\d+(?:[.,]\d+)?)\s*kW/i);
+let parsedWatts = device.power.match(/(\d+(?:[.,]\d+)?)\s*W/i);
+let ratedPower = parsedKilowatts
   ? Number(parsedKilowatts[1].replace(',', '.')) * 1000
   : Number(parsedWatts?.[1] || 120);
 const parsedBrightness = device.dim.match(/(\d+(?:[.,]\d+)?)\s*%/);
-const initialBrightness = Math.max(0, Math.min(100, parsedBrightness ? Number(parsedBrightness[1].replace(',', '.')) : device.status === 'Mất kết nối' ? 0 : 70));
+let initialBrightness = Math.max(0, Math.min(100, parsedBrightness ? Number(parsedBrightness[1].replace(',', '.')) : device.status === 'Mất kết nối' ? 0 : 70));
 let brightness = initialBrightness;
+let deviceDataSource = 'mô phỏng';
 
 const toastContainer = document.getElementById('toastContainer');
 
@@ -85,10 +86,13 @@ function renderDevice() {
   const type = device.type;
   const statusIsWarning = device.status.toLocaleLowerCase('vi').includes('cảnh báo');
   const statusIsOffline = device.status.toLocaleLowerCase('vi').includes('mất kết nối');
+  const statusIsOff = device.status.toLocaleLowerCase('vi').includes('đang tắt');
   const kindLabel = isCabinet ? 'Tủ chiếu sáng' : 'Điểm đèn';
-  const displayPower = parsedKilowatts
-    ? `${parsedKilowatts[1].replace(',', '.')} kW`
-    : `${ratedPower.toLocaleString('vi-VN')} W`;
+  const displayPower = device.power === 'Chưa có dữ liệu'
+    ? device.power
+    : parsedKilowatts
+      ? `${parsedKilowatts[1].replace(',', '.')} kW`
+      : `${ratedPower.toLocaleString('vi-VN')} W`;
 
   document.title = `Chi tiết thiết bị ${displayId} | SmartLight`;
   setText('toolbarDevice', `${kindLabel} (${displayId})`);
@@ -101,7 +105,11 @@ function renderDevice() {
   setText('specRoute', route);
   setText('specCabinet', isCabinet ? displayId : 'Chưa có dữ liệu liên kết');
   setText('deviceSource', isCabinet ? displayId : 'Chưa có dữ liệu liên kết');
-  setText('specLamp', isCabinet ? device.power : `LED · ${displayPower} · Thông số mô phỏng`);
+  setText('specLamp', isCabinet
+    ? device.power
+    : displayPower === 'Chưa có dữ liệu'
+      ? 'Chưa có dữ liệu'
+      : `LED · ${displayPower}${deviceDataSource === 'mô phỏng' ? ' · Thông số mô phỏng' : ''}`);
   setText('ratedPower', isCabinet ? `Tổng tải ${displayPower}` : `Định mức ${displayPower}`);
   setText('chartRatedPower', ratedPower.toLocaleString('vi-VN'));
   setText('chartMax', ratedPower.toLocaleString('vi-VN'));
@@ -116,15 +124,17 @@ function renderDevice() {
 
   const status = document.getElementById('deviceStatus');
   status.classList.toggle('is-warning', statusIsWarning);
-  status.classList.toggle('is-off', statusIsOffline);
-  status.querySelector('span').textContent = statusIsOffline ? 'Mất kết nối' : statusIsWarning ? 'Cảnh báo' : `Đang sáng · ${initialBrightness}%`;
+  status.classList.toggle('is-off', statusIsOffline || statusIsOff);
+  status.querySelector('span').textContent = statusIsOffline ? 'Mất kết nối' : statusIsWarning ? 'Cảnh báo' : statusIsOff ? 'Đang tắt' : `Đang sáng · ${initialBrightness}%`;
   document.querySelector('.network-specs .state-online').classList.toggle('is-warning', statusIsWarning);
-  document.querySelector('.network-specs .state-online').classList.toggle('is-off', statusIsOffline);
+  document.querySelector('.network-specs .state-online').classList.toggle('is-off', statusIsOffline || statusIsOff);
   document.querySelector('.network-specs .state-online').innerHTML = statusIsOffline
     ? '<i></i> Mất kết nối · Dữ liệu gần nhất'
     : statusIsWarning
       ? '<i></i> Có cảnh báo cần kiểm tra'
-      : '<i></i> Đang sáng bình thường';
+      : statusIsOff
+        ? '<i></i> Đang tắt'
+        : '<i></i> Đang sáng bình thường';
   if (statusIsWarning) {
     status.querySelector('span').textContent = device.status;
   }
@@ -135,7 +145,93 @@ function renderDevice() {
   updateBrightness(initialBrightness);
 }
 
+function apiField(record, camelName, pascalName) {
+  return record?.[camelName] ?? record?.[pascalName];
+}
+
+async function loadDeviceFromApi() {
+  if (!window.api) return;
+  const endpoint = isCabinet ? '/TuChieuSang' : '/DiemDen';
+  try {
+    let record;
+    try {
+      record = await window.api.get(`${endpoint}/${encodeURIComponent(device.id)}`);
+    } catch (error) {
+      if (error.status !== 404) throw error;
+    }
+
+    if (!record) {
+      const records = await window.api.get(endpoint);
+      if (!Array.isArray(records)) throw new TypeError('API thiết bị phải trả về danh sách hợp lệ.');
+      record = records.find(item => String(
+        apiField(item, isCabinet ? 'maTu' : 'maDen', isCabinet ? 'MaTu' : 'MaDen') || ''
+      ).trim() === device.id);
+    }
+    if (!record) throw new Error(`Không tìm thấy thiết bị ${device.id}.`);
+
+    const location = apiField(record, isCabinet ? 'diaChi' : 'viTri', isCabinet ? 'DiaChi' : 'ViTri');
+    const type = apiField(record, 'loaiBongDen', 'LoaiBongDen');
+    const routeId = apiField(record, 'maTuyen', 'MaTuyen');
+    const statusValue = apiField(record, 'trangThaiHoatDong', 'TrangThaiHoatDong');
+    const powerValue = apiField(record, 'congSuat', 'CongSuat');
+    if (location) device.location = String(location);
+    if (!isCabinet && type) device.type = String(type);
+    if (routeId) device.route = String(routeId);
+    if (powerValue !== undefined && powerValue !== null) {
+      device.power = `${powerValue} W`;
+      parsedWatts = device.power.match(/(\d+(?:[.,]\d+)?)\s*W/i);
+      parsedKilowatts = device.power.match(/(\d+(?:[.,]\d+)?)\s*kW/i);
+      ratedPower = Number(powerValue);
+    } else {
+      device.power = 'Chưa có dữ liệu';
+      parsedWatts = null;
+      parsedKilowatts = null;
+      ratedPower = 0;
+    }
+    const brightnessValue = apiField(record, 'doSang', 'DoSang');
+    if (brightnessValue !== undefined && brightnessValue !== null) {
+      initialBrightness = Math.max(0, Math.min(100, Number(brightnessValue)));
+      device.dim = `${initialBrightness}%`;
+    }
+    if (statusValue !== undefined && statusValue !== null) {
+      device.status = Number(statusValue) === 1 ? 'Hoạt động' : Number(statusValue) === 0 ? 'Đang tắt' : `Trạng thái ${statusValue}`;
+      if (Number(statusValue) === 0) initialBrightness = 0;
+    }
+    const [routes, cabinets, areas] = await Promise.all([
+      window.api.get('/TuyenChieuSang'),
+      window.api.get('/TuChieuSang'),
+      window.api.get('/KhuVuc')
+    ]);
+    if (![routes, cabinets, areas].every(Array.isArray)) {
+      throw new TypeError('API liên kết thiết bị phải trả về danh sách hợp lệ.');
+    }
+    let cabinet;
+    if (!isCabinet && routeId) {
+      const route = routes.find(item => String(apiField(item, 'maTuyen', 'MaTuyen') || '').trim() === String(routeId));
+      const cabinetId = apiField(route, 'maTu', 'MaTu');
+      cabinet = cabinets.find(item => String(apiField(item, 'maTu', 'MaTu') || '').trim() === String(cabinetId || ''));
+    } else if (isCabinet) {
+      cabinet = record;
+    }
+    const areaId = apiField(cabinet, 'maKhuVuc', 'MaKhuVuc');
+    const area = areas.find(item => String(apiField(item, 'maKhuVuc', 'MaKhuVuc') || '').trim() === String(areaId || '').trim());
+    if (area) {
+      device.district = String(apiField(area, 'tenPhuongXa', 'TenPhuongXa') || device.district);
+    }
+
+    deviceDataSource = 'Backend';
+    renderDevice();
+    setText('commandStatus', `${device.status} · Dữ liệu từ Backend`);
+    const disclaimer = document.querySelector('.demo-disclaimer');
+    if (disclaimer) disclaimer.textContent = 'Thông tin thiết bị được tải từ Backend; biểu đồ lịch sử và thao tác điều khiển vẫn là mô phỏng.';
+  } catch (error) {
+    console.warn(`Không tải được thiết bị ${device.id} từ API.`, error);
+    showToast(`Không tải được thiết bị ${device.id} từ Backend; đang hiển thị dữ liệu demo.`);
+  }
+}
+
 renderDevice();
+loadDeviceFromApi();
 updateClock();
 window.setInterval(() => {
   updateClock();
