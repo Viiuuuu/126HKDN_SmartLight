@@ -10,6 +10,172 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/control.css">
+  <style>
+    .control-legacy { display: none !important; }
+    .dashboard-wrapper .topbar { padding-right: 22px; padding-left: 22px; }
+    .dashboard-wrapper .topbar-left { max-width: 384px; }
+    .dashboard-wrapper .topbar-right { gap: 14px; }
+    .control-redesign.page-content { padding: 21px 23px 48px 23px; background: #f4f7fc; }
+    .control-redesign .redesign-heading { margin-bottom: 19px; }
+    .control-redesign .redesign-heading-row { display: flex; align-items: center; gap: 10px; }
+    .control-redesign .redesign-heading h2 { margin: 0 0 1px; font-size: 21px; line-height: 1.35; }
+    .control-redesign .redesign-heading p { margin: 0; color: #7887a5; font-size: 11px; }
+    .control-redesign .api-state { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; background: #e8eaff; color: #5000d2; font-size: 9px; font-weight: 700; white-space: nowrap; }
+    .control-redesign .api-state::before { content: none; }
+    .control-redesign .api-state.is-error { background: #fff2eb; color: #c2410c; }
+    .control-redesign .redesign-grid { display: grid; grid-template-columns: minmax(0, .984fr) minmax(0, 1.364fr) minmax(0, .929fr); gap: 15px; align-items: start; }
+    .control-redesign .redesign-column { min-width: 0; }
+    .control-redesign .redesign-card { min-width: 0; margin: 0 0 16px; padding: 16px; border: 1px solid #edf0f7; border-radius: 16px; background: #fff; box-shadow: 0 5px 14px rgba(39, 55, 96, .045); }
+    .control-redesign .redesign-column:first-child > .redesign-card:first-child { padding-bottom: 15px; }
+    .control-redesign .redesign-column:first-child > .redesign-card:nth-child(2) { padding-bottom: 14px; }
+    .control-redesign .redesign-column:nth-child(3) > .redesign-card { margin-bottom: 17px; }
+    .control-redesign .redesign-card-heading { display: flex; min-height: 24px; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+    .control-redesign .redesign-card-heading h3 { margin: 0; color: #14213d; font-size: 13px; font-weight: 700; }
+    .control-redesign .heading-title { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .control-redesign .heading-icon { width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 26px; border-radius: 7px; background: #e9eaff; color: #5200d7; }
+    .control-redesign .heading-icon.is-yellow { background: #fff7b8; color: #f0a900; }
+    .control-redesign .heading-icon svg { width: 15px; height: 15px; }
+    .control-redesign .redesign-badge { padding: 4px 9px; border-radius: 999px; background: #e9eaff; color: #5100d5; font-size: 9px; font-weight: 700; white-space: nowrap; }
+    .control-redesign .redesign-label { display: block; margin: 0 0 5px; color: #8290ad; font-size: 9px; font-weight: 700; letter-spacing: .025em; text-transform: uppercase; }
+    .control-redesign .redesign-select { width: 100%; height: 33px; margin: 0 0 10px; padding: 0 10px; border: 1px solid #e4e9f2; border-radius: 9px; background: #f8faff; color: #42516e; font-family: inherit; font-size: 10px; }
+    .control-redesign .redesign-description { min-height: 0; margin: 0; color: #465672; font-size: 10px; line-height: 1.45; }
+    .control-redesign .redesign-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .control-redesign .redesign-action { display: flex; min-height: 64px; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 7px 4px; border: 1px solid transparent; border-radius: 12px; background: #d3e4ff; color: #293f71; font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .control-redesign .redesign-action svg { width: 17px; height: 17px; }
+    .control-redesign .redesign-action small { color: #8092b4; font-size: 8px; font-weight: 500; }
+    .control-redesign .redesign-action[data-action="TAT"] { background: #ffdad3; color: #845144; }
+    .control-redesign .redesign-action[data-action="TAT"] small { color: #b2897c; }
+    .control-redesign .redesign-dim { min-height: 101px; margin-top: 12px; padding: 16px 12px 10px; border: 1px solid #edf0f7; border-radius: 10px; background: #f8faff; }
+    .control-redesign .redesign-dim-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; color: #35435e; font-size: 10px; font-weight: 600; }
+    .control-redesign .redesign-dim-value { color: #5600dc; font-size: 14px; font-weight: 800; }
+    .control-redesign .redesign-dim input { display: block; width: 100%; height: 12px; margin: 0; appearance: none; background: linear-gradient(#e1e6f0, #e1e6f0) center / 100% 4px no-repeat; cursor: pointer; }
+    .control-redesign .redesign-dim input::-webkit-slider-thumb { width: 12px; height: 12px; appearance: none; border: 0; border-radius: 50%; background: #5900e8; }
+    .control-redesign .redesign-dim input::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: #5900e8; }
+    .control-redesign .dim-presets { display: flex; gap: 5px; margin-top: 1px; }
+    .control-redesign .dim-preset { padding: 0; color: #7d8cac; font-family: inherit; font-size: 8px; cursor: pointer; }
+    .control-redesign .dim-preset.is-current { color: #5600dc; font-weight: 700; }
+    .control-redesign .dim-scale { display: flex; justify-content: space-between; margin-top: 7px; color: #99a6c0; font-size: 8px; }
+    .control-redesign .support-options { display: grid; gap: 7px; margin-top: 11px; }
+    .control-redesign .support-option { display: flex; min-height: 50px; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid #edf0f7; border-radius: 9px; background: #f8faff; }
+    .control-redesign .support-icon { display: flex; flex: 0 0 14px; color: #6500ed; }
+    .control-redesign .support-option:last-child .support-icon { color: #f05e23; }
+    .control-redesign .support-copy { min-width: 0; flex: 1; }
+    .control-redesign .support-copy strong { display: block; color: #283650; font-size: 9px; }
+    .control-redesign .support-copy small { display: block; margin-top: 2px; color: #8d9bb5; font-size: 8px; }
+    .control-redesign .support-state { color: #8391ad; font-size: 8px; white-space: nowrap; }
+    .control-redesign .redesign-table-wrap { overflow-x: auto; }
+    .control-redesign .table-caption { margin: -1px 0 10px; color: #8491ac; font-size: 9px; line-height: 1.55; }
+    .control-redesign .redesign-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 10px; }
+    .control-redesign .redesign-table th { padding: 8px 8px; border-bottom: 1px solid #edf0f7; color: #8794b1; font-size: 8px; font-weight: 700; white-space: nowrap; }
+    .control-redesign .redesign-table td { padding: 10px 8px; border-bottom: 1px solid #f0f2f8; color: #394762; white-space: nowrap; }
+    .control-redesign .lamp-code { color: #5a00dc !important; font-size: 10px; font-weight: 800; }
+    .control-redesign .lamp-state { display: inline-block; padding: 3px 8px; border-radius: 999px; background: #e8eaff; color: #4c00cf; font-size: 8px; font-weight: 700; }
+    .control-redesign .lamp-state.is-off { background: #fff0e8; color: #c25424; }
+    .control-redesign .lamp-state.is-unknown { background: #f1f3f8; color: #66748f; }
+    .control-redesign .brightness-cell { display: flex; align-items: center; gap: 7px; }
+    .control-redesign .brightness-track { width: 40px; height: 5px; overflow: hidden; border-radius: 999px; background: #e4e8f1; }
+    .control-redesign .brightness-fill { height: 100%; border-radius: inherit; background: #5b00e8; }
+    .control-redesign .empty-state { padding: 16px 8px !important; color: #7c89a5 !important; text-align: left; white-space: normal !important; }
+    .control-redesign .redesign-confirm { display: flex; min-height: 103px; flex-direction: column; justify-content: space-between; gap: 10px; margin: 0; padding: 13px 15px; border: 1px solid #edf0f7; border-radius: 16px; background: #fff; box-shadow: 0 5px 14px rgba(39, 55, 96, .045); }
+    .control-redesign .confirm-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .control-redesign .confirm-heading { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .control-redesign .confirm-heading strong { color: #14213d; font-size: 10px; white-space: nowrap; }
+    .control-redesign .confirm-preview { overflow: hidden; color: #8692ab; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+    .control-redesign .confirm-preview strong { color: #5b00d9; }
+    .control-redesign .confirm-target { margin-left: auto; padding: 4px 8px; border-radius: 5px; background: #f0f3f9; color: #53617b; font-size: 8px; white-space: nowrap; }
+    .control-redesign .confirm-bottom { display: flex; justify-content: flex-end; gap: 8px; }
+    .control-redesign .confirm-bottom button { min-width: 60px; padding: 6px 11px; border: 0; border-radius: 6px; background: #f0f3f9; color: #52617d; font-family: inherit; font-size: 9px; font-weight: 700; cursor: pointer; }
+    .control-redesign .confirm-bottom #controlSendCommand { min-width: 92px; background: #203568; color: #fff; }
+    .control-redesign .confirm-bottom #controlSendCommand:disabled { opacity: .55; cursor: not-allowed; }
+    .control-redesign .recent-list { display: flex; flex-direction: column; gap: 9px; }
+    .control-redesign .recent-empty { color: #40506e; font-size: 12px; }
+    .control-redesign .recent-item { padding: 10px 0; border-top: 1px solid #f0f2f8; }
+    .control-redesign .recent-meta { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 5px; color: #8794ae; font-size: 9px; }
+    .control-redesign .recent-title { color: #25334e; font-size: 10px; font-weight: 700; }
+    .control-redesign .recent-response { margin-top: 5px; color: #8794ae; font-size: 9px; }
+    .control-redesign .recent-footer { margin-top: 8px; color: #8491ad; font-size: 9px; }
+    .control-redesign .history-link { color: #5500d8; font-size: 9px; font-weight: 700; white-space: nowrap; }
+    .control-redesign .redesign-column:nth-child(2) .redesign-card-heading { padding-bottom: 11px; border-bottom: 1px solid #edf0f7; }
+    .control-redesign .redesign-column:nth-child(2) .recent-footer { margin-top: 13px; }
+    .dashboard-wrapper .nav-link.active { background: #4b00c8; }
+    @media (min-width: 1251px) {
+      .control-redesign .redesign-column:nth-child(2) { grid-column: 3; grid-row: 1; }
+      .control-redesign .redesign-column:nth-child(3) { grid-column: 2; grid-row: 1; }
+    }
+    @media (max-width: 1250px) {
+      .control-redesign .redesign-grid { grid-template-columns: minmax(235px, .95fr) minmax(410px, 1.35fr); gap: 16px; }
+      .control-redesign .redesign-column:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+      .control-redesign .redesign-column:nth-child(3) { grid-column: 2; grid-row: 1; }
+    }
+    @media (max-width: 800px) { .dashboard-wrapper { --sidebar-width: 0px; } .control-redesign.page-content { padding: 18px 16px 36px; } .control-redesign .redesign-grid { grid-template-columns: minmax(0, 1fr); } .control-redesign .redesign-column { grid-column: auto !important; grid-row: auto !important; } .control-redesign .redesign-column:nth-child(2) { order: 3; } .control-redesign .redesign-column:nth-child(3) { order: 2; } .control-redesign .redesign-heading-row { align-items: flex-start; flex-direction: column; } }
+
+    .dashboard-wrapper .nav-link.active { background: #1e40af; color: #fff; }
+    .dashboard-wrapper .nav-link.active .nav-icon { color: #fff; }
+    .control-redesign.page-content { background: var(--bg-page); }
+    .control-redesign .redesign-heading h2 { font-size: 26px; }
+    .control-redesign .redesign-heading p { color: var(--text-muted); font-size: 13.5px; }
+    .control-redesign .api-state { background: var(--color-primary-light); color: var(--color-primary); font-size: 11px; }
+    .control-redesign .api-state.is-error { background: var(--status-incident-bg); color: var(--status-incident-text); }
+    .control-redesign .redesign-card { border-color: var(--border-light); }
+    .control-redesign .redesign-card-heading h3 { color: var(--text-main); font-size: 16px; }
+    .control-redesign .heading-icon { width: 32px; height: 32px; flex-basis: 32px; background: var(--color-primary-light); color: var(--color-primary); }
+    .control-redesign .heading-icon svg { width: 18px; height: 18px; }
+    .control-redesign .heading-icon.is-yellow { background: #fef3c7; color: #d97706; }
+    .control-redesign .redesign-badge { background: var(--color-primary-light); color: var(--color-primary); font-size: 11px; }
+    .control-redesign .redesign-label { color: var(--text-light); font-size: 11px; }
+    .control-redesign .redesign-select { border-color: var(--border-input); background: var(--bg-subtle); color: var(--text-body); font-size: 13px; }
+    .control-redesign .redesign-description { color: var(--text-body); font-size: 13px; }
+    .control-redesign .redesign-action { background: #cee5fb; color: #074476; font-size: 13px; }
+    .control-redesign .redesign-action svg { width: 18px; height: 18px; }
+    .control-redesign .redesign-action small { color: var(--text-muted); font-size: 11px; }
+    .control-redesign .redesign-action[data-action="TAT"] { background: #ffdad6; color: #845144; }
+    .control-redesign .redesign-action[data-action="TAT"] small { color: #9a6e62; }
+    .control-redesign .redesign-dim { border-color: var(--border-light); background: var(--bg-subtle); }
+    .control-redesign .redesign-dim-row { color: var(--text-body); font-size: 13px; }
+    .control-redesign .redesign-dim-value { color: var(--color-primary); font-size: 17px; }
+    .control-redesign .redesign-dim input { background: linear-gradient(var(--border-input), var(--border-input)) center / 100% 4px no-repeat; }
+    .control-redesign .redesign-dim input::-webkit-slider-thumb,
+    .control-redesign .redesign-dim input::-moz-range-thumb { background: var(--color-primary); }
+    .control-redesign .dim-preset { color: var(--text-muted); font-size: 11px; }
+    .control-redesign .dim-preset.is-current { color: var(--color-primary); }
+    .control-redesign .dim-scale { color: var(--text-light); font-size: 11px; }
+    .control-redesign .support-option { border-color: var(--border-light); background: var(--bg-subtle); }
+    .control-redesign .support-icon { flex-basis: 16px; color: var(--color-primary); }
+    .control-redesign .support-option:last-child .support-icon { color: var(--status-incident-text); }
+    .control-redesign .support-copy strong { color: var(--text-main); font-size: 13px; }
+    .control-redesign .support-copy small { color: var(--text-muted); font-size: 11px; }
+    .control-redesign .support-state { color: var(--text-muted); font-size: 11px; }
+    .control-redesign .table-caption { color: var(--text-muted); font-size: 11px; }
+    .control-redesign .redesign-table { color: var(--text-body); font-size: 13px; }
+    .control-redesign .redesign-table th { border-color: var(--border-light); color: var(--text-light); font-size: 11px; }
+    .control-redesign .redesign-table td { border-color: #f8fafc; color: var(--text-body); }
+    .control-redesign .lamp-code { color: var(--color-primary) !important; font-size: 13px; }
+    .control-redesign .lamp-state { background: var(--color-primary-light); color: var(--color-primary); font-size: 11px; }
+    .control-redesign .lamp-state.is-off { background: var(--status-incident-bg); color: var(--status-incident-text); }
+    .control-redesign .lamp-state.is-unknown { background: var(--bg-hover); color: var(--text-muted); }
+    .control-redesign .brightness-track { background: var(--border-input); }
+    .control-redesign .brightness-fill { background: var(--color-primary); }
+    .control-redesign .empty-state { color: var(--text-muted) !important; }
+    .control-redesign .redesign-confirm { border-color: var(--border-light); }
+    .control-redesign .confirm-heading strong { color: var(--text-main); font-size: 13px; }
+    .control-redesign .confirm-preview { color: var(--text-muted); font-size: 11px; }
+    .control-redesign .confirm-preview strong { color: var(--color-primary); }
+    .control-redesign .confirm-target { background: var(--bg-hover); color: var(--text-body); font-size: 11px; }
+    .control-redesign .confirm-bottom button { background: var(--bg-hover); color: var(--text-body); font-size: 13px; }
+    .control-redesign .confirm-bottom #controlSendCommand { background: var(--color-primary-dark); }
+    .control-redesign .recent-empty { color: var(--text-body); font-size: 13px; }
+    .control-redesign .recent-item { border-color: var(--border-light); }
+    .control-redesign .recent-meta { color: var(--text-muted); font-size: 11px; }
+    .control-redesign .recent-title { color: var(--text-main); font-size: 13px; }
+    .control-redesign .recent-response { color: var(--text-muted); font-size: 11px; }
+    .control-redesign .recent-footer { color: var(--text-muted); font-size: 11px; }
+    .control-redesign .history-link { color: var(--color-primary); font-size: 11px; }
+    .control-redesign .redesign-column:nth-child(2) .redesign-card-heading { border-color: var(--border-light); }
+    @media (max-width: 800px) {
+      .control-redesign .redesign-column-lights .redesign-card-heading { flex-wrap: wrap; }
+      .control-redesign .redesign-column-lights .redesign-card-heading > .heading-title:last-child { width: 100%; justify-content: flex-end; }
+    }
+  </style>
 </head>
 <body>
   <div class="dashboard-wrapper">
@@ -360,7 +526,151 @@
       </header>
 
       <!-- Main Body Content -->
-      <main class="page-content">
+      <main class="page-content control-redesign">
+        <section class="redesign-heading">
+          <div class="redesign-heading-row">
+            <div>
+              <h2 class="page-main-title">Điều khiển chiếu sáng</h2>
+              <p class="page-subtitle">Giám sát và gửi lệnh điều khiển tức thời cho các tuyến và cụm đèn đô thị</p>
+            </div>
+            <span class="api-state" id="controlApiStatusNew" role="status">Chưa có trạng thái thiết bị trực tiếp</span>
+          </div>
+        </section>
+
+        <div class="redesign-grid">
+          <section class="redesign-column">
+            <div class="redesign-card">
+              <div class="redesign-card-heading">
+                <div class="heading-title">
+                  <span class="heading-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="5" y1="21" x2="5" y2="14"></line><line x1="5" y1="10" x2="5" y2="3"></line>
+                      <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+                      <line x1="19" y1="21" x2="19" y2="16"></line><line x1="19" y1="12" x2="19" y2="3"></line>
+                      <line x1="2" y1="14" x2="8" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="16" y1="16" x2="22" y2="16"></line>
+                    </svg>
+                  </span>
+                  <h3>Đối tượng điều khiển</h3>
+                </div>
+                <span class="redesign-badge">Chọn một đối tượng</span>
+              </div>
+              <label class="redesign-label" for="controlTargetType">Loại đối tượng</label>
+              <select class="redesign-select" id="controlTargetType">
+                <option value="cabinet">Tủ chiếu sáng</option>
+                <option value="route">Tuyến chiếu sáng</option>
+                <option value="lamp">Điểm đèn</option>
+              </select>
+              <label class="redesign-label" id="controlTargetLabel" for="controlTarget">Tủ chiếu sáng</label>
+              <select class="redesign-select" id="controlTarget" disabled>
+                <option value="">Đang tải dữ liệu...</option>
+              </select>
+              <p class="redesign-description" id="controlTargetDescription">Mỗi lệnh chỉ áp dụng cho một tủ, một tuyến hoặc một điểm đèn.</p>
+            </div>
+
+            <div class="redesign-card">
+              <div class="redesign-card-heading">
+                <div class="heading-title">
+                  <span class="heading-icon is-yellow" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                  </span>
+                  <h3>Lệnh điều khiển</h3>
+                </div>
+                <span class="redesign-badge">Một đối tượng mỗi lệnh</span>
+              </div>
+              <div class="redesign-actions" role="group" aria-label="Chọn lệnh điều khiển">
+                <button class="redesign-action is-selected" type="button" data-action="BAT" aria-pressed="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M8 14c-1.3-1.1-2-2.7-2-4.5a6 6 0 0 1 12 0c0 1.8-.7 3.4-2 4.5-.7.6-1 1.4-1 2.2H9c0-.8-.3-1.6-1-2.2Z"></path></svg>
+                  <span>Bật</span><small>100% sáng</small>
+                </button>
+                <button class="redesign-action" type="button" data-action="TAT" aria-pressed="false">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v10"></path><path d="M5.5 5.5a9 9 0 1 0 13 0"></path></svg>
+                  <span>Tắt</span><small>Nghị định</small>
+                </button>
+              </div>
+              <div class="redesign-dim">
+                <div class="redesign-dim-row"><label for="controlDim">Mức sáng thiết lập</label><span class="redesign-dim-value"><span id="controlDimValue">80</span>%</span></div>
+                <input id="controlDim" type="range" min="0" max="100" step="1" value="80">
+                <div class="dim-presets" aria-label="Mức sáng đặt nhanh">
+                  <button class="dim-preset" type="button" data-dim="0">0%</button>
+                  <button class="dim-preset" type="button" data-dim="30">30%</button>
+                  <button class="dim-preset" type="button" data-dim="70">70%</button>
+                  <button class="dim-preset" type="button" data-dim="100">100%</button>
+                </div>
+                <div class="dim-scale"><span>Tối thiểu (0%)</span><span>Tiết kiệm (50%)</span><span>Cực đại (100%)</span></div>
+              </div>
+              <div class="support-options">
+                <div class="support-option">
+                  <span class="support-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>
+                  <span class="support-copy"><strong>Vận hành theo lịch</strong><small>Chưa tích hợp điều khiển lịch từ trang này</small></span>
+                  <span class="support-state">Chưa hỗ trợ</span>
+                </div>
+                <div class="support-option">
+                  <span class="support-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg></span>
+                  <span class="support-copy"><strong>Ghi đè tạm thời</strong><small>Chưa có cơ chế tự hoàn nguyên sau 15 phút</small></span>
+                  <span class="support-state">Chưa hỗ trợ</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="redesign-column">
+            <div class="redesign-card">
+              <div class="redesign-card-heading">
+                <div class="heading-title">
+                  <span class="heading-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                  </span>
+                  <h3>Lệnh gần đây</h3>
+                </div>
+                <a class="history-link" href="activity-log.html">Tất cả →</a>
+              </div>
+              <div class="recent-list" id="controlRecentList"><p class="recent-empty">Đang tải lịch sử lệnh...</p></div>
+              <div class="recent-footer" id="controlHistorySummary">Chưa có dữ liệu xác nhận từ Gateway.</div>
+            </div>
+          </section>
+
+          <section class="redesign-column redesign-column-lights">
+            <div class="redesign-card">
+              <div class="redesign-card-heading">
+                <div class="heading-title">
+                  <span class="heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M8 12h8M10 18h4"></path></svg></span>
+                  <h3>Điểm đèn thuộc đối tượng đã chọn</h3>
+                </div>
+                <div class="heading-title">
+                  <span class="redesign-badge" id="controlTargetCount">0 điểm đèn</span>
+                  <a class="history-link" href="map.html" aria-label="Xem bản đồ"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z"></path><path d="M9 3v15M15 6v15"></path></svg> Xem bản đồ</a>
+                </div>
+              </div>
+              <p class="table-caption" id="controlLampSummary">Chọn một đối tượng để xem các điểm đèn trực thuộc.</p>
+              <div class="redesign-table-wrap">
+                <table class="redesign-table">
+                  <thead><tr><th>Mã đèn</th><th>Vị trí</th><th>Trạng thái</th><th>Mức sáng</th><th>Kết nối</th></tr></thead>
+                  <tbody id="controlLightsBody"><tr><td class="empty-state" colspan="5">Chọn đối tượng để xem các điểm đèn.</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="redesign-confirm">
+              <div class="confirm-top">
+                <div class="confirm-heading">
+                  <span class="heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg></span>
+                  <strong>Xác nhận lệnh điều khiển</strong>
+                </div>
+                <span class="confirm-preview" id="controlConfirmSummary">Gửi lệnh tức thời: <strong>BẬT</strong></span>
+                <span class="confirm-target" id="controlConfirmTarget">Chọn đối tượng</span>
+              </div>
+              <div class="confirm-bottom">
+                <button type="button" id="controlCancelCommand">Bỏ qua</button>
+                <button type="button" id="controlSendCommand" disabled>✓&nbsp; Phát lệnh</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <main class="page-content control-legacy" aria-hidden="true">
         <!-- Page Title & Header Actions -->
         <section class="control-header-row">
           <div class="header-title-box">
@@ -368,7 +678,7 @@
               <h2 class="page-main-title">Điều khiển chiếu sáng</h2>
               <span class="online-pill-badge">
                 <span class="pulse-dot-blue"></span>
-                <span>Trực tuyến</span>
+                <span id="controlApiStatus">Đang kết nối Backend...</span>
               </span>
             </div>
             <p class="page-subtitle">Giám sát và gửi lệnh điều khiển tức thời cho các tuyến và cụm đèn đô thị</p>
@@ -407,7 +717,7 @@
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/>
                   </svg>
-                  <span>Khu vực</span>
+                  <span>Tủ điện</span>
                 </button>
                 <button type="button" class="scope-tab-btn" data-scope="route">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -431,12 +741,19 @@
                 <div class="ctrl-field-group">
                   <label class="ctrl-field-label-row">Khu vực / Phường</label>
                   <div class="ctrl-select-wrapper">
-                    <select class="ctrl-select" id="selectDistrict">
-                      <option value="haichau" selected>Phường Hải Châu (16 tuyến, 1.420 đèn)</option>
-                      <option value="hoacuong">Phường Hòa Cường (22 tuyến, 1.890 đèn)</option>
-                      <option value="thanhkhe">Phường Thanh Khê (18 tuyến, 1.630 đèn)</option>
-                      <option value="anhai">Phường An Hải (24 tuyến, 2.150 đèn)</option>
-                    </select>
+                    <select class="ctrl-select" id="selectDistrict" aria-label="Khu vực chiếu sáng"></select>
+                    <span class="ctrl-select-caret">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="ctrl-field-group">
+                  <label class="ctrl-field-label-row">Tủ chiếu sáng</label>
+                  <div class="ctrl-select-wrapper">
+                    <select class="ctrl-select" id="selectCabinet" aria-label="Tủ chiếu sáng"></select>
                     <span class="ctrl-select-caret">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="6 9 12 15 18 9"></polyline>
@@ -448,12 +765,7 @@
                 <div class="ctrl-field-group">
                   <label class="ctrl-field-label-row">Tuyến chiếu sáng</label>
                   <div class="ctrl-select-wrapper">
-                    <select class="ctrl-select" id="selectRoute">
-                      <option value="tl05" selected>Tuyến Bạch Đằng (185 điểm đèn)</option>
-                      <option value="tl02">Tuyến 2 Tháng 9 (94 điểm đèn)</option>
-                      <option value="tl03">Tuyến Điện Biên Phủ (142 điểm đèn)</option>
-                      <option value="tl08">Tuyến Võ Nguyên Giáp (88 điểm đèn)</option>
-                    </select>
+                    <select class="ctrl-select" id="selectRoute" aria-label="Tuyến chiếu sáng"></select>
                     <span class="ctrl-select-caret">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="6 9 12 15 18 9"></polyline>
@@ -469,7 +781,7 @@
                   </div>
                   <div class="ctrl-select-wrapper">
                     <select class="ctrl-select" id="selectFilterScope">
-                      <option value="selected" selected>12 điểm đèn đã chọn</option>
+                      <option value="selected" selected>Điểm đèn được chọn</option>
                       <option value="all">Toàn bộ 185 điểm đèn</option>
                       <option value="even">Chỉ điểm đèn số chẵn</option>
                       <option value="odd">Chỉ điểm đèn số lẻ</option>
@@ -535,6 +847,12 @@
                   <span class="slider-val-display"><strong id="sliderPercentVal">80</strong>%</span>
                 </div>
                 <input type="range" min="0" max="100" value="80" class="range-input" id="brightnessRange">
+                <div class="flex flex-wrap gap-2 mt-3" aria-label="Mức sáng nhanh">
+                  <button type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold" data-brightness="0">0%</button>
+                  <button type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold" data-brightness="30">30%</button>
+                  <button type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold" data-brightness="70">70%</button>
+                  <button type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold" data-brightness="100">100%</button>
+                </div>
                 <div class="slider-scale-hints">
                   <span>Tối thiểu (0%)</span>
                   <span>Tiết kiệm (50%)</span>
@@ -913,6 +1231,7 @@
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
   <!-- Control Script -->
+  <script src="js/api-config.js"></script>
   <script src="js/control.js"></script>
 </body>
 </html>
