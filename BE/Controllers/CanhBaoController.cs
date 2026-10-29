@@ -74,4 +74,48 @@ public class CanhBaoController : ControllerBase
         }
         return Ok(item);
     }
+
+    // PUT: api/CanhBao/1
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(long id, [FromBody] CanhBaoUpdateDto dto)
+    {
+        var item = await _context.CanhBao.FirstOrDefaultAsync(x => x.MaCanhBao == id);
+        if (item == null)
+        {
+            return NotFound(new { message = $"Không tìm thấy cảnh báo với mã: {id}" });
+        }
+
+        if (dto.TrangThaiXuLy.HasValue)
+        {
+            item.TrangThaiXuLy = dto.TrangThaiXuLy.Value;
+            if (item.TrangThaiXuLy == 2)
+            {
+                item.ThoiGianXuLy = DateTime.Now;
+            }
+            else if (item.TrangThaiXuLy == 0)
+            {
+                item.ThoiGianXuLy = null;
+            }
+        }
+
+        if (dto.GhiChuXuLy != null)
+        {
+            item.GhiChuXuLy = dto.GhiChuXuLy;
+        }
+
+        if (!string.IsNullOrEmpty(dto.MaNguoiXuLy))
+        {
+            item.MaNguoiXuLy = dto.MaNguoiXuLy;
+        }
+
+        await _context.SaveChangesAsync();
+        return Ok(item);
+    }
+}
+
+public class CanhBaoUpdateDto
+{
+    public byte? TrangThaiXuLy { get; set; }
+    public string? GhiChuXuLy { get; set; }
+    public string? MaNguoiXuLy { get; set; }
 }

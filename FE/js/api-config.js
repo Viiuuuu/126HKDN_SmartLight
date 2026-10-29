@@ -26,21 +26,25 @@
  * ==============================================================================
  */
 
-// Cấu hình URL mặc định theo profile ASP.NET Core (launchSettings.json)
-const DEFAULT_API_URL = 'http://localhost:5203/api';
+// Cấu hình danh sách URL Backend (launchSettings.json)
+// - Visual Studio mặc định chạy HTTPS: https://localhost:7274/api
+// - dotnet run mặc định chạy HTTP: http://localhost:5203/api
+const KNOWN_API_URLS = [
+  'https://localhost:7274/api',
+  'http://localhost:5203/api'
+];
+
+const DEFAULT_API_URL = (function() {
+  const customUrl = localStorage.getItem('SMARTLIGHT_API_BASE_URL');
+  if (customUrl && customUrl.trim() !== '') {
+    return customUrl.trim().replace(/\/+$/, '');
+  }
+  return 'https://localhost:7274/api';
+})();
 
 const API_CONFIG = {
-  // Ưu tiên đọc từ localStorage nếu dev muốn override port local
-  BASE_URL: (function () {
-    const customUrl = localStorage.getItem('SMARTLIGHT_API_BASE_URL');
-    if (customUrl && customUrl.trim() !== '') {
-      return customUrl.trim().replace(/\/+$/, '');
-    }
-    return DEFAULT_API_URL;
-  })(),
-
+  BASE_URL: DEFAULT_API_URL,
   TIMEOUT_MS: 15000,
-
   DEFAULT_HEADERS: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -73,10 +77,12 @@ function getAuthHeaders() {
  * Chuẩn hóa endpoint và gắn query parameters nếu có
  * @param {string} endpoint - Ví dụ: '/TuChieuSang' hoặc 'TuChieuSang'
  * @param {object} params - Ví dụ: { maKhuVuc: 'KV01', limit: 10 }
+ * @param {string} baseUrl - Base URL tùy chọn
  */
-function buildApiUrl(endpoint, params = null) {
+function buildApiUrl(endpoint, params = null, baseUrl = null) {
+  const root = baseUrl || API_CONFIG.BASE_URL;
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-  const url = new URL(`${API_CONFIG.BASE_URL}${cleanEndpoint}`);
+  const url = new URL(`${root}${cleanEndpoint}`);
 
   if (params && typeof params === 'object') {
     Object.keys(params).forEach(key => {
@@ -90,11 +96,10 @@ function buildApiUrl(endpoint, params = null) {
 }
 
 /**
- * Hàm gọi API nền tảng với Timeout & xử lý lỗi tập trung
+ * Hàm gọi API nền tảng với Timeout & tự động phát hiện cổng (HTTPS 7274 / HTTP 5203)
  */
 async function apiFetch(endpoint, options = {}) {
   const { params, timeout = API_CONFIG.TIMEOUT_MS, ...fetchOptions } = options;
-  const fullUrl = buildApiUrl(endpoint, params);
 
   // Gắn header mặc định & auth
   fetchOptions.headers = {
@@ -102,46 +107,72 @@ async function apiFetch(endpoint, options = {}) {
     ...(fetchOptions.headers || {})
   };
 
-  // Thiết lập cơ chế tự hủy (AbortSignal) khi quá hạn timeout
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-  fetchOptions.signal = controller.signal;
+  // Tạo danh sách URL để thử (ưu tiên BASE_URL hiện tại, kế tiếp là các cổng còn lại)
+  const candidateBases = [
+    API_CONFIG.BASE_URL,
+    ...KNOWN_API_URLS.filter(u => u !== API_CONFIG.BASE_URL)
+  ];
 
-  try {
-    const response = await fetch(fullUrl, fetchOptions);
-    clearTimeout(timeoutId);
+  let lastError = null;
 
-    // Kiểm tra status HTTP
-    if (!response.ok) {
-      let errorMessage = `Yêu cầu thất bại với mã trạng thái ${response.status}`;
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.message || errorData.title || errorMessage;
-      } catch (_) {
-        const text = await response.text();
-        if (text) errorMessage = text;
+  for (let i = 0; i < candidateBases.length; i++) {
+    const currentBase = candidateBases[i];
+    const fullUrl = buildApiUrl(endpoint, params, currentBase);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    fetchOptions.signal = controller.signal;
+
+    try {
+      const response = await fetch(fullUrl, fetchOptions);
+      clearTimeout(timeoutId);
+
+      // Nếu gọi thành công qua cổng này, cập nhật lại BASE_URL đang hoạt động
+      if (currentBase !== API_CONFIG.BASE_URL) {
+        API_CONFIG.BASE_URL = currentBase;
       }
-      const err = new Error(errorMessage);
-      err.status = response.status;
-      throw err;
-    }
 
-    // Nếu mã phản hồi là 204 No Content
-    if (response.status === 204) {
-      return null;
-    }
+      // Kiểm tra status HTTP từ server trả về
+      if (!response.ok) {
+        let errorMessage = `Yêu cầu thất bại với mã trạng thái ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.title || errorMessage;
+        } catch (_) {
+          const text = await response.text();
+          if (text) errorMessage = text;
+        }
+        const err = new Error(errorMessage);
+        err.status = response.status;
+        throw err;
+      }
 
-    // Parse JSON
-    return await response.json();
-  } catch (error) {
-    clearTimeout(timeoutId);
-    if (error.name === 'AbortError') {
-      console.error(`[API Timeout] Endpoint: ${fullUrl} vượt quá thời gian ${timeout}ms`);
-      throw new Error(`Kết nối máy chủ quá thời gian quy định (${timeout / 1000}s). Vui lòng kiểm tra Backend.`);
+      if (response.status === 204) {
+        return null;
+      }
+
+      return await response.json();
+    } catch (error) {
+      clearTimeout(timeoutId);
+      lastError = error;
+
+      // Nếu lỗi là do Server trả về mã lỗi HTTP hợp lệ (ví dụ: 400, 401, 403, 429), không thử lại cổng khác
+      if (error.status) {
+        throw error;
+      }
+
+      // Nếu là lỗi Timeout hoặc không kết nối được (NetworkError), thử cổng tiếp theo
+      if (i < candidateBases.length - 1) {
+        console.warn(`[api-config] Không kết nối được ${fullUrl}, đang thử cổng tiếp theo...`);
+      }
     }
-    console.error(`[API Error] ${fullUrl}:`, error.message);
-    throw error;
   }
+
+  if (lastError && lastError.name === 'AbortError') {
+    throw new Error(`Kết nối máy chủ quá thời gian (${timeout / 1000}s). Vui lòng kiểm tra Backend.`);
+  }
+
+  throw lastError || new Error('Không thể kết nối đến máy chủ Backend.');
 }
 
 /**
@@ -214,6 +245,149 @@ const api = {
   }
 };
 
+/**
+ * Chuẩn hóa tên vai trò hiển thị trên giao diện theo danh mục SmartLight EVNCPC
+ * @param {string} role 
+ * @returns {string} Tên vai trò tiếng Việt chuẩn
+ */
+function formatRoleName(role) {
+  if (!role || typeof role !== 'string') return 'Quản trị viên';
+  const r = role.trim().toLowerCase();
+
+  // Nhóm Nhân viên vận hành
+  if (r.includes('vận hành') || r.includes('van hanh') || r.includes('vanhanh') || r === 'operator') {
+    return 'Nhân viên vận hành';
+  }
+
+  // Nhóm Nhân viên kỹ thuật
+  if (r.includes('kỹ thuật') || r.includes('ky thuat') || r.includes('kythuat') || r.includes('tech') || r === 'technician') {
+    return 'Nhân viên kỹ thuật';
+  }
+
+  // Nhóm Quản trị viên
+  if (r.includes('quản trị') || r.includes('quan tri') || r.includes('admin')) {
+    return 'Quản trị viên';
+  }
+
+  return role;
+}
+
+/**
+ * Tự động đồng bộ thông tin tài khoản và vai trò người dùng lên thanh Header
+ * Hỗ trợ tất cả các trang: index.html, alerts.html, control.html, map.html, schedules.html, reports.html,...
+ */
+function syncHeaderUserInfo() {
+  try {
+    const sessionRaw = sessionStorage.getItem('smartlight_user_session');
+    if (!sessionRaw) return;
+
+    const user = JSON.parse(sessionRaw);
+    if (!user || typeof user !== 'object') return;
+
+    const rawRole = user.role || user.vaiTro || '';
+    const displayRole = formatRoleName(rawRole);
+    const displayName = user.fullName || user.hoTen || (user.username ? (user.username.charAt(0).toUpperCase() + user.username.slice(1)) : 'Người dùng');
+    const displayEmail = user.email || (user.username ? `${user.username}@smartlight.evncpc.vn` : 'quantri@smartlight.evncpc.vn');
+
+    // 1. Cập nhật tên người dùng trên Topbar/Header
+    document.querySelectorAll('.user-name, #topbarUserName, #alertUserName, #userName').forEach(el => {
+      // Nếu có thẻ con (ví dụ icon), chỉ thay thế text node đầu tiên hoặc cập nhật textContent
+      if (el.children.length === 0) {
+        el.textContent = displayName;
+      } else if (el.childNodes && el.childNodes[0] && el.childNodes[0].nodeType === Node.TEXT_NODE) {
+        el.childNodes[0].textContent = displayName;
+      }
+    });
+
+    // 2. Cập nhật VAI TRÒ người dùng trên Topbar/Header
+    document.querySelectorAll('.user-role, #topbarUserRole, #alertUserRole, #userRole').forEach(el => {
+      el.textContent = displayRole;
+      el.setAttribute('data-role', displayRole);
+      // Gắn nhãn màu sắc trực quan theo từng vai trò
+      if (displayRole === 'Nhân viên vận hành') {
+        el.style.color = '#0284c7'; // Xanh dương vận hành
+      } else if (displayRole === 'Nhân viên kỹ thuật') {
+        el.style.color = '#f59e0b'; // Vàng cam kỹ thuật
+      } else {
+        el.style.color = '#64748b'; // Quản trị mặc định
+      }
+    });
+
+    // 3. Cập nhật trong Popover Dropdown cá nhân
+    document.querySelectorAll('.user-dropdown-info strong, #dropdownUserName').forEach(el => {
+      el.textContent = displayName;
+    });
+
+    document.querySelectorAll('.user-dropdown-info small, #dropdownUserEmail').forEach(el => {
+      if (displayEmail) el.textContent = displayEmail;
+    });
+
+  } catch (err) {
+    console.warn('[api-config] Lỗi đồng bộ thông tin Header người dùng:', err);
+  }
+}
+
+/**
+ * Thực hiện đăng xuất hệ thống an toàn (ATTT Cấp độ 3)
+ * Gửi yêu cầu lên Backend để ghi nhận thời gian đăng xuất (thoiGianDangXuat) và thu hồi phiên làm việc
+ */
+async function handleLogout(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  try {
+    const sessionRaw = sessionStorage.getItem('smartlight_user_session');
+    if (sessionRaw) {
+      const user = JSON.parse(sessionRaw);
+      const token = user.token || user.Token;
+      const maNguoiDung = user.maNguoiDung || user.username;
+
+      // Gọi API đăng xuất để cập nhật thoiGianDangXuat và daThuHoi trong cơ sở dữ liệu
+      if (token || maNguoiDung) {
+        await api.post('/PhienDangNhap/dang-xuat', {
+          token: token || null,
+          maNguoiDung: maNguoiDung || null
+        }).catch(err => {
+          console.warn('[Logout] Lỗi khi gọi API đăng xuất:', err);
+        });
+      }
+    }
+  } catch (err) {
+    console.warn('[Logout] Lỗi xử lý đăng xuất:', err);
+  } finally {
+    sessionStorage.removeItem('smartlight_user_session');
+    window.location.href = 'login.html';
+  }
+}
+
+/**
+ * Tự động gắn sự kiện Đăng xuất cho tất cả các nút/liên kết đăng xuất trên giao diện
+ */
+function attachLogoutListeners() {
+  document.querySelectorAll('#linkLogout, .logout-link, [data-action="logout"]').forEach(el => {
+    el.removeEventListener('click', handleLogout);
+    el.addEventListener('click', handleLogout);
+  });
+}
+
+// Khởi chạy khi DOM tải xong
+function initUserHeaderAndAuth() {
+  syncHeaderUserInfo();
+  attachLogoutListeners();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initUserHeaderAndAuth);
+} else {
+  initUserHeaderAndAuth();
+}
+
 // Đưa ra phạm vi toàn cục window
 window.api = api;
 window.API_CONFIG = API_CONFIG;
+window.syncHeaderUserInfo = syncHeaderUserInfo;
+window.formatRoleName = formatRoleName;
+window.handleLogout = handleLogout;
+window.attachLogoutListeners = attachLogoutListeners;
