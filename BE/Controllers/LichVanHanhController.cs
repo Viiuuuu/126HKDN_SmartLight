@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using BE.Data;
 using BE.Models;
+using BE.Security;
 
 namespace BE.Controllers;
 
@@ -62,10 +63,14 @@ public class LichVanHanhController : ControllerBase
         return Ok(item);
     }
 
-    // POST: api/LichVanHanh
+    // POST: api/LichVanHanh (Admin & Operator)
     [HttpPost]
     public async Task<ActionResult<LichVanHanh>> Create([FromBody] SaveLichVanHanhRequest request)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Thiết lập lịch vận hành tự động");
+        if (forbidden != null) return forbidden;
+
         var error = await ValidateRequest(request);
         if (error is not null) return BadRequest(new { message = error });
 
@@ -78,19 +83,28 @@ public class LichVanHanhController : ControllerBase
             MaTu = request.MaTu,
             MaTuyen = request.MaTuyen,
             MaDen = request.MaDen,
-            MaNguoiTao = request.MaNguoiTao,
+            MaNguoiTao = request.MaNguoiTao ?? caller.User?.MaNguoiDung,
             NgayTao = DateTime.Now
         };
 
         _context.LichVanHanh.Add(schedule);
         await _context.SaveChangesAsync();
+
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "THEM_LICH_VAN_HANH", "LichVanHanh", schedule.MaLich.ToString(),
+            $"Thiết lập lịch vận hành: {schedule.TenLich}.");
+
         return CreatedAtAction(nameof(GetById), new { id = schedule.MaLich }, schedule);
     }
 
-    // PUT: api/LichVanHanh/1
+    // PUT: api/LichVanHanh/1 (Admin & Operator)
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] SaveLichVanHanhRequest request)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Cập nhật lịch vận hành tự động");
+        if (forbidden != null) return forbidden;
+
         var schedule = await _context.LichVanHanh.FirstOrDefaultAsync(item => item.MaLich == id);
         if (schedule is null)
         {
@@ -110,13 +124,22 @@ public class LichVanHanhController : ControllerBase
         schedule.NgayCapNhat = DateTime.Now;
 
         await _context.SaveChangesAsync();
+
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "CAP_NHAT_LICH_VAN_HANH", "LichVanHanh", id.ToString(),
+            $"Cập nhật lịch vận hành: {schedule.TenLich}.");
+
         return NoContent();
     }
 
-    // DELETE: api/LichVanHanh/1
+    // DELETE: api/LichVanHanh/1 (Admin & Operator)
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Xóa lịch vận hành tự động");
+        if (forbidden != null) return forbidden;
+
         var schedule = await _context.LichVanHanh.FirstOrDefaultAsync(item => item.MaLich == id);
         if (schedule is null)
         {
@@ -134,6 +157,11 @@ public class LichVanHanhController : ControllerBase
         _context.LichVanHanh.Remove(schedule);
         await _context.SaveChangesAsync();
         await transaction.CommitAsync();
+
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "XOA_LICH_VAN_HANH", "LichVanHanh", id.ToString(),
+            $"Xóa lịch vận hành: {schedule.TenLich}.");
+
         return NoContent();
     }
 

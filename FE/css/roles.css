@@ -1,0 +1,163 @@
+/* ==========================================================================
+   SmartLight Municipal IoT - Role-Based Access Control (RBAC) Stylesheet
+   File: css/roles.css
+   Synchronized with css/style.css Royal Blue & Slate Palette
+   ========================================================================== */
+
+:root {
+  --color-primary: #1d4ed8;
+  --color-primary-container: #1e40af;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #dbeafe;
+  --color-primary-fixed: #e0edff;
+  --color-on-primary-fixed: #0f2b48;
+  --color-on-primary-fixed-variant: #1d4ed8;
+  --color-surface: #f5f7fb;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f8fafc;
+  --color-surface-container: #f1f5f9;
+  --color-surface-container-high: #e2e8f0;
+  --color-surface-container-highest: #cbd5e1;
+  --color-on-surface: #0f172a;
+  --color-on-surface-variant: #334155;
+  --color-outline: #64748b;
+  --color-outline-variant: #cbd5e1;
+  --color-secondary: #c2410c;
+  --color-secondary-container: #ffedd5;
+  --color-on-secondary-container: #ea580c;
+  --color-secondary-fixed: #ffedd5;
+  --color-on-secondary-fixed: #7c2d12;
+  --color-secondary-fixed-variant: #c2410c;
+}
+
+body {
+  font-family: var(--font-sans, 'Plus Jakarta Sans', 'Nunito', sans-serif);
+  background-color: var(--bg-page, #f5f7fb);
+  color: var(--text-main, #0f172a);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Preserve canonical Topbar search input appearance when Tailwind forms plugin is loaded */
+.topbar .search-box .search-input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  height: 100% !important;
+  line-height: inherit !important;
+  border-radius: 0 !important;
+}
+
+.topbar .search-box .search-input:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  user-select: none;
+}
+
+/* Tree connector lines for permission leaf rows */
+.tree-branch {
+  position: relative;
+}
+
+.tree-branch::before {
+  content: '';
+  position: absolute;
+  left: -22px;
+  top: -12px;
+  bottom: 12px;
+  width: 1px;
+  border-left: 1.5px dashed #cbd5e1;
+}
+
+.tree-branch::after {
+  content: '';
+  position: absolute;
+  left: -22px;
+  top: 14px;
+  width: 16px;
+  height: 1px;
+  border-top: 1.5px dashed #cbd5e1;
+}
+
+/* Indeterminate & checked checkbox styling */
+input[type="checkbox"].perm-checkbox {
+  accent-color: #1e40af;
+  transition: all 0.15s ease;
+}
+
+input[type="checkbox"].perm-checkbox:checked {
+  background-color: #1e40af;
+  border-color: #1e40af;
+}
+
+input[type="checkbox"].perm-checkbox:indeterminate {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+input[type="checkbox"].perm-checkbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.2);
+}
+
+/* Role Selector Card Transitions */
+.role-tab-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.role-tab-card:hover {
+  transform: translateY(-1px);
+}
+
+/* Custom Scrollbar matching areas.css / style.css */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Modal Backdrop & Dialog Animation */
+.rbac-modal-backdrop {
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(3px);
+  transition: opacity 0.2s ease;
+}
+
+.rbac-modal-panel {
+  animation: modalSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

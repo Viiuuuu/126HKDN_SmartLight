@@ -1,0 +1,16 @@
+# Visual Studio & .NET Build Artifacts
+.vs/
+**/.vs/
+[Bb]in/
+[Oo]bj/
+**/[Bb]in/
+**/[Oo]bj/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vsidx
+*.db-shm
+*.db-wal
+slnx.sqlite
+

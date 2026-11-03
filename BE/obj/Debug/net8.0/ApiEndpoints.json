@@ -77,6 +77,27 @@
     ]
   },
   {
+    "ContainingType": "BE.Controllers.CanhBaoController",
+    "Method": "Update",
+    "RelativePath": "api/CanhBao/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int64",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "BE.Controllers.CanhBaoUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "BE.Controllers.CauHinhCanhBaoController",
     "Method": "GetAll",
     "RelativePath": "api/CauHinhCanhBao",
@@ -104,6 +125,32 @@
   },
   {
     "ContainingType": "BE.Controllers.CauHinhCanhBaoController",
+    "Method": "Create",
+    "RelativePath": "api/CauHinhCanhBao",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "BE.Models.CauHinhCanhBao",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.CauHinhCanhBao",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.CauHinhCanhBaoController",
     "Method": "GetById",
     "RelativePath": "api/CauHinhCanhBao/{id}",
     "HttpMethod": "GET",
@@ -113,6 +160,37 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.CauHinhCanhBao",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.CauHinhCanhBaoController",
+    "Method": "Update",
+    "RelativePath": "api/CauHinhCanhBao/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "BE.Models.CauHinhCanhBao",
         "IsRequired": true
       }
     ],
@@ -156,6 +234,32 @@
   },
   {
     "ContainingType": "BE.Controllers.ChiTietLichVanHanhController",
+    "Method": "Create",
+    "RelativePath": "api/ChiTietLichVanHanh",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.SaveChiTietLichVanHanhRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.ChiTietLichVanHanh",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.ChiTietLichVanHanhController",
     "Method": "GetById",
     "RelativePath": "api/ChiTietLichVanHanh/{id}",
     "HttpMethod": "GET",
@@ -179,6 +283,43 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "BE.Controllers.ChiTietLichVanHanhController",
+    "Method": "Update",
+    "RelativePath": "api/ChiTietLichVanHanh/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.SaveChiTietLichVanHanhRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BE.Controllers.ChiTietLichVanHanhController",
+    "Method": "Delete",
+    "RelativePath": "api/ChiTietLichVanHanh/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "BE.Controllers.DiemDenController",
@@ -208,6 +349,32 @@
   },
   {
     "ContainingType": "BE.Controllers.DiemDenController",
+    "Method": "Create",
+    "RelativePath": "api/DiemDen",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "BE.Models.DiemDen",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.DiemDen",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.DiemDenController",
     "Method": "GetById",
     "RelativePath": "api/DiemDen/{id}",
     "HttpMethod": "GET",
@@ -223,6 +390,89 @@
     "ReturnTypes": [
       {
         "Type": "BE.Models.DiemDen",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.DiemDenController",
+    "Method": "Update",
+    "RelativePath": "api/DiemDen/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "BE.Models.DiemDen",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.DiemDen",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.DiemDenController",
+    "Method": "Delete",
+    "RelativePath": "api/DiemDen/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BE.Controllers.DiemDenController",
+    "Method": "GetForControl",
+    "RelativePath": "api/DiemDen/dieu-khien",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maTu",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "maTuyen",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "maDen",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[BE.Controllers.DiemDenControlDto, BE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -368,6 +618,32 @@
   },
   {
     "ContainingType": "BE.Controllers.KhuVucController",
+    "Method": "Create",
+    "RelativePath": "api/KhuVuc",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "BE.Models.KhuVuc",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.KhuVuc",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.KhuVucController",
     "Method": "GetById",
     "RelativePath": "api/KhuVuc/{id}",
     "HttpMethod": "GET",
@@ -391,6 +667,53 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "BE.Controllers.KhuVucController",
+    "Method": "Update",
+    "RelativePath": "api/KhuVuc/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "BE.Models.KhuVuc",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.KhuVuc",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.KhuVucController",
+    "Method": "Delete",
+    "RelativePath": "api/KhuVuc/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "BE.Controllers.LenhDieuKhienController",
@@ -429,6 +752,32 @@
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.IEnumerable\u00601[[BE.Models.LenhDieuKhien, BE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.LenhDieuKhienController",
+    "Method": "Create",
+    "RelativePath": "api/LenhDieuKhien",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.CreateLenhDieuKhienRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.LenhDieuKhien",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -507,6 +856,32 @@
   },
   {
     "ContainingType": "BE.Controllers.LichVanHanhController",
+    "Method": "Create",
+    "RelativePath": "api/LichVanHanh",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.SaveLichVanHanhRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.LichVanHanh",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.LichVanHanhController",
     "Method": "GetById",
     "RelativePath": "api/LichVanHanh/{id}",
     "HttpMethod": "GET",
@@ -532,6 +907,43 @@
     ]
   },
   {
+    "ContainingType": "BE.Controllers.LichVanHanhController",
+    "Method": "Update",
+    "RelativePath": "api/LichVanHanh/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.SaveLichVanHanhRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BE.Controllers.LichVanHanhController",
+    "Method": "Delete",
+    "RelativePath": "api/LichVanHanh/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "BE.Controllers.NguoiDungController",
     "Method": "GetAll",
     "RelativePath": "api/NguoiDung",
@@ -548,11 +960,21 @@
         "Name": "maKhuVuc",
         "Type": "System.String",
         "IsRequired": false
+      },
+      {
+        "Name": "trangThaiTaiKhoan",
+        "Type": "System.Nullable\u00601[[System.Byte, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "tuKhoa",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[BE.Models.NguoiDung, BE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -561,6 +983,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "BE.Controllers.NguoiDungController",
+    "Method": "Create",
+    "RelativePath": "api/NguoiDung",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.CreateNguoiDungRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "BE.Controllers.NguoiDungController",
@@ -576,17 +1014,91 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BE.Controllers.NguoiDungController",
+    "Method": "Update",
+    "RelativePath": "api/NguoiDung/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
       {
-        "Type": "BE.Models.NguoiDung",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.UpdateNguoiDungRequest",
+        "IsRequired": true
       }
-    ]
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BE.Controllers.NguoiDungController",
+    "Method": "UpdateStatus",
+    "RelativePath": "api/NguoiDung/{id}/trang-thai",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.UpdateTrangThaiRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BE.Controllers.NguoiDungController",
+    "Method": "UpdateStatus",
+    "RelativePath": "api/NguoiDung/{id}/trang-thai",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.UpdateTrangThaiRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BE.Controllers.NguoiDungController",
+    "Method": "UpdateRole",
+    "RelativePath": "api/NguoiDung/{id}/vai-tro",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.UpdateVaiTroRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "BE.Controllers.NhatKyHeThongController",
@@ -708,6 +1220,58 @@
     ]
   },
   {
+    "ContainingType": "BE.Controllers.PhienDangNhapController",
+    "Method": "DangNhap",
+    "RelativePath": "api/PhienDangNhap/dang-nhap",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.DangNhapRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Controllers.DangNhapResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.PhienDangNhapController",
+    "Method": "DangXuat",
+    "RelativePath": "api/PhienDangNhap/dang-xuat",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.DangXuatRequest",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BE.Controllers.PhienDangNhapController",
+    "Method": "KiemTraPhien",
+    "RelativePath": "api/PhienDangNhap/kiem-tra",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "BE.Controllers.QuyenHanController",
     "Method": "GetAll",
     "RelativePath": "api/QuyenHan",
@@ -781,6 +1345,32 @@
   },
   {
     "ContainingType": "BE.Controllers.TuChieuSangController",
+    "Method": "Create",
+    "RelativePath": "api/TuChieuSang",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "BE.Models.TuChieuSang",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.TuChieuSang",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.TuChieuSangController",
     "Method": "GetById",
     "RelativePath": "api/TuChieuSang/{id}",
     "HttpMethod": "GET",
@@ -806,6 +1396,53 @@
     ]
   },
   {
+    "ContainingType": "BE.Controllers.TuChieuSangController",
+    "Method": "Update",
+    "RelativePath": "api/TuChieuSang/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "BE.Models.TuChieuSang",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.TuChieuSang",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.TuChieuSangController",
+    "Method": "Delete",
+    "RelativePath": "api/TuChieuSang/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "BE.Controllers.TuyenChieuSangController",
     "Method": "GetAll",
     "RelativePath": "api/TuyenChieuSang",
@@ -822,6 +1459,32 @@
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.IEnumerable\u00601[[BE.Models.TuyenChieuSang, BE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.TuyenChieuSangController",
+    "Method": "Create",
+    "RelativePath": "api/TuyenChieuSang",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "BE.Models.TuyenChieuSang",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.TuyenChieuSang",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -858,6 +1521,53 @@
     ]
   },
   {
+    "ContainingType": "BE.Controllers.TuyenChieuSangController",
+    "Method": "Update",
+    "RelativePath": "api/TuyenChieuSang/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "BE.Models.TuyenChieuSang",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "BE.Models.TuyenChieuSang",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "BE.Controllers.TuyenChieuSangController",
+    "Method": "Delete",
+    "RelativePath": "api/TuyenChieuSang/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "BE.Controllers.VaiTroController",
     "Method": "GetAll",
     "RelativePath": "api/VaiTro",
@@ -891,17 +1601,7 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "BE.Models.VaiTro",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "BE.Controllers.VaiTroQuyenHanController",
@@ -964,5 +1664,36 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "BE.Controllers.VaiTroQuyenHanController",
+    "Method": "GetMatrix",
+    "RelativePath": "api/VaiTroQuyenHan/ma-tran",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BE.Controllers.VaiTroQuyenHanController",
+    "Method": "UpdateRolePermissions",
+    "RelativePath": "api/VaiTroQuyenHan/vai-tro/{maVaiTro}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maVaiTro",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "BE.Controllers.CapNhatQuyenVaiTroRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]
