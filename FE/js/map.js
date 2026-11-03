@@ -1,7 +1,7 @@
 /**
  * SmartLight Municipal IoT - Map Monitoring Script (map.js)
- * Handles interactive map nodes, detail card updates, filter drawer,
- * zooming, layer toggling, real-time clock, and toasts.
+ * Nguồn dữ liệu: API /KhuVuc, /TuChieuSang, /TuyenChieuSang, /DiemDen,
+ *                  /DuLieuGiamSatTu, /DuLieuGiamSatDen
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -45,6 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const metaDistrict = document.getElementById('metaDistrict');
   const metaRoute = document.getElementById('metaRoute');
   const metaLocation = document.getElementById('metaLocation');
+  const metaUpdatedAt = document.getElementById('metaUpdatedAt');
+  const metaVoltage = document.getElementById('metaVoltage');
   const detailAvatarIcon = document.getElementById('detailAvatarIcon');
   const btnInspectDetail = document.getElementById('btnInspectDetail');
   const btnQuickControl = document.getElementById('btnQuickControl');
@@ -52,13 +54,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Map Controls
   const mapBgLayer = document.getElementById('mapBgLayer');
+  const deviceLayer = document.getElementById('mapDeviceLayer');
   const btnZoomIn = document.getElementById('btnZoomIn');
   const btnZoomOut = document.getElementById('btnZoomOut');
   const btnRecenterGps = document.getElementById('btnRecenterGps');
   const btnToggleLayers = document.getElementById('btnToggleLayers');
   const btnSwitchSatellite = document.getElementById('btnSwitchSatellite');
   const toastContainer = document.getElementById('toastContainer');
-  const mapNodes = document.querySelectorAll('.map-node');
+
+  // Telemetry chips
+  const valLightsActive = document.getElementById('valLightsActive');
+  const valLightsWarning = document.getElementById('valLightsWarning');
+  const valLightsLost = document.getElementById('valLightsLost');
+  const countCabinet = document.getElementById('countCabinet');
+  const countLamp = document.getElementById('countLamp');
+  const countStatusNormal = document.getElementById('countStatusNormal');
+  const countStatusWarning = document.getElementById('countStatusWarning');
+  const countStatusLost = document.getElementById('countStatusLost');
 
   // -------------------------------------------------------------------------
   // 2. Real-time Clock Sync
@@ -71,9 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const date = String(now.getDate()).padStart(2, '0');
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const year = now.getFullYear();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
 
     if (topbarLiveClock) {
       topbarLiveClock.textContent = `${dayName}, ${date}/${month}/${year}`;
@@ -98,151 +107,153 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -------------------------------------------------------------------------
-  // 3. Map Nodes Database & Interaction
+  // 3. Device Database & Map Rendering
   // -------------------------------------------------------------------------
-  const deviceDatabase = {
-    'DD-185V-027': {
-      id: 'ĐĐ-185V-027',
-      code: 'ĐĐ-185V-027',
-      type: 'Điểm đèn LED thông minh',
-      district: 'Quận Hải Châu',
-      route: 'Tuyến HL-01',
-      location: 'Đường Bạch Đằng, P. Hải Châu 1, Q. Hải Châu, TP. Đà Nẵng',
-      status: 'Hoạt động',
-      statusClass: 'status-active',
-      power: '120 W',
-      dim: '100%',
-      iconType: 'lamp'
-    },
-    'TCS-04-HC': {
-      id: 'TCS-04-HC',
-      code: 'TCS-04-HC',
-      type: 'Tủ điều khiển trung tâm',
-      district: 'Quận Hải Châu',
-      route: 'Tuyến Nguyễn Văn Linh',
-      location: 'Ngã tư Nguyễn Văn Linh - Hoàng Diệu, Q. Hải Châu',
-      status: 'Hoạt động',
-      statusClass: 'status-active',
-      power: '42 Đèn (8.4 kW)',
-      dim: '98.5% Tải',
-      iconType: 'cabinet'
-    },
-    'TCS-09-ST': {
-      id: 'TCS-09-ST',
-      code: 'TCS-09-ST',
-      type: 'Tủ điều khiển trung tâm',
-      district: 'Quận Sơn Trà',
-      route: 'Tuyến Võ Nguyên Giáp',
-      location: 'Gần Công viên Biển Đông, P. Phước Mỹ, Q. Sơn Trà',
-      status: 'Cảnh báo',
-      statusClass: 'status-warning',
-      power: '64 Đèn (12.8 kW)',
-      dim: 'Sụt áp pha B (188V)',
-      iconType: 'cabinet'
-    },
-    'DD-084-ND': {
-      id: 'ĐĐ-084-ND',
-      code: 'ĐĐ-084-ND',
-      type: 'Điểm đèn LED thông minh',
-      district: 'Quận Hải Châu',
-      route: 'Tuyến Như Nguyệt',
-      location: 'Vỉa hè bờ sông Hàn, Km 1+200',
-      status: 'Hoạt động',
-      statusClass: 'status-active',
-      power: '150 W',
-      dim: '80% Dimming',
-      iconType: 'lamp'
-    },
-    'DD-091-ND': {
-      id: 'ĐĐ-091-ND',
-      code: 'ĐĐ-091-ND',
-      type: 'Điểm đèn LED thông minh',
-      district: 'Quận Hải Châu',
-      route: 'Tuyến Bạch Đằng',
-      location: 'Khu vực phía Tây Cầu Sông Hàn',
-      status: 'Hoạt động',
-      statusClass: 'status-active',
-      power: '150 W',
-      dim: '90% Dimming',
-      iconType: 'lamp'
-    },
-    'DD-112-TR': {
-      id: 'ĐĐ-112-TR',
-      code: 'ĐĐ-112-TR',
-      type: 'Điểm đèn LED thông minh',
-      district: 'Quận Hải Châu',
-      route: 'Tuyến Trần Phú',
-      location: 'Gần Bảo tàng Điêu khắc Chăm, Cột 24',
-      status: 'Cảnh báo',
-      statusClass: 'status-warning',
-      power: '100 W',
-      dim: 'Lỗi driver LED',
-      iconType: 'lamp'
-    },
-    'DD-201-CL': {
-      id: 'ĐĐ-201-CL',
-      code: 'ĐĐ-201-CL',
-      type: 'Điểm đèn LED thông minh',
-      district: 'Quận Cẩm Lệ',
-      route: 'Tuyến Cách Mạng Tháng 8',
-      location: 'Km 2+400, Hòa Thọ Đông, Q. Cẩm Lệ',
-      status: 'Mất kết nối',
-      statusClass: 'status-lost',
-      power: '120 W',
-      dim: 'Offline 3 giờ',
-      iconType: 'lamp'
-    },
-    'DD-054-CR': {
-      id: 'ĐĐ-054-CR',
-      code: 'ĐĐ-054-CR',
-      type: 'Điểm đèn LED thông minh',
-      district: 'Quận Sơn Trà',
-      route: 'Tuyến Võ Văn Kiệt',
-      location: 'Đầu Cầu Rồng phía Đông, Q. Sơn Trà',
-      status: 'Hoạt động',
-      statusClass: 'status-active',
-      power: '150 W',
-      dim: '100%',
-      iconType: 'lamp'
-    },
-    'DD-062-CR': {
-      id: 'ĐĐ-062-CR',
-      code: 'ĐĐ-062-CR',
-      type: 'Điểm đèn LED thông minh',
-      district: 'Quận Sơn Trà',
-      route: 'Tuyến Trần Hưng Đạo',
-      location: 'Khu vực Bến du thuyền DHC Marina',
-      status: 'Hoạt động',
-      statusClass: 'status-active',
-      power: '120 W',
-      dim: '100%',
-      iconType: 'lamp'
-    },
-    'DD-140-TTL': {
-      id: 'ĐĐ-140-TTL',
-      code: 'ĐĐ-140-TTL',
-      type: 'Điểm đèn LED thông minh',
-      district: 'Quận Hải Châu',
-      route: 'Tuyến 2 Tháng 9',
-      location: 'Gần chân Cầu Trần Thị Lý, Q. Hải Châu',
-      status: 'Hoạt động',
-      statusClass: 'status-active',
-      power: '150 W',
-      dim: '90%',
-      iconType: 'lamp'
-    }
+  const deviceDatabase = {};
+  let mapNodes = [];
+  let selectedDevice = null;
+
+  // Bounding box Đà Nẵng dùng để chiếu toạ độ GPS lên nền bản đồ
+  const DN_BOUNDS = {
+    minLat: 16.0000,
+    maxLat: 16.1400,
+    minLng: 108.1800,
+    maxLng: 108.3200
   };
 
-  let selectedDevice = null;
+  function apiField(record, camelName, pascalName) {
+    return record?.[camelName] ?? record?.[pascalName];
+  }
+
+  function readCoordinate(value) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  /**
+   * Chiếu toạ độ GPS lên vị trí phần trăm trong khung bản đồ.
+   * Trả về null nếu toạ độ không hợp lệ hoặc nằm ngoài Đà Nẵng.
+   */
+  function projectToMap(lat, lng) {
+    if (lat === null || lng === null) return null;
+    if (lat < DN_BOUNDS.minLat || lat > DN_BOUNDS.maxLat) return null;
+    if (lng < DN_BOUNDS.minLng || lng > DN_BOUNDS.maxLng) return null;
+
+    const x = ((lng - DN_BOUNDS.minLng) / (DN_BOUNDS.maxLng - DN_BOUNDS.minLng)) * 100;
+    const y = (1 - (lat - DN_BOUNDS.minLat) / (DN_BOUNDS.maxLat - DN_BOUNDS.minLat)) * 100;
+
+    return {
+      left: Math.min(92, Math.max(8, x)),
+      top: Math.min(88, Math.max(10, y))
+    };
+  }
+
+  function buildCabinetNode(device, position) {
+    const node = document.createElement('div');
+    node.className = 'map-node';
+    node.dataset.id = device.id;
+    node.title = `Tủ chiếu sáng ${device.id}`;
+    if (position) {
+      node.classList.add('has-gps');
+      node.style.left = `${position.left}%`;
+      node.style.top = `${position.top}%`;
+    }
+
+    const warning = device.statusClass === 'status-warning';
+    const lost = device.statusClass === 'status-lost';
+    const pinClass = warning || lost ? 'warning' : 'active';
+
+    node.innerHTML = `
+      ${!warning && !lost ? '<div class="node-ripple"></div>' : ''}
+      <div class="cabinet-pin ${pinClass}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 7v5l3 3"></path>
+          <path d="M9 12h6"></path>
+        </svg>
+      </div>
+      <span class="node-hover-label">${device.id} · ${device.district}</span>
+    `;
+    return node;
+  }
+
+  function buildLampNode(device, position) {
+    const node = document.createElement('div');
+    node.className = 'map-node';
+    node.dataset.id = device.id;
+    node.title = `Điểm đèn ${device.id}`;
+    if (position) {
+      node.classList.add('has-gps');
+      node.style.left = `${position.left}%`;
+      node.style.top = `${position.top}%`;
+    }
+
+    const pinClass = device.statusClass === 'status-active'
+      ? 'state-on'
+      : device.statusClass === 'status-warning'
+        ? 'state-warning'
+        : 'state-lost';
+
+    node.innerHTML = `
+      <div class="lamp-pin ${pinClass}"></div>
+      <span class="node-hover-label">${device.id} · ${device.dim}</span>
+    `;
+    return node;
+  }
+
+  function renderMapNodes(devices) {
+    if (!deviceLayer) return;
+
+    deviceLayer.replaceChildren();
+    mapNodes = [];
+
+    if (!devices.length) {
+      const empty = document.createElement('div');
+      empty.className = 'map-node-empty';
+      empty.textContent = 'Chưa có thiết bị nào trong Backend để hiển thị trên bản đồ.';
+      deviceLayer.appendChild(empty);
+      return;
+    }
+
+    // Vị trí dự phòng khi thiết bị không có toạ độ GPS
+    const fallbackPositions = [
+      { left: 36, top: 24 }, { left: 54, top: 32 }, { left: 48, top: 46 },
+      { left: 60, top: 52 }, { left: 42, top: 62 }, { left: 66, top: 66 },
+      { left: 30, top: 42 }, { left: 58, top: 72 }, { left: 70, top: 44 },
+      { left: 24, top: 70 }, { left: 46, top: 18 }, { left: 64, top: 22 }
+    ];
+
+    devices.forEach((device, index) => {
+      const position = projectToMap(device.lat, device.lng) || fallbackPositions[index % fallbackPositions.length];
+      const node = device.iconType === 'cabinet'
+        ? buildCabinetNode(device, position)
+        : buildLampNode(device, position);
+      deviceLayer.appendChild(node);
+      mapNodes.push(node);
+    });
+  }
+
+  function bindNodeEvents() {
+    mapNodes.forEach(node => {
+      node.addEventListener('click', event => {
+        event.stopPropagation();
+        const nodeId = node.getAttribute('data-id');
+
+        mapNodes.forEach(item => item.classList.remove('selected'));
+        node.classList.add('selected');
+
+        displayDeviceDetail(nodeId);
+        showToast(`Đã chọn thiết bị: ${nodeId}`, 'success');
+      });
+    });
+  }
 
   function displayDeviceDetail(id) {
     const data = deviceDatabase[id];
     if (!data) return;
     selectedDevice = data;
 
-    if (deviceDetailCard) {
-      deviceDetailCard.classList.remove('hidden');
-    }
+    deviceDetailCard?.classList.remove('hidden');
 
     if (detailId) detailId.textContent = data.id;
     if (metaCode) metaCode.textContent = data.code;
@@ -252,6 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (metaLocation) metaLocation.textContent = data.location;
     if (detailPower) detailPower.textContent = data.power;
     if (detailDimming) detailDimming.textContent = data.dim;
+    if (metaUpdatedAt) metaUpdatedAt.textContent = data.updated || '—';
+    if (metaVoltage) metaVoltage.textContent = data.voltage ? `${data.voltage} VAC` : '—';
 
     if (detailStatusText) detailStatusText.textContent = data.status;
     if (detailStatusBadge) {
@@ -277,25 +290,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Node Click Handlers
-  mapNodes.forEach(node => {
-    node.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const nodeId = node.getAttribute('data-id');
-
-      mapNodes.forEach(n => n.classList.remove('selected'));
-      node.classList.add('selected');
-
-      displayDeviceDetail(nodeId);
-      showToast(`Đã chọn thiết bị: ${nodeId}`, 'success');
-    });
-  });
-
   if (btnCloseDetailCard) {
     btnCloseDetailCard.addEventListener('click', () => {
-      if (deviceDetailCard) {
-        deviceDetailCard.classList.add('hidden');
-      }
+      deviceDetailCard?.classList.add('hidden');
     });
   }
 
@@ -314,18 +311,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnApplyFilter) {
     btnApplyFilter.addEventListener('click', () => {
-      showToast('Đã áp dụng bộ lọc dữ liệu bản đồ', 'success');
+      applyMapFilters();
     });
+  }
+
+  function applyMapFilters(notify = true) {
+    const district = document.getElementById('selectDistrict')?.value || 'all';
+    const selectedDistrict = district === 'all' ? '' : district;
+    const showCabinets = document.getElementById('chkCabinet')?.checked !== false;
+    const showLamps = document.getElementById('chkLamp')?.checked !== false;
+    const showNormal = document.getElementById('chkStatusNormal')?.checked !== false;
+    const showWarning = document.getElementById('chkStatusWarning')?.checked !== false;
+    const showLost = document.getElementById('chkStatusLost')?.checked !== false;
+    const keyword = filterSearchInput?.value.trim().toLocaleLowerCase('vi') || '';
+    let visibleCount = 0;
+
+    mapNodes.forEach(node => {
+      const data = deviceDatabase[node.dataset.id];
+      if (!data) {
+        node.style.display = 'none';
+        return;
+      }
+
+      const matchesDistrict = !selectedDistrict
+        || data.areaId === selectedDistrict
+        || data.district.toLocaleLowerCase('vi').includes(selectedDistrict.toLocaleLowerCase('vi'));
+      const matchesType = data.iconType === 'cabinet' ? showCabinets : showLamps;
+      const matchesStatus = data.statusClass === 'status-active'
+        ? showNormal
+        : data.statusClass === 'status-warning'
+          ? showWarning
+          : showLost;
+      const searchableText = `${data.id} ${data.code} ${data.type} ${data.district} ${data.route} ${data.location}`.toLocaleLowerCase('vi');
+      const matchesSearch = !keyword || searchableText.includes(keyword);
+      const visible = matchesDistrict && matchesType && matchesStatus && matchesSearch;
+
+      node.style.display = visible ? '' : 'none';
+      if (visible) visibleCount++;
+      if (!visible && node.classList.contains('selected')) {
+        node.classList.remove('selected');
+        selectedDevice = null;
+        deviceDetailCard?.classList.add('hidden');
+      }
+    });
+
+    if (notify) showToast(`Đang hiển thị ${visibleCount} thiết bị theo bộ lọc.`, 'success');
   }
 
   if (btnResetFilter) {
     btnResetFilter.addEventListener('click', () => {
       if (filterSearchInput) filterSearchInput.value = '';
-      const checkboxes = filterPanel.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach(c => c.checked = true);
-      const sel = document.getElementById('selectDistrict');
-      if (sel) sel.selectedIndex = 1;
-      showToast('Đã đặt lại bộ lọc bản đồ mặc định', 'success');
+      filterPanel?.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = true;
+      });
+      const districtSelect = document.getElementById('selectDistrict');
+      if (districtSelect) districtSelect.value = 'all';
+      applyMapFilters(false);
+      showToast('Đã đặt lại bộ lọc bản đồ.', 'success');
     });
   }
 
@@ -337,9 +379,280 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('chkStatusLost')
       ];
       statusBoxes.forEach(b => { if (b) b.checked = true; });
-      showToast('Đã chọn tất cả trạng thái', 'success');
+      applyMapFilters(false);
+      showToast('Đã chọn tất cả trạng thái.', 'success');
     });
   }
+
+  filterSearchInput?.addEventListener('keydown', event => {
+    if (event.key === 'Enter') applyMapFilters();
+  });
+  document.getElementById('selectDistrict')?.addEventListener('change', () => applyMapFilters(false));
+  document.getElementById('chkCabinet')?.addEventListener('change', () => applyMapFilters(false));
+  document.getElementById('chkLamp')?.addEventListener('change', () => applyMapFilters(false));
+  document.getElementById('chkStatusNormal')?.addEventListener('change', () => applyMapFilters(false));
+  document.getElementById('chkStatusWarning')?.addEventListener('change', () => applyMapFilters(false));
+  document.getElementById('chkStatusLost')?.addEventListener('change', () => applyMapFilters(false));
+  applyMapFilters(false);
+
+  function formatMetric(value, unit = '', digits = 1) {
+    if (value === null || value === undefined || value === '') return '—';
+    const number = Number(value);
+    if (!Number.isFinite(number)) return '—';
+    return `${number.toFixed(digits)}${unit}`;
+  }
+
+  function averagePhase(values) {
+    const numbers = values.map(Number).filter(Number.isFinite);
+    if (!numbers.length) return null;
+    return numbers.reduce((sum, value) => sum + value, 0) / numbers.length;
+  }
+
+  async function enrichCabinetMetrics(device) {
+    try {
+      const readings = await window.api.get('/DuLieuGiamSatTu', { maTu: device.id, limit: 1 });
+      const latest = Array.isArray(readings) ? readings[0] : null;
+      if (!latest) return;
+
+      const voltage = averagePhase([
+        apiField(latest, 'dienApPha1', 'DienApPha1'),
+        apiField(latest, 'dienApPha2', 'DienApPha2'),
+        apiField(latest, 'dienApPha3', 'DienApPha3')
+      ]);
+      const current = averagePhase([
+        apiField(latest, 'dongDienPha1', 'DongDienPha1'),
+        apiField(latest, 'dongDienPha2', 'DongDienPha2'),
+        apiField(latest, 'dongDienPha3', 'DongDienPha3')
+      ]);
+      const power = apiField(latest, 'congSuat', 'CongSuat');
+      const energy = apiField(latest, 'dienNang', 'DienNang');
+
+      device.voltage = voltage;
+      device.current = current;
+      device.powerKw = power;
+      device.energyKwh = energy;
+      device.power = power !== null && power !== undefined
+        ? `${formatMetric(power, ' kW', 2)} · U ${formatMetric(voltage, ' V', 0)} · I ${formatMetric(current, ' A', 1)}`
+        : `U ${formatMetric(voltage, ' V', 0)} · I ${formatMetric(current, ' A', 1)}`;
+      device.dim = energy !== null && energy !== undefined
+        ? `Điện năng ${formatMetric(energy, ' kWh', 1)}`
+        : device.dim;
+      if (Number(power) > 0 && device.statusClass !== 'status-lost') {
+        device.status = 'Hoạt động';
+        device.statusClass = 'status-active';
+      } else if (Number(power) === 0 && device.statusClass === 'status-active') {
+        device.status = 'Đang tắt';
+        device.dim = 'Tắt tải (P = 0)';
+      }
+    } catch (error) {
+      console.warn(`Không tải được giám sát tủ ${device.id}.`, error);
+    }
+  }
+
+  async function enrichLampMetrics(device) {
+    try {
+      const readings = await window.api.get('/DuLieuGiamSatDen', { maDen: device.id, limit: 1 });
+      const latest = Array.isArray(readings) ? readings[0] : null;
+      if (!latest) return;
+
+      const voltage = apiField(latest, 'dienAp', 'DienAp');
+      const current = apiField(latest, 'dongDien', 'DongDien');
+      const power = apiField(latest, 'congSuatThucTe', 'CongSuatThucTe');
+      const dim = apiField(latest, 'doSang', 'DoSang');
+
+      device.voltage = voltage;
+      device.current = current;
+      device.power = power !== null && power !== undefined
+        ? `${formatMetric(power, ' W', 1)} · U ${formatMetric(voltage, ' V', 0)} · I ${formatMetric(current, ' A', 2)}`
+        : `U ${formatMetric(voltage, ' V', 0)} · I ${formatMetric(current, ' A', 2)}`;
+      if (dim !== null && dim !== undefined) {
+        device.dim = `${dim}%`;
+      }
+      if (Number(power) > 0 || Number(dim) > 0) {
+        device.status = 'Hoạt động';
+        device.statusClass = 'status-active';
+      } else if (Number(power) === 0 || Number(dim) === 0) {
+        device.status = 'Đang tắt';
+        device.statusClass = 'status-lost';
+      }
+    } catch (error) {
+      console.warn(`Không tải được giám sát đèn ${device.id}.`, error);
+    }
+  }
+
+  function populateDistrictFilter(areas) {
+    const select = document.getElementById('selectDistrict');
+    if (!select) return;
+
+    const requestedArea = new URLSearchParams(window.location.search).get('area');
+    const requestedDistrict = new URLSearchParams(window.location.search).get('district');
+
+    const options = areas.map(area => ({
+      id: String(apiField(area, 'maKhuVuc', 'MaKhuVuc') || '').trim(),
+      name: String(apiField(area, 'tenPhuongXa', 'TenPhuongXa') || '').trim()
+    })).filter(option => option.id && option.name);
+
+    select.replaceChildren();
+    const allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.textContent = 'Tất cả khu vực (Đà Nẵng)';
+    select.appendChild(allOption);
+
+    options.forEach(option => {
+      const element = document.createElement('option');
+      element.value = option.id;
+      element.textContent = option.name;
+      select.appendChild(element);
+    });
+
+    if (requestedArea && options.some(option => option.id === requestedArea)) {
+      select.value = requestedArea;
+    } else if (requestedDistrict && options.some(option => option.id === requestedDistrict)) {
+      select.value = requestedDistrict;
+    } else {
+      select.value = 'all';
+    }
+  }
+
+  function updateTelemetryCounts(devices) {
+    const cabinets = devices.filter(device => device.iconType === 'cabinet');
+    const lamps = devices.filter(device => device.iconType === 'lamp');
+    const active = devices.filter(device => device.statusClass === 'status-active').length;
+    const warning = devices.filter(device => device.statusClass === 'status-warning').length;
+    const lost = devices.filter(device => device.statusClass === 'status-lost').length;
+
+    if (valLightsActive) valLightsActive.textContent = active.toLocaleString('vi-VN');
+    if (valLightsWarning) valLightsWarning.textContent = warning.toLocaleString('vi-VN');
+    if (valLightsLost) valLightsLost.textContent = lost.toLocaleString('vi-VN');
+    if (countCabinet) countCabinet.textContent = cabinets.length.toLocaleString('vi-VN');
+    if (countLamp) countLamp.textContent = lamps.length.toLocaleString('vi-VN');
+    if (countStatusNormal) countStatusNormal.textContent = active.toLocaleString('vi-VN');
+    if (countStatusWarning) countStatusWarning.textContent = warning.toLocaleString('vi-VN');
+    if (countStatusLost) countStatusLost.textContent = lost.toLocaleString('vi-VN');
+  }
+
+  async function loadMapInfrastructure() {
+    if (!window.api) {
+      showToast('Chưa nạp API client; bản đồ đang ở chế độ mô phỏng.', 'warning');
+      return;
+    }
+
+    try {
+      const [areas, cabinets, routes, lamps] = await Promise.all([
+        window.api.get('/KhuVuc'),
+        window.api.get('/TuChieuSang'),
+        window.api.get('/TuyenChieuSang'),
+        window.api.get('/DiemDen')
+      ]);
+      if (![areas, cabinets, routes, lamps].every(Array.isArray)) {
+        throw new TypeError('API hạ tầng phải trả về danh sách thiết bị.');
+      }
+      if (!cabinets.length && !lamps.length) {
+        showToast('Backend chưa có tủ/điểm đèn; bản đồ đang trống.', 'warning');
+        renderMapNodes([]);
+        updateTelemetryCounts([]);
+        return;
+      }
+
+      populateDistrictFilter(areas);
+
+      const areaNames = new Map(areas.map(item => [
+        String(apiField(item, 'maKhuVuc', 'MaKhuVuc') || '').trim(),
+        String(apiField(item, 'tenPhuongXa', 'TenPhuongXa') || '').trim()
+      ]));
+      const routeById = new Map(routes.map(item => [
+        String(apiField(item, 'maTuyen', 'MaTuyen') || '').trim(),
+        item
+      ]));
+
+      const devices = [];
+
+      cabinets.forEach(item => {
+        const id = String(apiField(item, 'maTu', 'MaTu') || '').trim();
+        const connected = Boolean(apiField(item, 'trangThaiKetNoi', 'TrangThaiKetNoi'));
+        const areaId = String(apiField(item, 'maKhuVuc', 'MaKhuVuc') || '').trim();
+        const lastSeen = apiField(item, 'lanKetNoiCuoi', 'LanKetNoiCuoi');
+
+        devices.push({
+          id,
+          code: id,
+          type: 'Tủ điều khiển trung tâm',
+          district: areaNames.get(areaId) || 'Chưa xác định',
+          areaId,
+          route: String(apiField(item, 'tenTu', 'TenTu') || ''),
+          location: String(apiField(item, 'diaChi', 'DiaChi') || 'Chưa có vị trí'),
+          status: connected ? 'Hoạt động' : 'Mất kết nối',
+          statusClass: connected ? 'status-active' : 'status-lost',
+          power: 'Chưa có dữ liệu giám sát',
+          dim: connected ? 'Đã kết nối' : 'Mất kết nối',
+          iconType: 'cabinet',
+          updated: lastSeen ? new Date(lastSeen).toLocaleString('vi-VN') : '—',
+          lat: readCoordinate(apiField(item, 'viDo', 'ViDo')),
+          lng: readCoordinate(apiField(item, 'kinhDo', 'KinhDo'))
+        });
+      });
+
+      const cabinetById = new Map(cabinets.map(item => [
+        String(apiField(item, 'maTu', 'MaTu') || '').trim(),
+        item
+      ]));
+
+      lamps.forEach(item => {
+        const id = String(apiField(item, 'maDen', 'MaDen') || '').trim();
+        const routeId = String(apiField(item, 'maTuyen', 'MaTuyen') || '').trim();
+        const route = routeById.get(routeId);
+        const cabinet = cabinetById.get(String(apiField(route, 'maTu', 'MaTu') || '').trim());
+        const areaId = String(apiField(cabinet, 'maKhuVuc', 'MaKhuVuc') || '').trim();
+        const isActive = Number(apiField(item, 'trangThaiHoatDong', 'TrangThaiHoatDong')) === 1;
+        const dim = apiField(item, 'doSang', 'DoSang');
+        const power = apiField(item, 'congSuat', 'CongSuat');
+        const lastSeen = apiField(item, 'lanDoCuoi', 'LanDoCuoi');
+
+        devices.push({
+          id,
+          code: id,
+          type: String(apiField(item, 'loaiBongDen', 'LoaiBongDen') || 'Điểm đèn LED'),
+          district: areaNames.get(areaId) || 'Chưa xác định',
+          areaId,
+          route: String(apiField(route, 'tenTuyen', 'TenTuyen') || routeId),
+          location: String(apiField(item, 'viTri', 'ViTri') || 'Chưa có vị trí'),
+          status: isActive ? 'Hoạt động' : 'Đang tắt',
+          statusClass: isActive ? 'status-active' : 'status-lost',
+          power: power !== null && power !== undefined ? `${power} W` : 'Chưa có dữ liệu',
+          dim: dim !== null && dim !== undefined ? `${dim}%` : 'Chưa có dữ liệu',
+          iconType: 'lamp',
+          updated: lastSeen ? new Date(lastSeen).toLocaleString('vi-VN') : '—',
+          lat: readCoordinate(apiField(item, 'viDo', 'ViDo')),
+          lng: readCoordinate(apiField(item, 'kinhDo', 'KinhDo'))
+        });
+      });
+
+      Object.keys(deviceDatabase).forEach(key => delete deviceDatabase[key]);
+      devices.forEach(device => { deviceDatabase[device.id] = device; });
+
+      renderMapNodes(devices);
+      bindNodeEvents();
+      updateTelemetryCounts(devices);
+
+      await Promise.all(devices.map(device =>
+        device.iconType === 'cabinet' ? enrichCabinetMetrics(device) : enrichLampMetrics(device)
+      ));
+
+      updateTelemetryCounts(devices);
+      applyMapFilters(false);
+
+      const selectedNode = document.querySelector('.map-node.selected');
+      if (selectedNode?.dataset.id && deviceDatabase[selectedNode.dataset.id]) {
+        displayDeviceDetail(selectedNode.dataset.id);
+      }
+      showToast(`Đã tải ${devices.length} thiết bị hạ tầng từ Backend lên bản đồ.`, 'success');
+    } catch (error) {
+      console.warn('Không tải được dữ liệu bản đồ từ API.', error);
+      showToast('Không kết nối được Backend bản đồ; đang hiển thị thiết bị mô phỏng.', 'warning');
+    }
+  }
+
+  loadMapInfrastructure();
 
   // -------------------------------------------------------------------------
   // 5. Map Canvas Zoom & Satellite Layer Controls
@@ -378,7 +691,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnRecenterGps.addEventListener('click', () => {
       currentZoom = 1;
       applyZoom();
-      showToast('Đã định vị về trung tâm Hải Châu - Sơn Trà, Đà Nẵng', 'success');
+      showToast('Đã định vị về trung tâm Đà Nẵng', 'success');
     });
   }
 
@@ -387,7 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mapBgLayer) {
       mapBgLayer.style.backgroundImage = `url('${isSatellite ? satBg : normalBg}')`;
     }
-    showToast(isSatellite ? 'Đã kích hoạt lớp bản đồ Vệ tinh' : 'Đã kích hoạt lớp bản đồ Giao thông', 'success');
+    showToast(isSatellite ? 'Đã kích hoạt lơp bản đồ Vệ tinh' : 'Đã kích hoạt lớp bản đồ Giao thông', 'success');
   }
 
   if (btnToggleLayers) {
@@ -424,13 +737,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnQuickControl) {
     btnQuickControl.addEventListener('click', () => {
-      showToast('Đã mở lệnh điều khiển Dimming / Bật Tắt cho node này', 'success');
+      if (!selectedDevice) {
+        showToast('Hãy chọn một thiết bị trước khi mở điều khiển.', 'warning');
+        return;
+      }
+
+      const params = new URLSearchParams({
+        id: selectedDevice.id,
+        type: selectedDevice.type,
+        district: selectedDevice.district,
+        route: selectedDevice.route,
+        location: selectedDevice.location,
+        status: selectedDevice.status,
+        power: selectedDevice.power,
+        dim: selectedDevice.dim
+      });
+      window.location.href = `device-detail.html?${params.toString()}`;
     });
   }
 
   if (btnDispatchPatrol) {
     btnDispatchPatrol.addEventListener('click', () => {
-      showToast('Đã gửi thông báo điều phối đội xe kỹ thuật Hải Châu - Sơn Trà', 'success');
+      showToast('Chức năng điều phối đội hiện chưa được kết nối API.', 'warning');
     });
   }
 
@@ -438,8 +766,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // 7. Topbar Popovers (Notifications & User Profile)
   // -------------------------------------------------------------------------
   function closeAllPopovers() {
-    if (notificationDropdown) notificationDropdown.classList.remove('active');
-    if (userDropdown) userDropdown.classList.remove('active');
+    notificationDropdown?.classList.remove('active');
+    userDropdown?.classList.remove('active');
   }
 
   if (btnNotifications) {
@@ -489,13 +817,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // 8. Mobile Sidebar
   // -------------------------------------------------------------------------
   function openMobileSidebar() {
-    if (sidebar) sidebar.classList.add('open');
-    if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+    sidebar?.classList.add('open');
+    sidebarBackdrop?.classList.add('active');
   }
 
   function closeMobileSidebar() {
-    if (sidebar) sidebar.classList.remove('open');
-    if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+    sidebar?.classList.remove('open');
+    sidebarBackdrop?.classList.remove('active');
   }
 
   if (btnToggleMobileSidebar) btnToggleMobileSidebar.addEventListener('click', openMobileSidebar);
@@ -511,14 +839,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
 
-    const iconSvg = type === 'success' 
+    const iconSvg = type === 'success'
       ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`
       : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
-
-    toast.innerHTML = `
-      ${iconSvg}
-      <span>${message}</span>
-    `;
+    const iconTemplate = document.createElement('template');
+    iconTemplate.innerHTML = iconSvg;
+    const text = document.createElement('span');
+    text.textContent = message;
+    toast.append(iconTemplate.content, text);
 
     toastContainer.appendChild(toast);
 

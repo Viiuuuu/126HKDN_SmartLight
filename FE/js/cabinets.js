@@ -1,6 +1,6 @@
 // ==================== JAVASCRIPT LOGIC FOR CABINETS ====================
 // System Data & States
-const cabinetsData = [
+let cabinetsData = [
   {
     id: 'T-TK003',
     code: 'T-HC003',
@@ -20,7 +20,12 @@ const cabinetsData = [
     energyKwh: 148.2,
     mode: 'AUTO',
     source: 'Lưới 380V',
-    note: 'Hoạt động bình thường • Đang 3 khởi động từ'
+    note: 'Hoạt động bình thường • Đang 3 khởi động từ',
+    routesList: [
+      { name: 'Tuyến Hoàng Văn Thái (Đoạn 1 - Ngã Ba Huế)', length: '1.8 km', lights: 42, power: '4.2 kW', contactor: 'K1', status: 'BẬT 100%' },
+      { name: 'Tuyến Tôn Đức Thắng nối dài', length: '1.2 km', lights: 28, power: '2.8 kW', contactor: 'K2', status: 'BẬT 100%' },
+      { name: 'Nhánh ngõ 84 Hoàng Văn Thái', length: '0.6 km', lights: 14, power: '1.4 kW', contactor: 'K3', status: 'BẬT 100%' }
+    ]
   },
   {
     id: 'T-ST011',
@@ -41,7 +46,11 @@ const cabinetsData = [
     energyKwh: 94.5,
     mode: 'AUTO',
     source: 'Lưới 380V',
-    note: 'Cảnh báo: Mất điện áp Pha 2 (Nhánh phía Tây)'
+    note: 'Cảnh báo: Mất điện áp Pha 2 (Nhánh phía Tây)',
+    routesList: [
+      { name: 'Tuyến ven biển Võ Nguyên Giáp (Đoạn Mỹ Khê)', length: '2.4 km', lights: 56, power: '5.6 kW', contactor: 'K1', status: 'BẬT 100%' },
+      { name: 'Tuyến nhánh đường Hồ Nghinh (Mất pha L2)', length: '1.5 km', lights: 34, power: '2.6 kW', contactor: 'K2', status: 'MẤT PHA' }
+    ]
   },
   {
     id: 'T-TK009',
@@ -62,7 +71,12 @@ const cabinetsData = [
     energyKwh: 0.0,
     mode: 'TỰ CẮT CÁP',
     source: 'RƠ LE BẢO VỆ NGẮT',
-    note: 'RƠ LE BẢO VỆ ĐÃ NGẮT • Phát hiện đứt cáp nhánh D3'
+    note: 'RƠ LE BẢO VỆ ĐÃ NGẮT • Phát hiện đứt cáp nhánh D3',
+    routesList: [
+      { name: 'Tuyến đường Trần Cao Vân', length: '2.1 km', lights: 48, power: '0.0 kW', contactor: 'K1', status: 'TỰ CẮT CÁP' },
+      { name: 'Tuyến nhánh Hà Huy Tập', length: '1.0 km', lights: 22, power: '0.0 kW', contactor: 'K2', status: 'ĐÃ NGẮT BẢO VỆ' },
+      { name: 'Nhánh D3 Trần Cao Vân (Đứt cáp trụ 12-14)', length: '0.5 km', lights: 12, power: '0.0 kW', contactor: 'K3', status: 'NGUY HIỂM ĐỨT CÁP' }
+    ]
   },
   {
     id: 'T-TK007',
@@ -83,7 +97,13 @@ const cabinetsData = [
     energyKwh: '--',
     mode: 'LỊCH RTC',
     source: 'Lưới điện',
-    note: 'Mất kết nối viễn thông • Giữ nguyên lịch RTC'
+    note: 'Mất kết nối viễn thông • Giữ nguyên lịch RTC',
+    routesList: [
+      { name: 'Tuyến Nguyễn Tất Thành (Cung biển)', length: '3.2 km', lights: 72, power: '7.2 kW', contactor: 'K1', status: 'LỊCH RTC' },
+      { name: 'Tuyến nhánh Đặng Huy Trứ', length: '0.8 km', lights: 18, power: '1.8 kW', contactor: 'K2', status: 'LỊCH RTC' },
+      { name: 'Tuyến kết nối Nguyễn Sinh Sắc', length: '1.4 km', lights: 32, power: '3.2 kW', contactor: 'K3', status: 'LỊCH RTC' },
+      { name: 'Tuyến đường gom Xuân Thiều', length: '0.7 km', lights: 16, power: '1.6 kW', contactor: 'K4', status: 'LỊCH RTC' }
+    ]
   },
   {
     id: 'T-HC002',
@@ -104,7 +124,12 @@ const cabinetsData = [
     energyKwh: 112.4,
     mode: 'TIẾT KIỆM',
     source: 'Lưới ổn định',
-    note: 'Cảnh báo: Cửa tủ đang mở (Công tắc hành trình)'
+    note: 'Cảnh báo: Cửa tủ đang mở (Công tắc hành trình)',
+    routesList: [
+      { name: 'Tuyến đường 2 Tháng 9 (Cổ Viện Chàm)', length: '1.9 km', lights: 44, power: '4.4 kW', contactor: 'K1', status: 'BẬT 70%' },
+      { name: 'Tuyến Bạch Đằng nối dài (Bờ Tây sông Hàn)', length: '1.6 km', lights: 38, power: '3.8 kW', contactor: 'K2', status: 'BẬT 70%' },
+      { name: 'Tuyến kết nối Phan Đăng Lưu', length: '0.9 km', lights: 20, power: '2.0 kW', contactor: 'K3', status: 'BẬT 70%' }
+    ]
   },
   {
     id: 'T-ST013',
@@ -118,16 +143,485 @@ const cabinetsData = [
     time: '24/10/2024 - 19:40:45',
     l1: { v: 220.0, a: 5.4 },
     l2: { v: 221.0, a: 5.3 },
-    l3: { v: 220.2, a: 5.4 },
+    l3: { v: 220.5, a: 5.5 },
     dim: 30,
-    cosPhi: 0.88,
-    powerKw: 3.7,
-    energyKwh: 51.1,
-    mode: 'LỊCH TIẾT KIỆM',
-    source: 'Ắc quy DC dự phòng',
-    note: 'Cảnh báo: Ắc quy yếu 11.2V'
+    cosPhi: 0.89,
+    powerKw: 4.8,
+    energyKwh: 68.2,
+    mode: 'TIẾT KIỆM SÂU',
+    source: 'Lưới điện (Ắc quy yếu)',
+    note: 'Cảnh báo: Điện áp ắc quy dự phòng tụt dưới 11.2V',
+    routesList: [
+      { name: 'Tuyến đường Sơn Trà - Điện Ngọc', length: '2.5 km', lights: 58, power: '3.6 kW', contactor: 'K1', status: 'BẬT 30%' },
+      { name: 'Tuyến Nguyễn Văn Thoại dẫn biển', length: '1.3 km', lights: 30, power: '1.2 kW', contactor: 'K2', status: 'BẬT 30%' }
+    ]
   }
 ];
+
+function apiField(record, camelCase, pascalCase) {
+  return record?.[camelCase] ?? record?.[pascalCase];
+}
+
+// Danh sách khu vực lấy từ API (dùng cho form thêm tủ)
+let cabinetAreas = [];
+
+function cabinetStatusLabel(status) {
+  if (status === 'online') return 'ONLINE';
+  if (status === 'warning') return 'CẢNH BÁO';
+  if (status === 'danger') return 'SỰ CỐ';
+  return 'OFFLINE';
+}
+
+function cabinetStatusBanner(item) {
+  if (item.status === 'online') {
+    return `
+      <div class="card-status-banner banner-normal">
+        <span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+        <span>${escapeHtml(item.note || 'Đang kết nối và vận hành bình thường')}</span>
+      </div>
+    `;
+  }
+  if (item.status === 'warning') {
+    return `
+      <div class="card-status-banner banner-warning">
+        <span class="material-symbols-outlined text-[16px] text-amber-600">warning</span>
+        <span>${escapeHtml(item.note || 'Có cảnh báo cần kiểm tra')}</span>
+      </div>
+    `;
+  }
+  if (item.status === 'danger') {
+    return `
+      <div class="card-status-banner banner-danger">
+        <span class="material-symbols-outlined text-[16px] text-rose-600">error</span>
+        <span>${escapeHtml(item.note || 'Sự cố nghiêm trọng, cần xử lý')}</span>
+      </div>
+    `;
+  }
+  return `
+    <div class="card-status-banner banner-offline">
+      <span class="material-symbols-outlined text-[16px] text-slate-400">cloud_off</span>
+      <span>${escapeHtml(item.note || 'Mất kết nối viễn thông')}</span>
+    </div>
+  `;
+}
+
+function renderCabinetCards(items) {
+  const grid = document.getElementById('cabinetsGridContainer');
+  if (!grid) return;
+
+  grid.innerHTML = items.map(item => {
+    const dimValue = Number.parseFloat(item.dim);
+    const dimLabel = Number.isFinite(dimValue) ? `${dimValue}%` : '—';
+    const dimClass = dimValue >= 100 ? 'dim-badge-100'
+      : dimValue >= 70 ? 'dim-badge-70'
+        : dimValue >= 30 ? 'dim-badge-30' : 'dim-badge-0';
+    const dotClass = item.status === 'online' ? 'dot-online'
+      : item.status === 'warning' ? 'dot-warning'
+        : item.status === 'danger' ? 'dot-danger' : 'dot-offline';
+    const routesCount = (item.routesList || []).length;
+
+    return `
+      <div class="cabinet-card ${item.status === 'warning' ? 'card-warning' : ''} ${item.status === 'danger' ? 'card-danger' : ''}" style="cursor: pointer;" onclick="goToCabinetDetail('${escapeHtml(item.code)}', event)" data-status="${escapeHtml(item.status)}" data-dim="${escapeHtml(dimLabel === '—' ? '' : dimValue)}" data-code="${escapeHtml(item.code)}" data-name="${escapeHtml(item.name)}">
+        <div class="flex items-start justify-between">
+          <div class="flex items-start gap-2.5">
+            <span class="status-dot-pulse ${dotClass} mt-1.5"></span>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 leading-tight hover:text-brand-600 cursor-pointer transition" onclick="openRoutesPopup('${escapeHtml(item.id)}', event)">
+                ${escapeHtml(item.name)}
+              </h3>
+              <p class="text-[11px] text-slate-500 mt-0.5">
+                ${escapeHtml(item.district)} •
+                <button type="button" class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-brand-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition" onclick="openRoutesPopup('${escapeHtml(item.id)}', event)">🛣️ ${routesCount} tuyến đường</button>
+              </p>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+              <span>${escapeHtml(item.network)}</span>
+              <span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span>
+            </div>
+            <div class="text-[10px] font-mono text-slate-400 mt-0.5">${escapeHtml(item.time)}</div>
+          </div>
+        </div>
+
+        <div class="phase-metering-row">
+          <div class="phase-box">
+            <div class="phase-title">PHA 1 (L1)</div>
+            <div class="phase-val-v">${escapeHtml(item.l1.v)} <span class="text-[9px] font-normal text-slate-400">V</span></div>
+            <div class="phase-val-a">${escapeHtml(item.l1.a)} <span class="text-[9px] font-normal text-slate-400">A</span></div>
+          </div>
+          <div class="phase-box">
+            <div class="phase-title">PHA 2 (L2)</div>
+            <div class="phase-val-v">${escapeHtml(item.l2.v)} <span class="text-[9px] font-normal text-slate-400">V</span></div>
+            <div class="phase-val-a">${escapeHtml(item.l2.a)} <span class="text-[9px] font-normal text-slate-400">A</span></div>
+          </div>
+          <div class="phase-box">
+            <div class="phase-title">PHA 3 (L3)</div>
+            <div class="phase-val-v">${escapeHtml(item.l3.v)} <span class="text-[9px] font-normal text-slate-400">V</span></div>
+            <div class="phase-val-a">${escapeHtml(item.l3.a)} <span class="text-[9px] font-normal text-slate-400">A</span></div>
+          </div>
+        </div>
+
+        <div class="metrics-strip">
+          <div class="dim-badge ${dimClass}">
+            <span class="text-xs">${escapeHtml(dimLabel)}</span>
+            <span class="text-[9px]">DIM %</span>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] text-slate-400 font-medium">cos φ</div>
+            <div class="font-mono font-bold text-slate-800">${escapeHtml(item.cosPhi)}</div>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] text-slate-400 font-medium">Công suất</div>
+            <div class="font-mono font-bold text-slate-800">${escapeHtml(item.powerKw)} <span class="text-[9px] font-normal">kW</span></div>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] text-slate-400 font-medium">Sản lượng E</div>
+            <div class="font-mono font-bold text-slate-800">${escapeHtml(item.energyKwh)} <span class="text-[9px] font-normal">kWh</span></div>
+          </div>
+        </div>
+
+        ${cabinetStatusBanner(item)}
+
+        <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <span>Mã: <strong class="text-slate-700 font-mono">${escapeHtml(item.code)}</strong></span>
+            <span>•</span>
+            <span>Chế độ: <strong class="text-slate-700">${escapeHtml(item.mode)}</strong></span>
+          </div>
+          <span class="font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${escapeHtml(cabinetStatusLabel(item.status))}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderCabinetTree(items) {
+  const tree = document.getElementById('treeViewContent');
+  if (!tree) return;
+
+  const grouped = new Map();
+  items.forEach(item => {
+    const key = item.district || 'Chưa xác định';
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(item);
+  });
+
+  tree.innerHTML = `
+    <div class="tree-node">
+      <div class="tree-node-row font-bold text-slate-900">
+        <span class="tree-chevron expanded">
+          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+        </span>
+        <input type="checkbox" checked class="tree-checkbox" onclick="handleCheckboxClick(event, 'all')">
+        <span class="material-symbols-outlined text-[17px] text-amber-500">folder</span>
+        <span class="flex-1">Tất cả tủ</span>
+        <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">${items.length}</span>
+      </div>
+      <div class="tree-children">
+        ${[...grouped.entries()].map(([district, group]) => `
+          <div class="tree-node">
+            <div class="tree-node-row font-semibold text-slate-800" onclick="handleTreeNodeClick('${escapeHtml(district)}')">
+              <span class="tree-chevron expanded">
+                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+              </span>
+              <input type="checkbox" checked class="tree-checkbox">
+              <span class="material-symbols-outlined text-[17px] text-primary">location_city</span>
+              <span class="flex-1">${escapeHtml(district)}</span>
+              <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">${group.length} tủ</span>
+            </div>
+            <div class="tree-children">
+              ${group.map(item => `
+                <div class="tree-node">
+                  <div class="tree-node-row" onclick="focusCabinetCard('${escapeHtml(item.code)}')">
+                    <span class="tree-chevron expanded">
+                      <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    </span>
+                    <input type="checkbox" checked class="tree-checkbox">
+                    <span class="material-symbols-outlined text-[16px] text-blue-600">electric_meter</span>
+                    <span class="flex-1 font-bold">${escapeHtml(item.name)}</span>
+                    <span class="text-[10px] font-semibold ${item.status === 'online' ? 'text-emerald-700 bg-emerald-100/80' : 'text-slate-500 bg-slate-100'} px-1.5 py-0.5 rounded whitespace-nowrap">${escapeHtml(cabinetStatusLabel(item.status))}</span>
+                  </div>
+                  <div class="tree-children">
+                    ${(item.routesList || []).map(route => `
+                      <div class="tree-node-row text-slate-700 font-medium">
+                        <span class="tree-chevron expanded">
+                          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                        </span>
+                        <input type="checkbox" checked class="tree-checkbox">
+                        <span class="flex-1 cursor-pointer hover:text-primary hover:underline" onclick="openRoutesPopup('${escapeHtml(item.id)}', event, '${escapeHtml(route.name)}')">🛣️ ${escapeHtml(route.name)}</span>
+                        <span class="text-[10px] font-bold text-emerald-600">${escapeHtml(route.status)}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderCabinetList(items) {
+  const list = document.getElementById('listViewContent');
+  if (!list) return;
+
+  const grouped = new Map();
+  items.forEach(item => {
+    const key = item.district || 'Chưa xác định';
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(item);
+  });
+
+  list.innerHTML = [...grouped.entries()].map(([district, group]) => `
+    <div class="ward-group">
+      <div class="ward-header" onclick="toggleWardGroup(this)">
+        <span class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-primary">domain</span>
+          <span>${escapeHtml(district)}</span>
+        </span>
+        <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">${group.length} tủ</span>
+      </div>
+      <div class="ward-body">
+        ${group.map(item => `
+          <div class="route-section">
+            <div class="route-title">
+              <span class="material-symbols-outlined text-[14px]">alt_route</span>
+              <span>${escapeHtml(item.name)}</span>
+            </div>
+            ${(item.routesList || []).map(route => `
+              <div class="cabinet-list-item" onclick="openRoutesPopup('${escapeHtml(item.id)}', event, '${escapeHtml(route.name)}')">
+                <span class="truncate">[${escapeHtml(item.code)}] ${escapeHtml(route.name)}</span>
+                <span class="text-[10px] font-bold ${item.status === 'online' ? 'text-emerald-600 bg-emerald-50' : 'text-slate-500 bg-slate-100'} px-1.5 py-0.5 rounded">${escapeHtml(cabinetStatusLabel(item.status))}</span>
+              </div>
+            `).join('') || `<div class="cabinet-list-item" onclick="focusCabinetCard('${escapeHtml(item.code)}')"><span class="truncate">[${escapeHtml(item.code)}] ${escapeHtml(item.route || 'Chưa có tuyến')}</span><span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">OFFLINE</span></div>`}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateCabinetStats(items) {
+  const total = items.length;
+  const online = items.filter(item => item.status === 'online').length;
+  const offline = items.filter(item => item.status === 'offline').length;
+  const warning = items.filter(item => item.status === 'warning' || item.status === 'danger').length;
+
+  const tabButtons = document.querySelectorAll('#mainTabList button[data-tab]');
+  tabButtons.forEach(button => {
+    const tab = button.getAttribute('data-tab');
+    if (tab === 'all') {
+      button.textContent = `Danh sách tủ (${total})`;
+    } else if (tab === 'offline') {
+      button.textContent = `Tủ mất kết nối (${offline})`;
+    } else if (tab === 'warning') {
+      const label = button.querySelector('span:last-child');
+      if (label) label.textContent = `Có cảnh báo (${warning})`;
+    }
+  });
+
+  const dimCounts = { all: total, 100: 0, 70: 0, 50: 0, 30: 0, 0: 0, warning };
+  items.forEach(item => {
+    const dim = Number.parseFloat(item.dim);
+    if (!Number.isFinite(dim)) return;
+    if (dim >= 100) dimCounts[100] += 1;
+    else if (dim >= 70) dimCounts[70] += 1;
+    else if (dim >= 50) dimCounts[50] += 1;
+    else if (dim >= 30) dimCounts[30] += 1;
+    else dimCounts[0] += 1;
+  });
+
+  document.querySelectorAll('#dimFilterGroup button[data-dim]').forEach(button => {
+    const dim = button.getAttribute('data-dim');
+    if (dim === 'decor') return;
+    const count = dimCounts[dim];
+    if (typeof count !== 'number') return;
+    const baseLabels = {
+      all: 'Tất cả',
+      100: '100%',
+      70: '70%',
+      50: '50%',
+      30: '30%',
+      0: 'CẮT: 0%',
+      warning: 'Cảnh báo'
+    };
+    const base = baseLabels[dim] || dim;
+    button.textContent = `${base} (${count})`;
+  });
+}
+
+function populateCabinetAreaOptions(areas) {
+  const select = document.getElementById('addCabinetArea');
+  if (!select) return;
+  const currentValue = select.value;
+  select.replaceChildren();
+  areas.forEach(area => {
+    const id = String(apiField(area, 'maKhuVuc', 'MaKhuVuc') || '').trim();
+    const name = String(apiField(area, 'tenPhuongXa', 'TenPhuongXa') || '').trim();
+    if (!id || !name) return;
+    const option = document.createElement('option');
+    option.value = id;
+    option.textContent = name;
+    select.appendChild(option);
+  });
+  if (currentValue && [...select.options].some(option => option.value === currentValue)) {
+    select.value = currentValue;
+  }
+}
+
+function displayReading(value) {
+  return value === null || value === undefined ? '--' : Number(value).toLocaleString('vi-VN');
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[character]);
+}
+
+async function loadCabinetsFromApi() {
+  if (!window.api) return false;
+
+  try {
+    const [areas, apiCabinets, routes, lamps] = await Promise.all([
+      window.api.get('/KhuVuc'),
+      window.api.get('/TuChieuSang'),
+      window.api.get('/TuyenChieuSang'),
+      window.api.get('/DiemDen')
+    ]);
+    if (![areas, apiCabinets, routes, lamps].every(Array.isArray)) {
+      throw new TypeError('API hạ tầng phải trả về danh sách hợp lệ.');
+    }
+    if (!apiCabinets.length) {
+      showToast('Backend chưa có dữ liệu tủ; đang giữ danh sách mô phỏng.', 'warning');
+      return false;
+    }
+
+    const areaNames = new Map(areas.map(area => [
+      String(apiField(area, 'maKhuVuc', 'MaKhuVuc') || '').trim(),
+      String(apiField(area, 'tenPhuongXa', 'TenPhuongXa') || '').trim()
+    ]));
+    cabinetAreas = areas;
+    populateCabinetAreaOptions(areas);
+    const readingsByCabinet = new Map();
+    try {
+      const allReadings = await window.api.get('/DuLieuGiamSatTu', { limit: 500 });
+      if (Array.isArray(allReadings)) {
+        allReadings.forEach(reading => {
+          const cabinetId = String(apiField(reading, 'maTu', 'MaTu') || '').trim();
+          if (!cabinetId || readingsByCabinet.has(cabinetId)) return;
+          readingsByCabinet.set(cabinetId, reading);
+        });
+      }
+    } catch (error) {
+      console.warn('Không tải được dữ liệu giám sát tủ.', error);
+    }
+
+    const liveCabinets = apiCabinets.map(cabinet => {
+      const id = String(apiField(cabinet, 'maTu', 'MaTu') || '').trim();
+      const cabinetRoutes = routes.filter(route =>
+        String(apiField(route, 'maTu', 'MaTu') || '').trim() === id
+      );
+      const reading = readingsByCabinet.get(id) || null;
+
+      const phase = (voltageName, currentName) => ({
+        v: displayReading(reading && apiField(reading, voltageName, voltageName[0].toUpperCase() + voltageName.slice(1))),
+        a: displayReading(reading && apiField(reading, currentName, currentName[0].toUpperCase() + currentName.slice(1)))
+      });
+      const connected = Boolean(apiField(cabinet, 'trangThaiKetNoi', 'TrangThaiKetNoi'));
+      const cabinetArea = String(apiField(cabinet, 'maKhuVuc', 'MaKhuVuc') || '').trim();
+      const cabinetLamps = lamps.filter(lamp =>
+        cabinetRoutes.some(route =>
+          String(apiField(route, 'maTuyen', 'MaTuyen') || '').trim() ===
+          String(apiField(lamp, 'maTuyen', 'MaTuyen') || '').trim()
+        )
+      );
+      const activeLamps = cabinetLamps.filter(lamp =>
+        Number(apiField(lamp, 'trangThaiHoatDong', 'TrangThaiHoatDong')) === 1
+      );
+      const dimValues = cabinetLamps
+        .map(lamp => Number(apiField(lamp, 'doSang', 'DoSang')))
+        .filter(Number.isFinite);
+      const avgDim = dimValues.length
+        ? Math.round(dimValues.reduce((sum, value) => sum + value, 0) / dimValues.length)
+        : null;
+      const hasFault = cabinetLamps.some(lamp =>
+        Number(apiField(lamp, 'trangThaiHoatDong', 'TrangThaiHoatDong')) > 1
+      );
+      const status = !connected
+        ? 'offline'
+        : hasFault
+          ? 'danger'
+          : cabinetLamps.length && activeLamps.length < cabinetLamps.length
+            ? 'warning'
+            : 'online';
+
+      return {
+        id,
+        code: id,
+        name: String(apiField(cabinet, 'tenTu', 'TenTu') || id),
+        district: areaNames.get(cabinetArea) || cabinetArea || 'Chưa xác định',
+        route: String(apiField(cabinet, 'diaChi', 'DiaChi') || ''),
+        status,
+        temp: '--',
+        network: String(apiField(cabinet, 'maThietBi', 'MaThietBi') || 'Chưa xác định'),
+        time: apiField(cabinet, 'lanKetNoiCuoi', 'LanKetNoiCuoi')
+          ? new Date(apiField(cabinet, 'lanKetNoiCuoi', 'LanKetNoiCuoi')).toLocaleString('vi-VN')
+          : 'Chưa có dữ liệu',
+        l1: phase('dienApPha1', 'dongDienPha1'),
+        l2: phase('dienApPha2', 'dongDienPha2'),
+        l3: phase('dienApPha3', 'dongDienPha3'),
+        dim: avgDim !== null ? String(avgDim) : '—',
+        cosPhi: apiField(reading, 'heSoCongSuat', 'HeSoCongSuat') ?? '--',
+        powerKw: apiField(reading, 'congSuat', 'CongSuat') ?? '--',
+        energyKwh: apiField(reading, 'dienNang', 'DienNang') ?? '--',
+        mode: String(apiField(cabinet, 'cheDoVanHanh', 'CheDoVanHanh') ?? 'Chưa xác định'),
+        source: String(apiField(cabinet, 'trangThaiNguon', 'TrangThaiNguon') || 'Chưa xác định'),
+        note: String(apiField(cabinet, 'moTa', 'MoTa') || ''),
+        routesList: cabinetRoutes.map(route => {
+          const routeId = String(apiField(route, 'maTuyen', 'MaTuyen') || '').trim();
+          const routeLamps = lamps.filter(lamp =>
+            String(apiField(lamp, 'maTuyen', 'MaTuyen') || '').trim() === routeId
+          );
+          const routeActive = routeLamps.filter(lamp =>
+            Number(apiField(lamp, 'trangThaiHoatDong', 'TrangThaiHoatDong')) === 1
+          ).length;
+          const routeStatus = Number(apiField(route, 'trangThaiHoatDong', 'TrangThaiHoatDong')) === 1
+            ? (routeLamps.length && routeActive < routeLamps.length ? 'BẬT MỘT PHẦN' : 'BẬT 100%')
+            : 'TẮT';
+          return {
+            name: String(apiField(route, 'tenTuyen', 'TenTuyen') || routeId),
+            length: `${apiField(route, 'chieuDai', 'ChieuDai') ?? '—'} m`,
+            lights: routeLamps.length,
+            power: '—',
+            contactor: '—',
+            status: routeStatus
+          };
+        })
+      };
+    });
+
+    cabinetsData = liveCabinets;
+    renderCabinetCards(liveCabinets);
+    renderCabinetTree(liveCabinets);
+    renderCabinetList(liveCabinets);
+    populateTable();
+    updateCabinetStats(liveCabinets);
+    btnViewTable?.click();
+    return true;
+  } catch (error) {
+    console.warn('Không tải được danh sách tủ từ API; giữ dữ liệu mô phỏng.', error);
+    showToast('Không kết nối được Backend tủ; đang hiển thị danh sách mô phỏng.', 'warning');
+    return false;
+  }
+}
 
 let currentViewMode = 'tree'; // 'tree' | 'list'
 
@@ -322,33 +816,42 @@ const tableBody = document.getElementById('cabinetTableBody');
 
 function populateTable() {
   if (!tableBody) return;
-  tableBody.innerHTML = cabinetsData.map(c => `
-    <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="openCabinetDetailsModal('${c.id}')">
-      <td class="py-3 px-4 font-mono font-bold text-brand-600">${c.code}</td>
-      <td class="py-3 px-4 font-bold text-slate-900">${c.name}</td>
-      <td class="py-3 px-4 text-slate-500">${c.district} • ${c.route}</td>
+  tableBody.innerHTML = cabinetsData.map(c => {
+    const routesCount = c.routesList ? c.routesList.length : 3;
+    return `
+    <tr class="hover:bg-slate-50 transition cursor-pointer" data-code="${escapeHtml(c.code || c.id)}" data-id="${escapeHtml(c.id)}" onclick="goToCabinetDetail(this.dataset.code, event)">
+      <td class="py-3 px-4 font-mono font-bold text-brand-600">${escapeHtml(c.code)}</td>
+      <td class="py-3 px-4 font-bold text-slate-900 cursor-pointer hover:text-brand-600 hover:underline" onclick="openRoutesPopup(this.closest('tr').dataset.id, event)">${escapeHtml(c.name)}</td>
+      <td class="py-3 px-4 text-slate-500">
+        <span>${escapeHtml(c.district)}</span> •
+        <button type="button" class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition shadow-2xs" onclick="openRoutesPopup(this.closest('tr').dataset.id, event)">
+          🛣️ ${routesCount} tuyến đường
+        </button>
+      </td>
       <td class="py-3 px-4 text-center">
         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
           c.status === 'online' ? 'bg-emerald-50 text-emerald-700' :
           c.status === 'warning' ? 'bg-amber-50 text-amber-700' :
           c.status === 'danger' ? 'bg-rose-100 text-rose-700 font-extrabold' :
           'bg-slate-100 text-slate-600'
-        }">${c.status.toUpperCase()}</span>
+        }">${escapeHtml(c.status.toUpperCase())}</span>
       </td>
-      <td class="py-3 px-4 text-center font-mono">${c.l1.v} / ${c.l2.v} / ${c.l3.v}</td>
-      <td class="py-3 px-4 text-center font-mono text-blue-600 font-semibold">${c.l1.a} / ${c.l2.a} / ${c.l3.a}</td>
-      <td class="py-3 px-4 text-center font-mono font-bold">${c.dim}%</td>
-      <td class="py-3 px-4 text-center font-mono font-semibold">${c.powerKw} kW</td>
+      <td class="py-3 px-4 text-center font-mono">${escapeHtml(c.l1.v)} / ${escapeHtml(c.l2.v)} / ${escapeHtml(c.l3.v)}</td>
+      <td class="py-3 px-4 text-center font-mono text-blue-600 font-semibold">${escapeHtml(c.l1.a)} / ${escapeHtml(c.l2.a)} / ${escapeHtml(c.l3.a)}</td>
+      <td class="py-3 px-4 text-center font-mono font-bold">${escapeHtml(c.dim)}${c.dim === '—' ? '' : '%'}</td>
+      <td class="py-3 px-4 text-center font-mono font-semibold">${escapeHtml(c.powerKw)} kW</td>
       <td class="py-3 px-4 text-center" onclick="event.stopPropagation()">
-        <button class="px-2.5 py-1 text-[11px] font-bold text-brand-600 hover:bg-brand-50 rounded-lg transition" onclick="openCabinetDetailsModal('${c.id}')">
+        <button type="button" class="px-2.5 py-1 text-[11px] font-bold text-brand-600 hover:bg-brand-50 rounded-lg transition" onclick="goToCabinetDetail(this.closest('tr').dataset.code, event)">
           Chi tiết
         </button>
       </td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 }
 
 btnViewGrid?.addEventListener('click', () => {
+  if (!btnViewTable || !gridContainer || !tableContainer) return;
   btnViewGrid.className = 'p-1.5 rounded-md bg-white text-slate-800 shadow-sm transition';
   btnViewTable.className = 'p-1.5 rounded-md text-slate-500 hover:text-slate-800 transition';
   gridContainer.classList.remove('hidden');
@@ -356,6 +859,7 @@ btnViewGrid?.addEventListener('click', () => {
 });
 
 btnViewTable?.addEventListener('click', () => {
+  if (!btnViewGrid || !gridContainer || !tableContainer) return;
   btnViewTable.className = 'p-1.5 rounded-md bg-white text-slate-800 shadow-sm transition';
   btnViewGrid.className = 'p-1.5 rounded-md text-slate-500 hover:text-slate-800 transition';
   populateTable();
@@ -412,26 +916,30 @@ function updateModalDim(val) {
 }
 
 function toggleContactor(name, state) {
-  showToast(`Đã gửi lệnh ${state ? 'ĐÓNG' : 'NGẮT'} khởi động từ ${name}`);
+  const control = [...document.querySelectorAll('#modalCabinetDetails input[type="checkbox"]')]
+    .find(input => input.getAttribute('onchange')?.includes(`'${name}'`));
+  const label = control?.closest('.border')?.querySelector('span.text-\\[10px\\]');
+  if (label) label.textContent = state ? 'ĐANG ĐÓNG' : 'ĐANG NGẮT';
+  showToast(`Mô phỏng: ${name} ${state ? 'đóng' : 'ngắt'}. Chưa gửi lệnh thật.`, 'warning');
 }
 
 function pingCabinetModem(code) {
-  showToast(`Đang Ping tới modem tủ ${code}... Độ trễ 42ms (Rất tốt)`);
+  showToast(`Mô phỏng kiểm tra kết nối tủ ${code}; chưa gửi ping đến thiết bị thật.`, 'warning');
 }
 
 function saveCabinetSettings() {
   closeCabinetDetailsModal();
-  showToast('Đã lưu cấu hình và phát lệnh điều khiển thành công!');
+  showToast('Cấu hình chỉ được mô phỏng; Backend chưa có API lưu lệnh tủ.', 'warning');
 }
 
 function openInspectionModal(code) {
   openCabinetDetailsModal(code);
-  showToast(`Đang mở giao diện phân tích lỗi điện áp Pha 2 tủ ${code}`);
+  showToast(`Chức năng phân tích lỗi tủ ${code} chưa được kết nối Backend.`, 'warning');
 }
 
 function openEmergencyModal(code) {
   openCabinetDetailsModal(code);
-  showToast('CẢNH BÁO KHẨN CẤP: Đã gửi thông báo điều động đội sửa chữa cơ động EVN!', 'danger');
+  showToast('Tính năng điều động chưa được kết nối; chưa gửi thông báo khẩn cấp.', 'danger');
 }
 
 // Modal Add Cabinet
@@ -450,7 +958,7 @@ function closeAddCabinetModal() {
 }
 
 // Close modals on backdrop click
-[modalDetails, modalAdd].forEach(m => {
+[modalDetails, modalAdd, document.getElementById('modalRoutesPopup')].forEach(m => {
   m?.addEventListener('click', (e) => {
     if (e.target === m) {
       closeCabinetDetailsModal();
@@ -462,29 +970,126 @@ function closeAddCabinetModal() {
 // Close modals on Escape key
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
+    closeRoutesPopup();
     closeCabinetDetailsModal();
     closeAddCabinetModal();
   }
 });
 
-document.getElementById('formAddCabinet')?.addEventListener('submit', (e) => {
+document.getElementById('formAddCabinet')?.addEventListener('submit', async (e) => {
   e.preventDefault();
+  const code = document.getElementById('addCabinetCode')?.value.trim() || '';
+  const name = document.getElementById('addCabinetName')?.value.trim() || '';
+  const areaId = document.getElementById('addCabinetArea')?.value || '';
+  const address = document.getElementById('addCabinetAddress')?.value.trim() || '';
+  const device = document.getElementById('addCabinetDevice')?.value || '';
+  const gps = document.getElementById('addCabinetGps')?.value.trim() || '';
+
+  if (!code || !name || !areaId) {
+    showToast('Vui lòng nhập đầy đủ mã tủ, tên tủ và khu vực.', 'danger');
+    return;
+  }
+  if (cabinetsData.some(cabinet => cabinet.code.toLowerCase() === code.toLowerCase())) {
+    showToast(`Mã tủ ${code} đã tồn tại trong danh sách.`, 'danger');
+    document.getElementById('addCabinetCode')?.focus();
+    return;
+  }
+
+  let viDo = null;
+  let kinhDo = null;
+  if (gps.includes(',')) {
+    const [lat, lng] = gps.split(',').map(value => parseFloat(value.trim()));
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      viDo = lat;
+      kinhDo = lng;
+    }
+  }
+
+  if (window.api) {
+    try {
+      await window.api.post('/TuChieuSang', {
+        maTu: code,
+        tenTu: name,
+        diaChi: address,
+        maKhuVuc: areaId,
+        viDo,
+        kinhDo,
+        trangThaiKetNoi: false,
+        trangThaiNguon: 'UNKNOWN',
+        cheDoVanHanh: 0,
+        maThietBi: device
+      });
+      closeAddCabinetModal();
+      showToast(`Đã thêm tủ ${code} lên Backend.`);
+      await loadCabinetsFromApi();
+      return;
+    } catch (error) {
+      console.warn('Không thêm được tủ lên Backend.', error);
+      showToast(error.message || 'Không thêm được tủ lên Backend.', 'warning');
+      return;
+    }
+  }
+
+  cabinetsData.unshift({
+    id: code,
+    code,
+    name,
+    district: document.getElementById('addCabinetArea')?.selectedOptions[0]?.textContent.trim() || '',
+    route: address,
+    status: 'offline',
+    temp: '--',
+    network: document.getElementById('addCabinetDevice')?.selectedOptions[0]?.textContent.trim() || 'Chưa xác định',
+    time: 'Chưa có dữ liệu',
+    l1: { v: '--', a: '--' },
+    l2: { v: '--', a: '--' },
+    l3: { v: '--', a: '--' },
+    dim: '—',
+    cosPhi: '--',
+    powerKw: document.getElementById('addCabinetPower')?.value || '--',
+    energyKwh: '--',
+    mode: 'Chưa xác định',
+    source: 'Chưa xác định',
+    note: '',
+    routesList: []
+  });
+  renderCabinetCards(cabinetsData);
+  renderCabinetTree(cabinetsData);
+  renderCabinetList(cabinetsData);
+  populateTable();
+  btnViewTable?.click();
   closeAddCabinetModal();
-  showToast('Đã thêm tủ điều khiển chiếu sáng mới thành công!');
+  showToast(`Đã thêm ${code} vào danh sách demo; chưa lưu lên Backend.`, 'warning');
 });
 
 // ==================== SYNC & CLOCK & TOAST ====================
-document.getElementById('btnSyncStatus')?.addEventListener('click', () => {
+document.getElementById('btnSyncStatus')?.addEventListener('click', async () => {
   const icon = document.getElementById('syncIcon');
   if (icon) icon.classList.add('animate-spin');
-  setTimeout(() => {
+  try {
+    const refreshed = await loadCabinetsFromApi();
+    if (refreshed) showToast('Đã tải lại danh sách tủ từ Backend.');
+  } finally {
     if (icon) icon.classList.remove('animate-spin');
-    showToast('Đã hoàn tất đồng bộ tức thời 950 tủ điều khiển trên toàn TP!');
-  }, 1200);
+  }
 });
 
 document.getElementById('btnExportData')?.addEventListener('click', () => {
-  showToast('Đang tạo và tải xuống file báo cáo Danh_Sach_Tu_Chieu_Sang_DaNang.xlsx');
+  const quote = value => `"${String(value ?? '').replace(/"/g, '""')}"`;
+  const rows = [
+    ['Mã tủ', 'Tên tủ', 'Khu vực', 'Vị trí', 'Trạng thái', 'Điện áp L1', 'Điện áp L2', 'Điện áp L3'],
+    ...cabinetsData.map(item => [
+      item.code, item.name, item.district, item.route, item.status,
+      item.l1.v, item.l2.v, item.l3.v
+    ])
+  ];
+  const csv = rows.map(row => row.map(quote).join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'danh-sach-tu-chieu-sang.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+  showToast('Đã tải danh sách tủ dạng CSV.');
 });
 
 // Clock
@@ -514,10 +1119,11 @@ function showToast(message, type = 'success') {
       ? 'bg-slate-900 text-white border-slate-800' 
       : 'bg-rose-900 text-white border-rose-800'
   }`;
-  toast.innerHTML = `
-    <span class="w-2 h-2 rounded-full ${type === 'success' ? 'bg-emerald-400' : 'bg-rose-400'}"></span>
-    <span>${message}</span>
-  `;
+  const marker = document.createElement('span');
+  marker.className = `w-2 h-2 rounded-full ${type === 'success' ? 'bg-emerald-400' : 'bg-rose-400'}`;
+  const text = document.createElement('span');
+  text.textContent = message;
+  toast.append(marker, text);
   container.appendChild(toast);
   
   requestAnimationFrame(() => {
@@ -539,6 +1145,7 @@ window.addEventListener('DOMContentLoaded', () => {
   } else {
     switchLeftPanelMode('tree');
   }
+  loadCabinetsFromApi();
 });
 
 // Mobile Sidebar
@@ -555,4 +1162,102 @@ if (btnCloseSidebar && sidebar) {
   btnCloseSidebar.addEventListener('click', () => {
     sidebar.classList.remove('open');
   });
+}
+
+// ==================== NAVIGATION TO CABINET DETAIL ====================
+function goToCabinetDetail(code, event) {
+  if (event) {
+    if (typeof event.stopPropagation === 'function') event.stopPropagation();
+  }
+  const targetCode = code || 'TU-NTT-03';
+  window.location.href = `cabinets-detail.html?code=${encodeURIComponent(targetCode)}`;
+}
+
+// ==================== ROUTES POPUP HANDLERS ====================
+function openRoutesPopup(id, event, specificRoute) {
+  if (event) {
+    if (typeof event.stopPropagation === 'function') event.stopPropagation();
+  }
+  const item = cabinetsData.find(c => c.id === id || c.code === id) || cabinetsData[0];
+  const modal = document.getElementById('modalRoutesPopup');
+  if (!modal) return;
+
+  // Set title and metadata
+  const titleEl = document.getElementById('popupRoutesTitle');
+  const subEl = document.getElementById('popupRoutesSub');
+  if (titleEl) titleEl.textContent = `Danh sách tuyến đường phụ trách - ${item.name}`;
+  if (subEl) subEl.textContent = `Mã tủ: ${item.code} • Quận ${item.district} • Mạng: ${item.network}`;
+
+  // Set summary stats
+  const routes = item.routesList || [
+    { name: `Tuyến ${item.route} nhánh 1`, length: '1.6 km', lights: 36, power: '3.6 kW', contactor: 'K1', status: 'BẬT 100%' },
+    { name: `Tuyến ${item.route} nhánh 2`, length: '1.2 km', lights: 28, power: '2.8 kW', contactor: 'K2', status: 'BẬT 100%' }
+  ];
+
+  const countEl = document.getElementById('statPopupRoutesCount');
+  const lengthEl = document.getElementById('statPopupLength');
+  const lightsEl = document.getElementById('statPopupLights');
+  const powerEl = document.getElementById('statPopupPower');
+
+  if (countEl) countEl.textContent = `${routes.length} tuyến`;
+  if (lengthEl) {
+    const totalKm = routes.reduce((sum, r) => sum + (parseFloat(r.length) || 0), 0);
+    lengthEl.textContent = `${totalKm.toFixed(1)} km`;
+  }
+  if (lightsEl) {
+    const totalLights = routes.reduce((sum, r) => sum + (parseInt(r.lights) || 0), 0);
+    lightsEl.textContent = `${totalLights} đèn`;
+  }
+  if (powerEl) {
+    powerEl.textContent = `${item.powerKw || 10.4} kW`;
+  }
+
+  // Render table rows
+  const tbody = document.getElementById('popupRoutesTableBody');
+  if (tbody) {
+    tbody.innerHTML = routes.map(r => {
+      const isHighlighted = specificRoute && r.name.toLowerCase().includes(specificRoute.toLowerCase());
+      return `
+        <tr class="hover:bg-slate-50 transition ${isHighlighted ? 'bg-blue-50/80 font-bold' : ''}">
+          <td class="py-2.5 px-3">
+            <div class="font-bold text-slate-800 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+              <span>${r.name}</span>
+            </div>
+          </td>
+          <td class="py-2.5 px-3 text-center font-mono text-slate-600">${r.length}</td>
+          <td class="py-2.5 px-3 text-center font-mono font-semibold text-slate-700">${r.lights} đèn</td>
+          <td class="py-2.5 px-3 text-center font-mono font-bold text-emerald-700">${r.power}</td>
+          <td class="py-2.5 px-3 text-center">
+            <span class="inline-flex px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-slate-100 text-slate-700">${r.contactor}</span>
+          </td>
+          <td class="py-2.5 px-3 text-center">
+            <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold ${
+              r.status.includes('100%') ? 'bg-emerald-50 text-emerald-700' :
+              r.status.includes('70%') || r.status.includes('30%') ? 'bg-blue-50 text-brand-700' :
+              r.status.includes('MẤT') || r.status.includes('NGUY HIỂM') || r.status.includes('CẮT') ? 'bg-rose-100 text-rose-700 font-extrabold' :
+              'bg-slate-100 text-slate-600'
+            }">${r.status}</span>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // Nút chuyển sang trang chi tiết tủ từ popup
+  const btnDetail = document.getElementById('btnPopupGoToCabinetDetail');
+  if (btnDetail) {
+    btnDetail.onclick = () => goToCabinetDetail(item.code || item.id);
+  }
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeRoutesPopup() {
+  const modal = document.getElementById('modalRoutesPopup');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
 }
