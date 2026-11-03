@@ -804,6 +804,92 @@ a {
 }
 
 /* --------------------------------------------------------------------------
+   Metric Summary Bar (1 row compact KPI bar matching alerts.html)
+   -------------------------------------------------------------------------- */
+.metric-summary-bar {
+  background-color: var(--bg-card, #ffffff);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 16px;
+  padding: 14px 24px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  font-size: 13px;
+}
+
+.metric-summary-items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 28px;
+}
+
+.metric-summary-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  user-select: none;
+}
+
+.metric-summary-item:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.metric-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.metric-dot.dot-blue { background-color: #0284c7; }
+.metric-dot.dot-cyan { background-color: #06b6d4; }
+.metric-dot.dot-amber { background-color: #f59e0b; }
+.metric-dot.dot-rose { background-color: #f43f5e; }
+
+.metric-summary-item .metric-label {
+  color: #64748b;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.metric-summary-item .metric-val {
+  font-weight: 800;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.metric-summary-item .metric-val.val-danger {
+  color: #e11d48;
+}
+
+.metric-summary-divider {
+  width: 1px;
+  height: 18px;
+  background-color: #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  .metric-summary-bar {
+    padding: 12px 16px;
+  }
+  .metric-summary-divider {
+    display: none;
+  }
+  .metric-summary-items {
+    gap: 14px;
+  }
+}
+
+/* --------------------------------------------------------------------------
    KPI Metric Cards (4 Columns)
    -------------------------------------------------------------------------- */
 .kpi-grid {

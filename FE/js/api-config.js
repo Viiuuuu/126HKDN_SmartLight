@@ -322,6 +322,30 @@ function syncHeaderUserInfo() {
       if (displayEmail) el.textContent = displayEmail;
     });
 
+    // 4. Đồng bộ quyền hiển thị mục menu "Nhật ký hệ thống / Nhật ký hoạt động" trên Sidebar
+    const isTech = displayRole === 'Nhân viên kỹ thuật' || user.maVaiTro === 3;
+    const isOp = displayRole === 'Nhân viên vận hành' || user.maVaiTro === 2;
+
+    document.querySelectorAll('a[href*="activity-log.html"], [data-nav="logs"]').forEach(link => {
+      const li = link.closest('li');
+      if (!li) return;
+
+      if (isTech) {
+        // Nhân viên kỹ thuật: Ẩn hoàn toàn khỏi Sidebar menu
+        li.style.display = 'none';
+      } else {
+        li.style.display = '';
+        const navLabel = link.querySelector('.nav-label');
+        if (navLabel) {
+          if (isOp) {
+            navLabel.textContent = 'Nhật ký hoạt động';
+          } else {
+            navLabel.textContent = 'Nhật ký hệ thống';
+          }
+        }
+      }
+    });
+
   } catch (err) {
     console.warn('[api-config] Lỗi đồng bộ thông tin Header người dùng:', err);
   }
