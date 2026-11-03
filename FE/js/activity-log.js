@@ -1,25 +1,42 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const sessionRaw = sessionStorage.getItem('smartlight_user_session');
-  let session;
-  try {
-    session = sessionRaw ? JSON.parse(sessionRaw) : null;
-  } catch (error) {
-    console.error('Không thể đọc phiên đăng nhập.', error);
-  }
+  const rbac = typeof window.getCurrentRbacSession === 'function'
+    ? window.getCurrentRbacSession()
+    : { roleKey: 'admin', roleLabel: 'Quản trị viên', session: { username: 'Nguyễn Văn Minh', fullName: 'Nguyễn Văn Minh' } };
 
-  const operatorRoles = ['operator', 'nhân viên vận hành', 'nhan vien van hanh'];
-  const role = typeof session?.role === 'string' ? session.role.trim().toLocaleLowerCase('vi-VN') : '';
-  if (!session || !operatorRoles.includes(role)) {
-    window.location.replace('login.html');
+  // Chỉ Quản trị viên (Xem nhật ký hệ thống) và Nhân viên vận hành (Xem lịch sử hoạt động cá nhân) được phép truy cập
+  if (rbac.roleKey !== 'admin' && rbac.roleKey !== 'operator') {
+    window.location.replace('index.html');
     return;
   }
+
   document.body.classList.add('authorized');
 
-  const username = typeof session.username === 'string' && session.username.trim()
-    ? session.username.trim()
-    : 'Nhân viên vận hành';
-  document.getElementById('userName').childNodes[0].textContent = username;
-  document.getElementById('userRole').textContent = 'Nhân viên vận hành';
+  const isAdmin = rbac.roleKey === 'admin';
+  const username = rbac.session?.fullName || rbac.session?.hoTen || rbac.session?.username || rbac.roleLabel;
+  const userNameEl = document.getElementById('userName');
+  const userRoleEl = document.getElementById('userRole');
+  if (userNameEl && userNameEl.childNodes[0]) userNameEl.childNodes[0].textContent = username;
+  if (userRoleEl) userRoleEl.textContent = rbac.roleLabel;
+
+  // Cập nhật tiêu đề trang theo vai trò (Admin: Nhật ký hệ thống | Operator: Nhật ký hoạt động cá nhân)
+  const headingTitle = document.querySelector('.page-heading h1');
+  const headingDesc = document.querySelector('.page-heading p');
+  const breadcrumbStrong = document.querySelector('.breadcrumbs strong');
+  const scopeBadge = document.querySelector('.personal-scope');
+  const demoNote = document.querySelector('.demo-note');
+
+  if (isAdmin) {
+    document.title = 'Nhật ký hoạt động hệ thống | SmartLight';
+    if (headingTitle) headingTitle.textContent = 'Nhật ký hoạt động hệ thống';
+    if (headingDesc) headingDesc.textContent = 'Theo dõi toàn bộ lịch sử đăng nhập, phân quyền, điều khiển và cấu hình trên hệ thống SmartLight.';
+    if (breadcrumbStrong) breadcrumbStrong.textContent = 'Nhật ký hoạt động hệ thống';
+    if (scopeBadge) {
+      scopeBadge.innerHTML = '<span class="material-symbols-outlined">shield_person</span> Toàn bộ hệ thống (Quản trị viên)';
+    }
+    if (demoNote) {
+      demoNote.textContent = 'Hiển thị toàn bộ nhật ký kiểm toán hệ thống dành cho Quản trị viên.';
+    }
+  }
 
   const initialActivities = [
     { date: '24/10/2024', time: '19:32:15', action: 'Điều khiển', description: 'Tắt tuyến chiếu sáng', target: 'Tuyến TL-001', result: 'Thành công', note: '-' },
@@ -32,8 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
     { date: '24/10/2024', time: '11:05:40', action: 'Xem', description: 'Xem lịch sử vận hành', target: 'Tuyến TL-006', result: 'Thành công', note: '-' },
     { date: '24/10/2024', time: '10:22:18', action: 'Đăng nhập', description: 'Đăng nhập hệ thống', target: 'Hệ thống', result: 'Thành công', note: '-' },
     { date: '24/10/2024', time: '09:17:56', action: 'Quản lý', description: 'Chỉnh sửa thông tin tủ', target: 'Tủ CS-01', result: 'Thất bại', note: 'Lỗi kết nối thiết bị' },
-    { date: '24/10/2024', time: '08:50:33', action: 'Xem', description: 'Xem nhật ký hoạt động cá nhân', target: 'Hệ thống', result: 'Thành công', note: '-' }
+    { date: '24/10/2024', time: '08:50:33', action: 'Xem', description: 'Xem nhật ký hoạt động', target: 'Hệ thống', result: 'Thành công', note: '-' }
   ];
+
   const actions = ['Điều khiển', 'Xem', 'Quản lý', 'Cảnh báo', 'Đăng nhập'];
   const generatedActivities = Array.from({ length: 37 }, (_, index) => {
     const template = initialActivities[index % initialActivities.length];
@@ -48,7 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
       description: index % 4 === 0 ? 'Xem trạng thái thiết bị' : template.description
     };
   });
-  const activities = [...initialActivities, ...generatedActivities].map((activity, index) => ({
+
+  let activities = [...initialActivities, ...generatedActivities].map((activity, index) => ({
     ...activity,
     id: index + 1,
     actor: username
@@ -61,6 +80,52 @@ document.addEventListener('DOMContentLoaded', () => {
     'Cảnh báo': ['action-alert', 'warning'],
     'Đăng nhập': ['action-auth', 'login']
   };
+
+  function mapBackendLogCategory(hanhDong) {
+    const h = (hanhDong || '').toUpperCase();
+    if (h.includes('DANG_NHAP') || h.includes('DANG_XUAT')) return 'Đăng nhập';
+    if (h.includes('DIEU_KHIEN')) return 'Điều khiển';
+    if (h.includes('CANH_BAO')) return 'Cảnh báo';
+    if (h.includes('XEM')) return 'Xem';
+    return 'Quản lý';
+  }
+
+  async function tryLoadLogsFromBackend() {
+    if (!window.api || typeof window.api.get !== 'function') return;
+    try {
+      const params = isAdmin ? { limit: 100 } : { maNguoiDung: rbac.session?.maNguoiDung, limit: 100 };
+      const data = await window.api.get('/NhatKyHeThong', params);
+      if (Array.isArray(data) && data.length > 0) {
+        activities = data.map((item, idx) => {
+          const dt = item.thoiGian ? new Date(item.thoiGian) : new Date();
+          const dd = String(dt.getDate()).padStart(2, '0');
+          const mm = String(dt.getMonth() + 1).padStart(2, '0');
+          const yyyy = dt.getFullYear();
+          const hh = String(dt.getHours()).padStart(2, '0');
+          const min = String(dt.getMinutes()).padStart(2, '0');
+          const ss = String(dt.getSeconds()).padStart(2, '0');
+
+          return {
+            id: item.maNhatKy || idx + 1,
+            date: `${dd}/${mm}/${yyyy}`,
+            time: `${hh}:${min}:${ss}`,
+            action: mapBackendLogCategory(item.hanhDong),
+            description: item.noiDung || item.hanhDong,
+            target: item.maDoiTuong ? `${item.doiTuong || 'Hệ thống'} (${item.maDoiTuong})` : (item.doiTuong || 'Hệ thống'),
+            result: item.ketQua === 1 ? 'Thành công' : 'Thất bại',
+            note: item.maNguoiDung ? `Mã TK: ${item.maNguoiDung.trim()}` : '-',
+            actor: item.maNguoiDung ? item.maNguoiDung.trim() : username
+          };
+        });
+        filteredActivities = activities;
+        currentPage = 1;
+        renderRows();
+      }
+    } catch (_) {
+      // Giữ dữ liệu mẫu khi Backend chưa chạy
+    }
+  }
+
   const pageSizeSelect = document.getElementById('pageSize');
   const tableBody = document.getElementById('activityRows');
   const emptyState = document.getElementById('emptyState');
@@ -117,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const start = (currentPage - 1) * size;
     const pageRows = filteredActivities.slice(start, start + size);
     tableBody.innerHTML = pageRows.map((activity, index) => {
-      const [actionClass, icon] = actionStyles[activity.action];
+      const [actionClass, icon] = actionStyles[activity.action] || ['action-manage', 'settings'];
       const date = parseDateTime(activity);
       const dateText = Number.isNaN(date.getTime()) ? activity.date : dateFormatter.format(date);
       const resultClass = activity.result === 'Thành công' ? 'result-success' : 'result-failed';
@@ -187,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!activity) return;
     document.getElementById('dialogTitle').textContent = activity.description;
     const details = [
-      ['Người thực hiện', username],
+      ['Người thực hiện', activity.actor || username],
       ['Thời gian', `${activity.date} ${activity.time}`],
       ['Loại thao tác', activity.action],
       ['Đối tượng', activity.target],
@@ -216,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const values = filteredActivities.map((activity, index) => [
       index + 1,
       `${activity.date} ${activity.time}`,
-      username,
+      activity.actor || username,
       activity.action,
       activity.description,
       activity.target,
@@ -228,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'nhat-ky-hoat-dong-ca-nhan.csv';
+    link.download = isAdmin ? 'nhat-ky-he-thong-smartlight.csv' : 'nhat-ky-hoat-dong-ca-nhan.csv';
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
@@ -292,4 +357,5 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   renderRows();
+  tryLoadLogsFromBackend();
 });

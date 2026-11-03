@@ -1458,3 +1458,219 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ==========================================================================
+   SHARED NAVBAR & RBAC ANTI-JITTER / ZERO-FLICKER LOCK
+   Đảm bảo Sidebar + Topbar đồng nhất tuyệt đối 100% giữa mọi trang (kể cả trang có Tailwind CDN)
+   và ẩn tức thì các mục menu / nút thao tác theo vai trò RBAC ngay từ frame đầu tiên
+   ========================================================================== */
+html {
+  scrollbar-gutter: stable;
+}
+
+.sidebar {
+  width: 256px !important;
+  min-width: 256px !important;
+  max-width: 256px !important;
+  background-color: #ffffff !important;
+  border-right: 1px solid #edf2f7 !important;
+  font-family: var(--font-sans) !important;
+  line-height: 1.5 !important;
+}
+
+.sidebar-brand {
+  height: 64px !important;
+  min-height: 64px !important;
+  max-height: 64px !important;
+  padding: 0 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  border-bottom: 1px solid #edf2f7 !important;
+}
+
+.sidebar-brand .brand-name {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  line-height: 1.15 !important;
+  margin: 0 !important;
+}
+
+.sidebar-brand .brand-sub {
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  color: #94a3b8 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  margin-top: 2px !important;
+}
+
+.sidebar-nav {
+  padding: 10px 10px 6px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.sidebar-nav .nav-group {
+  margin-bottom: 4px !important;
+}
+
+.sidebar-nav .nav-group-title {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: #94a3b8 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  padding: 4px 10px !important;
+  margin-bottom: 2px !important;
+  line-height: 1.5 !important;
+}
+
+.sidebar-nav .nav-list {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.sidebar-nav .nav-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 11px !important;
+  padding: 8px 10px !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  color: #334155 !important;
+  text-decoration: none !important;
+  transition: background-color 0.16s ease, color 0.16s ease !important;
+}
+
+.sidebar-nav .nav-link:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+.sidebar-nav .nav-link.active {
+  background-color: #1e40af !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+.sidebar-nav .nav-link.active .nav-icon {
+  color: #ffffff !important;
+}
+
+.topbar {
+  height: 64px !important;
+  min-height: 64px !important;
+  max-height: 64px !important;
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #edf2f7 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 28px !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 90 !important;
+  font-family: var(--font-sans) !important;
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    padding: 0 16px !important;
+  }
+}
+
+/* Ẩn tức thì menu theo vai trò RBAC bằng CSS thuần để không bao giờ bị nhảy layout */
+html[data-rbac-role="operator"] .sidebar-nav li:has(a[data-nav="users"]),
+html[data-rbac-role="operator"] .sidebar-nav li:has(a[data-nav="roles"]),
+html[data-rbac-role="operator"] .sidebar-nav li:has(a[data-nav="areas"]),
+html[data-rbac-role="operator"] .sidebar-nav li:has(a[href*="users.html"]),
+html[data-rbac-role="operator"] .sidebar-nav li:has(a[href*="roles.html"]),
+html[data-rbac-role="operator"] .sidebar-nav li:has(a[href*="areas.html"]) {
+  display: none !important;
+}
+
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[data-nav="control"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[data-nav="schedule"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[data-nav="schedules"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[data-nav="areas"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[data-nav="users"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[data-nav="roles"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[data-nav="reports"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[data-nav="logs"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[href*="control.html"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[href*="schedules.html"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[href*="areas.html"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[href*="users.html"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[href*="roles.html"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[href*="reports.html"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[href*="activity-log.html"]),
+html[data-rbac-role="technician"] .sidebar-nav li:has(a[href="#logs"]),
+html[data-rbac-role="technician"] .sidebar-nav .nav-group:nth-of-type(3) {
+  display: none !important;
+}
+
+/* Ẩn tức thì các nút Thêm, Sửa, Xóa, Cấu hình, Điều khiển đối với Nhân viên kỹ thuật */
+html[data-rbac-role="technician"] #btnOpenAddCabinetModal,
+html[data-rbac-role="technician"] #btnAddCabinet,
+html[data-rbac-role="technician"] #btnEditCabinet,
+html[data-rbac-role="technician"] #btnDeleteCabinet,
+html[data-rbac-role="technician"] #btnSaveCabinet,
+html[data-rbac-role="technician"] [data-action="add-cabinet"],
+html[data-rbac-role="technician"] [data-action="edit-cabinet"],
+html[data-rbac-role="technician"] [data-action="delete-cabinet"],
+html[data-rbac-role="technician"] [onclick*="editCabinet"],
+html[data-rbac-role="technician"] [onclick*="deleteCabinet"],
+html[data-rbac-role="technician"] [onclick*="openAddCabinet"],
+html[data-rbac-role="technician"] #btnOpenAddRouteModal,
+html[data-rbac-role="technician"] #btnAddRoute,
+html[data-rbac-role="technician"] #btnOpenEditModal,
+html[data-rbac-role="technician"] #btnOpenCalibrateModal,
+html[data-rbac-role="technician"] #btnDeleteRoute,
+html[data-rbac-role="technician"] #btnSaveRoute,
+html[data-rbac-role="technician"] button[data-action="edit"],
+html[data-rbac-role="technician"] button[data-action="delete"],
+html[data-rbac-role="technician"] [onclick*="editRoute"],
+html[data-rbac-role="technician"] [onclick*="deleteRoute"],
+html[data-rbac-role="technician"] #btnOpenAddLightModal,
+html[data-rbac-role="technician"] #btnAddLight,
+html[data-rbac-role="technician"] #btnEditLight,
+html[data-rbac-role="technician"] #btnDeleteLight,
+html[data-rbac-role="technician"] button[onclick*="setQuickDim"],
+html[data-rbac-role="technician"] button[onclick*="toggleLight"],
+html[data-rbac-role="technician"] button[onclick*="sendLightCommand"],
+html[data-rbac-role="technician"] #btn-turn-on,
+html[data-rbac-role="technician"] #btn-turn-off,
+html[data-rbac-role="technician"] #btnApplyDimming,
+html[data-rbac-role="technician"] #btnToggleLightPower,
+html[data-rbac-role="technician"] #btnOpenConfigModal,
+html[data-rbac-role="technician"] #btnConfigAlerts,
+html[data-rbac-role="technician"] #btnSaveAlertConfig,
+html[data-rbac-role="technician"] #btnUpdateAlertStatus,
+html[data-rbac-role="technician"] #btnSaveStatus,
+html[data-rbac-role="technician"] #btnSaveResolution,
+html[data-rbac-role="technician"] #btnAcceptDispatch,
+html[data-rbac-role="technician"] #btnCloseIncident,
+html[data-rbac-role="technician"] #btnConfirmCloseModal,
+html[data-rbac-role="technician"] #btnConfirmResolve,
+html[data-rbac-role="technician"] #btnAssignTech,
+html[data-rbac-role="technician"] #btnDispatchTech,
+html[data-rbac-role="technician"] #btnAcknowledgeAlert,
+html[data-rbac-role="technician"] button[onclick*="openStatusModal"],
+html[data-rbac-role="technician"] button[onclick*="openConfigModal"],
+html[data-rbac-role="technician"] button[onclick*="updateAlertStatus"],
+html[data-rbac-role="technician"] #btnOpenAddAreaModal,
+html[data-rbac-role="technician"] #btnOpenAddUserModal,
+html[data-rbac-role="technician"] #btnBulkLockUsers,
+html[data-rbac-role="technician"] #btnSaveChanges {
+  display: none !important;
+}

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BE.Data;
 using BE.Models;
+using BE.Security;
 
 namespace BE.Controllers;
 
@@ -40,10 +41,6 @@ public class TuyenChieuSangController : ControllerBase
         return Ok(item);
     }
 
-    /// <summary>
-    /// Chuẩn hoá dữ liệu theo CHECK constraint của DB (trạng thái 0-3, chiều dài &gt; 0,
-    /// mức sáng 0-100) để tránh lỗi 500.
-    /// </summary>
     private static void NormalizeRouteState(TuyenChieuSang model)
     {
         if (model.TrangThaiHoatDong > 3)
@@ -62,10 +59,14 @@ public class TuyenChieuSangController : ControllerBase
         }
     }
 
-    // POST: api/TuyenChieuSang
+    // POST: api/TuyenChieuSang (Admin & Operator)
     [HttpPost]
     public async Task<ActionResult<TuyenChieuSang>> Create([FromBody] TuyenChieuSang model)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Thêm mới tuyến chiếu sáng");
+        if (forbidden != null) return forbidden;
+
         if (string.IsNullOrWhiteSpace(model.MaTuyen) || string.IsNullOrWhiteSpace(model.MaTu))
         {
             return BadRequest(new { message = "Mã tuyến và mã tủ không được để trống." });
@@ -97,13 +98,21 @@ public class TuyenChieuSangController : ControllerBase
         _context.TuyenChieuSang.Add(model);
         await _context.SaveChangesAsync();
 
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "THEM_TUYEN_CHIEU_SANG", "TuyenChieuSang", model.MaTuyen,
+            $"Thêm mới tuyến chiếu sáng: {model.TenTuyen} ({model.MaTuyen}).");
+
         return CreatedAtAction(nameof(GetById), new { id = model.MaTuyen }, model);
     }
 
-    // PUT: api/TuyenChieuSang/TCS00001
+    // PUT: api/TuyenChieuSang/TCS00001 (Admin & Operator)
     [HttpPut("{id}")]
     public async Task<ActionResult<TuyenChieuSang>> Update(string id, [FromBody] TuyenChieuSang model)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Cập nhật thông tin tuyến chiếu sáng");
+        if (forbidden != null) return forbidden;
+
         var item = await _context.TuyenChieuSang.FirstOrDefaultAsync(x => x.MaTuyen == id);
         if (item == null)
         {
@@ -121,13 +130,22 @@ public class TuyenChieuSangController : ControllerBase
         item.NgayCapNhat = DateTime.Now;
 
         await _context.SaveChangesAsync();
+
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "CAP_NHAT_TUYEN_CHIEU_SANG", "TuyenChieuSang", item.MaTuyen,
+            $"Cập nhật thông tin tuyến chiếu sáng: {item.TenTuyen} ({item.MaTuyen}).");
+
         return Ok(item);
     }
 
-    // DELETE: api/TuyenChieuSang/TCS00001
+    // DELETE: api/TuyenChieuSang/TCS00001 (Admin & Operator)
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Xóa tuyến chiếu sáng");
+        if (forbidden != null) return forbidden;
+
         var item = await _context.TuyenChieuSang.FirstOrDefaultAsync(x => x.MaTuyen == id);
         if (item == null)
         {
@@ -142,6 +160,11 @@ public class TuyenChieuSangController : ControllerBase
 
         _context.TuyenChieuSang.Remove(item);
         await _context.SaveChangesAsync();
+
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "XOA_TUYEN_CHIEU_SANG", "TuyenChieuSang", id,
+            $"Xóa tuyến chiếu sáng: {item.TenTuyen} ({id}).");
+
         return NoContent();
     }
 }

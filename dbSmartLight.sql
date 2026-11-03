@@ -429,14 +429,14 @@ WHERE NOT EXISTS (SELECT 1 FROM QuyenHan q WHERE q.tenQuyenHan=v.ten);
 INSERT INTO VaiTro_QuyenHan(maVaiTro,maQuyenHan,duocCapNhat)
 SELECT r.maVaiTro,q.maQuyenHan,
  CASE WHEN r.tenVaiTro=N'Quản trị viên' THEN 1
-      WHEN r.tenVaiTro=N'Nhân viên vận hành' AND q.tenQuyenHan=N'Lịch vận hành' THEN 1
-      WHEN r.tenVaiTro=N'Nhân viên kỹ thuật' AND q.tenQuyenHan=N'Giám sát và cảnh báo' THEN 1
+      WHEN r.tenVaiTro=N'Nhân viên vận hành' AND q.tenQuyenHan IN (N'Quản lý tủ chiếu sáng',N'Quản lý tuyến chiếu sáng',N'Quản lý điểm đèn',N'Giám sát và cảnh báo',N'Lịch vận hành',N'Báo cáo thống kê') THEN 1
+      WHEN r.tenVaiTro=N'Nhân viên kỹ thuật' THEN 0
       ELSE 0 END
 FROM VaiTro r CROSS JOIN QuyenHan q
 WHERE (
  (r.tenVaiTro=N'Quản trị viên')
  OR (r.tenVaiTro=N'Nhân viên vận hành' AND q.tenQuyenHan IN
-  (N'Quản lý khu vực',N'Quản lý tủ chiếu sáng',N'Quản lý tuyến chiếu sáng',N'Quản lý điểm đèn',N'Giám sát và cảnh báo',N'Lịch vận hành',N'Báo cáo thống kê'))
+  (N'Quản lý tủ chiếu sáng',N'Quản lý tuyến chiếu sáng',N'Quản lý điểm đèn',N'Giám sát và cảnh báo',N'Lịch vận hành',N'Báo cáo thống kê'))
  OR (r.tenVaiTro=N'Nhân viên kỹ thuật' AND q.tenQuyenHan IN
   (N'Quản lý tủ chiếu sáng',N'Quản lý tuyến chiếu sáng',N'Quản lý điểm đèn',N'Giám sát và cảnh báo'))
 )

@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
   
   <!-- Canonical App Styles -->
-  <link rel="stylesheet" href="css/style.css">
+  <script>try{const s=JSON.parse(sessionStorage.getItem('smartlight_user_session')||'{}'),r=String(s.maVaiTro||s.role||s.vaiTro||'').toLowerCase();if(r==='3'||r.includes('kỹ thuật')||r.includes('ky thuat')||r.includes('tech'))document.documentElement.dataset.rbacRole='technician';else if(r==='2'||r.includes('vận hành')||r.includes('van hanh')||r==='operator')document.documentElement.dataset.rbacRole='operator';}catch(e){}</script><link rel="stylesheet" href="css/style.css">
   
   <!-- Tailwind CSS CDN with configuration -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -142,7 +142,7 @@
                   </svg>
                 </span>
                 <span class="nav-label">Cảnh báo sự cố</span>
-                <span class="nav-badge" id="sidebarAlertCount">18</span>
+                <span class="nav-badge" id="sidebarAlertCount">12</span>
               </a>
             </li>
           </ul>
@@ -212,7 +212,7 @@
           <div class="nav-group-title">QUẢN TRỊ & BÁO CÁO</div>
           <ul class="nav-list">
             <li>
-              <a href="#users" class="nav-link" data-nav="users">
+              <a href="users.html" class="nav-link" data-nav="users">
                 <span class="nav-icon">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -225,7 +225,7 @@
               </a>
             </li>
             <li>
-              <a href="#roles" class="nav-link" data-nav="roles">
+              <a href="roles.html" class="nav-link" data-nav="roles">
                 <span class="nav-icon">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
@@ -247,7 +247,7 @@
               </a>
             </li>
             <li>
-              <a href="#logs" class="nav-link" data-nav="logs">
+              <a href="activity-log.html" class="nav-link" data-nav="logs">
                 <span class="nav-icon">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"></circle>
@@ -318,7 +318,7 @@
         <!-- TOP BREADCRUMB & ACTION BAR -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white px-5 py-3.5 rounded-2xl border border-slate-200/80 shadow-xs">
           <div class="flex items-center gap-2 flex-wrap text-xs font-medium">
-            <a href="routes.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/70 text-slate-700 font-semibold transition-colors">
+            <a href="lights.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/70 text-slate-700 font-semibold transition-colors">
               <span class="material-symbols-outlined text-[16px] text-primary">arrow_back</span>
               <span>Danh sách điểm đèn</span>
             </a>

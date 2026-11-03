@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BE.Data;
 using BE.Models;
+using BE.Security;
 
 namespace BE.Controllers;
 
@@ -60,10 +61,14 @@ public class TuChieuSangController : ControllerBase
         }
     }
 
-    // POST: api/TuChieuSang
+    // POST: api/TuChieuSang (Admin & Operator)
     [HttpPost]
     public async Task<ActionResult<TuChieuSang>> Create([FromBody] TuChieuSang model)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Thêm mới tủ chiếu sáng");
+        if (forbidden != null) return forbidden;
+
         if (string.IsNullOrWhiteSpace(model.MaTu) || string.IsNullOrWhiteSpace(model.MaKhuVuc))
         {
             return BadRequest(new { message = "Mã tủ và mã khu vực không được để trống." });
@@ -90,13 +95,21 @@ public class TuChieuSangController : ControllerBase
         _context.TuChieuSang.Add(model);
         await _context.SaveChangesAsync();
 
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "THEM_TU_CHIEU_SANG", "TuChieuSang", model.MaTu,
+            $"Thêm mới tủ chiếu sáng: {model.TenTu} ({model.MaTu}).");
+
         return CreatedAtAction(nameof(GetById), new { id = model.MaTu }, model);
     }
 
-    // PUT: api/TuChieuSang/TC00001
+    // PUT: api/TuChieuSang/TC00001 (Admin & Operator)
     [HttpPut("{id}")]
     public async Task<ActionResult<TuChieuSang>> Update(string id, [FromBody] TuChieuSang model)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Cập nhật thông tin tủ chiếu sáng");
+        if (forbidden != null) return forbidden;
+
         var item = await _context.TuChieuSang.FirstOrDefaultAsync(x => x.MaTu == id);
         if (item == null)
         {
@@ -120,13 +133,22 @@ public class TuChieuSangController : ControllerBase
         item.NgayCapNhat = DateTime.Now;
 
         await _context.SaveChangesAsync();
+
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "CAP_NHAT_TU_CHIEU_SANG", "TuChieuSang", item.MaTu,
+            $"Cập nhật thông tin tủ chiếu sáng: {item.TenTu} ({item.MaTu}).");
+
         return Ok(item);
     }
 
-    // DELETE: api/TuChieuSang/TC00001
+    // DELETE: api/TuChieuSang/TC00001 (Admin & Operator)
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Xóa tủ chiếu sáng");
+        if (forbidden != null) return forbidden;
+
         var item = await _context.TuChieuSang.FirstOrDefaultAsync(x => x.MaTu == id);
         if (item == null)
         {
@@ -141,6 +163,11 @@ public class TuChieuSangController : ControllerBase
 
         _context.TuChieuSang.Remove(item);
         await _context.SaveChangesAsync();
+
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "XOA_TU_CHIEU_SANG", "TuChieuSang", id,
+            $"Xóa tủ chiếu sáng: {item.TenTu} ({id}).");
+
         return NoContent();
     }
 }

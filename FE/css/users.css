@@ -1,0 +1,141 @@
+/* ==========================================================================
+   SmartLight Municipal IoT - User Management (Quản lý người dùng) Stylesheet
+   File: css/users.css
+   Synchronized with css/style.css Royal Blue & Slate Palette
+   ========================================================================== */
+
+:root {
+  --color-primary: #1d4ed8;
+  --color-primary-container: #1e40af;
+  --color-primary-fixed: #e0edff;
+  --color-surface: #f5f7fb;
+  --color-on-surface: #0f172a;
+  --color-on-surface-variant: #334155;
+  --color-outline: #64748b;
+  --color-outline-variant: #cbd5e1;
+}
+
+body {
+  font-family: var(--font-sans, 'Plus Jakarta Sans', 'Nunito', sans-serif);
+  background-color: var(--bg-page, #f5f7fb);
+  color: var(--text-main, #0f172a);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Preserve canonical Topbar search input appearance when Tailwind forms plugin is loaded */
+.topbar .search-box .search-input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  height: 100% !important;
+  line-height: inherit !important;
+  border-radius: 0 !important;
+}
+
+.topbar .search-box .search-input:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  user-select: none;
+}
+
+/* User Table Row Hover & Selected Accent Bar */
+.user-table-row {
+  position: relative;
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.user-table-row.is-active {
+  background-color: #f8fafc;
+}
+
+.user-table-row.is-active td:first-child {
+  box-shadow: inset 3.5px 0 0 0 #1e40af;
+}
+
+/* Checkbox styling */
+input[type="checkbox"].user-row-checkbox {
+  accent-color: #1e40af;
+  transition: all 0.15s ease;
+}
+
+input[type="checkbox"].user-row-checkbox:checked {
+  background-color: #1e40af;
+  border-color: #1e40af;
+}
+
+input[type="checkbox"].user-row-checkbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.2);
+}
+
+/* Right Slide-Over Drawer ("Chi tiết người dùng") */
+.user-drawer-backdrop {
+  background-color: rgba(15, 23, 42, 0.25);
+  backdrop-filter: blur(1.5px);
+  transition: opacity 0.25s ease;
+}
+
+.user-detail-drawer {
+  transform: translateX(100%);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.user-detail-drawer.is-open {
+  transform: translateX(0);
+}
+
+/* Modal Backdrop & Dialog Animation */
+.user-modal-backdrop {
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(3px);
+  transition: opacity 0.2s ease;
+}
+
+.user-modal-panel {
+  animation: modalSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
