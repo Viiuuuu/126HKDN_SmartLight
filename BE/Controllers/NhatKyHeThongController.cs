@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BE.Data;
 using BE.Models;
+using BE.Security;
 
 namespace BE.Controllers;
 
@@ -17,6 +18,9 @@ public class NhatKyHeThongController : ControllerBase
     }
 
     // GET: api/NhatKyHeThong
+    // Admin: Xem toàn bộ nhật ký hoạt động hệ thống
+    // Operator: Chỉ được xem lịch sử hoạt động cá nhân của chính mình
+    // Technician: Không có quyền truy cập nhật ký hệ thống
     [HttpGet]
     public async Task<ActionResult<IEnumerable<NhatKyHeThong>>> GetAll(
         [FromQuery] string? maNguoiDung,
@@ -24,11 +28,25 @@ public class NhatKyHeThongController : ControllerBase
         [FromQuery] byte? ketQua,
         [FromQuery] int? limit)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context,
+            Request,
+            new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR },
+            "Xem nhật ký hoạt động");
+        if (forbidden != null) return forbidden;
+
         var query = _context.NhatKyHeThong.AsNoTracking().AsQueryable();
 
-        if (!string.IsNullOrEmpty(maNguoiDung))
+        // Nếu là Nhân viên vận hành, bắt buộc giới hạn trong phạm vi tài khoản cá nhân
+        if (caller.IsOperator && caller.User != null)
         {
-            query = query.Where(x => x.MaNguoiDung == maNguoiDung);
+            var selfId = caller.User.MaNguoiDung.Trim();
+            query = query.Where(x => x.MaNguoiDung == selfId);
+        }
+        else if (!string.IsNullOrEmpty(maNguoiDung))
+        {
+            var cleanUserId = maNguoiDung.Trim();
+            query = query.Where(x => x.MaNguoiDung == cleanUserId);
         }
 
         if (!string.IsNullOrEmpty(hanhDong))
@@ -55,11 +73,27 @@ public class NhatKyHeThongController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<NhatKyHeThong>> GetById(long id)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context,
+            Request,
+            new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR },
+            "Xem chi tiết nhật ký hoạt động");
+        if (forbidden != null) return forbidden;
+
         var item = await _context.NhatKyHeThong.AsNoTracking().FirstOrDefaultAsync(x => x.MaNhatKy == id);
         if (item == null)
         {
             return NotFound(new { message = $"Không tìm thấy nhật ký hệ thống với mã: {id}" });
         }
+
+        if (caller.IsOperator && caller.User != null && item.MaNguoiDung?.Trim() != caller.User.MaNguoiDung.Trim())
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new
+            {
+                message = "Nhân viên vận hành chỉ được phép xem lịch sử hoạt động cá nhân của chính mình."
+            });
+        }
+
         return Ok(item);
     }
 }

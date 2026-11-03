@@ -21,6 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('[ActivityLog] Không thể đọc phiên làm việc:', err);
   }
 
+  // Hỗ trợ đồng bộ với RBAC session từ api-config nếu có
+  if (!session && typeof window.getCurrentRbacSession === 'function') {
+    const rbac = window.getCurrentRbacSession();
+    if (rbac && rbac.session) {
+      session = rbac.session;
+    }
+  }
+
   if (!session) {
     window.location.replace('login.html');
     return;

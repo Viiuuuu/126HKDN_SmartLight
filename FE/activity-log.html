@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <script>try{const s=JSON.parse(sessionStorage.getItem('smartlight_user_session')||'{}'),r=String(s.maVaiTro||s.role||s.vaiTro||'').toLowerCase();if(r==='3'||r.includes('kỹ thuật')||r.includes('ky thuat')||r.includes('tech'))document.documentElement.dataset.rbacRole='technician';else if(r==='2'||r.includes('vận hành')||r.includes('van hanh')||r==='operator')document.documentElement.dataset.rbacRole='operator';}catch(e){}</script><link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/activity-log.css">
 </head>
 <body class="activity-log-page">
@@ -42,8 +42,10 @@
         <div class="nav-group">
           <div class="nav-group-title">Quản trị &amp; Báo cáo</div>
           <ul class="nav-list">
-            <li><a class="nav-link" href="reports.html"><span class="nav-icon material-symbols-outlined">bar_chart</span><span class="nav-label">Báo cáo &amp; thống kê</span></a></li>
-            <li id="menuItemActivityLog"><a class="nav-link active" href="activity-log.html" aria-current="page"><span class="nav-icon material-symbols-outlined">history</span><span class="nav-label" id="sidebarLogLabel">Nhật ký hệ thống</span></a></li>
+            <li><a class="nav-link" href="users.html" data-nav="users"><span class="nav-icon material-symbols-outlined">group</span><span class="nav-label">Quản lý người dùng</span></a></li>
+            <li><a class="nav-link" href="roles.html" data-nav="roles"><span class="nav-icon material-symbols-outlined">admin_panel_settings</span><span class="nav-label">Phân quyền</span></a></li>
+            <li><a class="nav-link" href="reports.html" data-nav="reports"><span class="nav-icon material-symbols-outlined">bar_chart</span><span class="nav-label">Báo cáo &amp; thống kê</span></a></li>
+            <li id="menuItemActivityLog"><a class="nav-link active" href="activity-log.html" aria-current="page" data-nav="logs"><span class="nav-icon material-symbols-outlined">history</span><span class="nav-label" id="sidebarLogLabel">Nhật ký hệ thống</span></a></li>
           </ul>
         </div>
       </nav>

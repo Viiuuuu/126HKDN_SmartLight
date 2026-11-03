@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using BE.Data;
 using BE.Models;
+using BE.Security;
 
 namespace BE.Controllers;
 
@@ -70,10 +71,14 @@ public class LenhDieuKhienController : ControllerBase
         return Ok(item);
     }
 
-    // POST: api/LenhDieuKhien
+    // POST: api/LenhDieuKhien (Admin & Operator)
     [HttpPost]
     public async Task<ActionResult<LenhDieuKhien>> Create([FromBody] CreateLenhDieuKhienRequest request)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Gửi lệnh điều khiển chiếu sáng");
+        if (forbidden != null) return forbidden;
+
         var targetCount = new[] { request.MaTu, request.MaTuyen, request.MaDen }.Count(value => !string.IsNullOrWhiteSpace(value));
         if (targetCount != 1)
         {
@@ -109,9 +114,10 @@ public class LenhDieuKhienController : ControllerBase
             userIdentifier = Request.Headers["X-User-Id"].FirstOrDefault();
         }
 
-        var userId = await _context.NguoiDung
+        var normalizedId = RbacHelper.NormalizeUsernameAlias(userIdentifier ?? "");
+        var userId = caller.User?.MaNguoiDung ?? await _context.NguoiDung
             .Where(user => user.TrangThaiTaiKhoan == 1 && !user.DaXoa &&
-                (user.MaNguoiDung == userIdentifier || user.TenDangNhap == userIdentifier))
+                (user.MaNguoiDung == userIdentifier || user.TenDangNhap == userIdentifier || user.TenDangNhap == normalizedId))
             .Select(user => user.MaNguoiDung)
             .FirstOrDefaultAsync();
         if (userId is null)
@@ -152,6 +158,11 @@ public class LenhDieuKhienController : ControllerBase
 
         _context.LenhDieuKhien.Add(command);
         await _context.SaveChangesAsync();
+
+        var targetCode = request.MaTu ?? request.MaTuyen ?? request.MaDen;
+        await RbacHelper.LogActivityAsync(
+            _context, userId, "DIEU_KHIEN_CHIEU_SANG", "LenhDieuKhien", targetCode,
+            $"Gửi lệnh điều khiển [{action}{(request.MucSang.HasValue ? $" {request.MucSang}%" : "")}] tới thiết bị {targetCode}.");
 
         return CreatedAtAction(nameof(GetById), new { id = command.MaLenh }, command);
     }

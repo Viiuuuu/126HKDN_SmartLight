@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BE.Data;
 using BE.Models;
+using BE.Security;
 
 namespace BE.Controllers;
 
@@ -94,10 +95,6 @@ public class DiemDenController : ControllerBase
         return Ok(item);
     }
 
-    /// <summary>
-    /// Chuẩn hoá dữ liệu theo CHECK constraint của DB (trạng thái 0-3, độ sáng 0-100,
-    /// toạ độ phải có đủ cặp vĩ độ/kinh độ) để tránh lỗi 500.
-    /// </summary>
     private static void NormalizeLampState(DiemDen model)
     {
         if (model.TrangThaiHoatDong > 3)
@@ -115,7 +112,6 @@ public class DiemDenController : ControllerBase
             model.CongSuat = null;
         }
 
-        // DB yêu cầu toạ độ phải có đủ cả vĩ độ và kinh độ
         if (model.ViDo.HasValue != model.KinhDo.HasValue)
         {
             model.ViDo = null;
@@ -123,10 +119,14 @@ public class DiemDenController : ControllerBase
         }
     }
 
-    // POST: api/DiemDen
+    // POST: api/DiemDen (Admin & Operator)
     [HttpPost]
     public async Task<ActionResult<DiemDen>> Create([FromBody] DiemDen model)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Thêm mới điểm đèn");
+        if (forbidden != null) return forbidden;
+
         if (string.IsNullOrWhiteSpace(model.MaDen) || string.IsNullOrWhiteSpace(model.MaTuyen))
         {
             return BadRequest(new { message = "Mã điểm đèn và mã tuyến không được để trống." });
@@ -158,13 +158,21 @@ public class DiemDenController : ControllerBase
         _context.DiemDen.Add(model);
         await _context.SaveChangesAsync();
 
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "THEM_DIEM_DEN", "DiemDen", model.MaDen,
+            $"Thêm mới điểm đèn: {model.TenDen} ({model.MaDen}).");
+
         return CreatedAtAction(nameof(GetById), new { id = model.MaDen }, model);
     }
 
-    // PUT: api/DiemDen/DEN00001
+    // PUT: api/DiemDen/DEN00001 (Admin & Operator)
     [HttpPut("{id}")]
     public async Task<ActionResult<DiemDen>> Update(string id, [FromBody] DiemDen model)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Cập nhật thông tin điểm đèn");
+        if (forbidden != null) return forbidden;
+
         var item = await _context.DiemDen.FirstOrDefaultAsync(x => x.MaDen == id);
         if (item == null)
         {
@@ -190,13 +198,22 @@ public class DiemDenController : ControllerBase
         item.NgayCapNhat = DateTime.Now;
 
         await _context.SaveChangesAsync();
+
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "CAP_NHAT_DIEM_DEN", "DiemDen", item.MaDen,
+            $"Cập nhật thông tin điểm đèn: {item.TenDen} ({item.MaDen}).");
+
         return Ok(item);
     }
 
-    // DELETE: api/DiemDen/DEN00001
+    // DELETE: api/DiemDen/DEN00001 (Admin & Operator)
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
+        var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
+            _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Xóa điểm đèn");
+        if (forbidden != null) return forbidden;
+
         var item = await _context.DiemDen.FirstOrDefaultAsync(x => x.MaDen == id);
         if (item == null)
         {
@@ -205,6 +222,11 @@ public class DiemDenController : ControllerBase
 
         _context.DiemDen.Remove(item);
         await _context.SaveChangesAsync();
+
+        await RbacHelper.LogActivityAsync(
+            _context, caller.User?.MaNguoiDung, "XOA_DIEM_DEN", "DiemDen", id,
+            $"Xóa điểm đèn: {item.TenDen} ({id}).");
+
         return NoContent();
     }
 }

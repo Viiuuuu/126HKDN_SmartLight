@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BE.Data;
 using BE.Models;
+using BE.Security;
 using System.Security.Cryptography;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,14 @@ public class DangNhapRequest
     public string MatKhau { get; set; } = null!;
 }
 
+public class QuyenHanSessionDto
+{
+    public int MaQuyenHan { get; set; }
+    public string TenQuyenHan { get; set; } = string.Empty;
+    public bool DuocXem { get; set; } = true;
+    public bool DuocCapNhat { get; set; }
+}
+
 public class DangNhapResponse
 {
     public string MaNguoiDung { get; set; } = null!;
@@ -28,6 +37,7 @@ public class DangNhapResponse
     public string? MaKhuVuc { get; set; }
     public string Token { get; set; } = null!;
     public DateTime ThoiGianHetHan { get; set; }
+    public List<QuyenHanSessionDto> DanhSachQuyen { get; set; } = new();
 }
 
 public class DangXuatRequest
@@ -83,12 +93,7 @@ public class PhienDangNhapController : ControllerBase
         }
 
         var rawUsername = request.TenDangNhap?.Trim() ?? "";
-        var lowerUsername = rawUsername.ToLowerInvariant();
-        var normalizedUsername = rawUsername;
-        if (lowerUsername == "admin") normalizedUsername = "admin_demo";
-        else if (lowerUsername == "operator" || lowerUsername == "vanhanh") normalizedUsername = "vanhanh_demo";
-        else if (lowerUsername == "technician" || lowerUsername == "kythuat") normalizedUsername = "kythuat_demo";
-
+        var normalizedUsername = RbacHelper.NormalizeUsernameAlias(rawUsername);
         var now = DateTime.Now;
 
         // 1. ATTT Cấp độ 3: Chống tấn công Brute-force (Giới hạn tối đa 5 lần sai liên tiếp trong 15 phút)
@@ -110,7 +115,6 @@ public class PhienDangNhapController : ControllerBase
         var failedAttempts = await failureQuery.CountAsync();
         if (failedAttempts >= 5)
         {
-            // Ghi nhật ký kiểm toán về hành vi brute-force bị chặn
             _context.NhatKyHeThong.Add(new NhatKyHeThong
             {
                 HanhDong = "DANG_NHAP_BI_CHAN",
@@ -139,7 +143,6 @@ public class PhienDangNhapController : ControllerBase
             isPasswordValid = VerifyPassword(user.MatKhau, request.MatKhau);
         }
 
-        // Nếu user không tồn tại hoặc sai mật khẩu, trả về thông báo lỗi chung
         if (user == null || !isPasswordValid)
         {
             _context.NhatKyHeThong.Add(new NhatKyHeThong
@@ -161,8 +164,8 @@ public class PhienDangNhapController : ControllerBase
             });
         }
 
-        // 4. Kiểm tra trạng thái tài khoản
-        if (user.TrangThaiTaiKhoan == 2)
+        // 4. Kiểm tra trạng thái tài khoản (1: Hoạt động; 0: Nghỉ/Tạm khóa; 2: Khóa)
+        if (user.TrangThaiTaiKhoan != 1)
         {
             _context.NhatKyHeThong.Add(new NhatKyHeThong
             {
@@ -182,10 +185,9 @@ public class PhienDangNhapController : ControllerBase
         }
 
         // 5. ATTT Cấp độ 3: Khởi tạo phiên làm việc bảo mật (Session Management)
-        // Sinh token ngẫu nhiên an toàn bằng Cryptographically Secure PRNG (32 bytes = 64 ký tự HEX)
         var tokenBytes = RandomNumberGenerator.GetBytes(32);
         var tokenHex = Convert.ToHexString(tokenBytes).ToLowerInvariant();
-        var expiration = now.AddHours(8); // Phiên làm việc giới hạn 8 giờ
+        var expiration = now.AddHours(8);
 
         var newSession = new PhienDangNhap
         {
@@ -197,16 +199,27 @@ public class PhienDangNhapController : ControllerBase
         };
         _context.PhienDangNhap.Add(newSession);
 
-        // Cập nhật lần đăng nhập cuối của người dùng
         user.LanDangNhapCuoi = now;
 
-        // Lấy tên vai trò hiển thị
         var roleName = await _context.VaiTro
             .Where(r => r.MaVaiTro == user.MaVaiTro)
             .Select(r => r.TenVaiTro)
-            .FirstOrDefaultAsync() ?? "Người dùng";
+            .FirstOrDefaultAsync() ?? RbacHelper.GetDefaultRoleName(user.MaVaiTro);
 
-        // 6. ATTT Cấp độ 3: Ghi nhận nhật ký kiểm toán (Audit Trail) cho sự kiện đăng nhập thành công
+        var danhSachQuyen = await (
+            from vq in _context.VaiTroQuyenHan.AsNoTracking()
+            join q in _context.QuyenHan.AsNoTracking() on vq.MaQuyenHan equals q.MaQuyenHan
+            where vq.MaVaiTro == user.MaVaiTro && !q.DaXoa
+            select new QuyenHanSessionDto
+            {
+                MaQuyenHan = q.MaQuyenHan,
+                TenQuyenHan = q.TenQuyenHan,
+                DuocXem = true,
+                DuocCapNhat = user.MaVaiTro == RbacHelper.ROLE_ADMIN || vq.DuocCapNhat
+            }
+        ).ToListAsync();
+
+        // 6. ATTT Cấp độ 3: Ghi nhận nhật ký kiểm toán (Audit Trail)
         _context.NhatKyHeThong.Add(new NhatKyHeThong
         {
             MaNguoiDung = user.MaNguoiDung,
@@ -221,15 +234,58 @@ public class PhienDangNhapController : ControllerBase
 
         return Ok(new DangNhapResponse
         {
-            MaNguoiDung = user.MaNguoiDung,
+            MaNguoiDung = user.MaNguoiDung.Trim(),
             TenDangNhap = user.TenDangNhap,
             HoTen = user.HoTen,
             Email = user.Email,
             VaiTro = roleName,
             MaVaiTro = user.MaVaiTro,
-            MaKhuVuc = user.MaKhuVuc,
+            MaKhuVuc = user.MaKhuVuc?.Trim(),
             Token = tokenHex,
-            ThoiGianHetHan = expiration
+            ThoiGianHetHan = expiration,
+            DanhSachQuyen = danhSachQuyen
+        });
+    }
+
+    // =========================================================================
+    // GET: api/PhienDangNhap/kiem-tra
+    // Xác thực phiên đăng nhập hiện tại và trả về vai trò + quyền hạn từ CSDL
+    // =========================================================================
+    [HttpGet("kiem-tra")]
+    public async Task<ActionResult> KiemTraPhien()
+    {
+        var caller = await RbacHelper.ResolveCallerAsync(_context, Request, requireAuthentication: true);
+        if (caller.ErrorResult != null)
+        {
+            return caller.ErrorResult;
+        }
+
+        var user = caller.User!;
+        var danhSachQuyen = await (
+            from vq in _context.VaiTroQuyenHan.AsNoTracking()
+            join q in _context.QuyenHan.AsNoTracking() on vq.MaQuyenHan equals q.MaQuyenHan
+            where vq.MaVaiTro == user.MaVaiTro && !q.DaXoa
+            select new QuyenHanSessionDto
+            {
+                MaQuyenHan = q.MaQuyenHan,
+                TenQuyenHan = q.TenQuyenHan,
+                DuocXem = true,
+                DuocCapNhat = user.MaVaiTro == RbacHelper.ROLE_ADMIN || vq.DuocCapNhat
+            }
+        ).ToListAsync();
+
+        return Ok(new
+        {
+            maNguoiDung = user.MaNguoiDung.Trim(),
+            tenDangNhap = user.TenDangNhap,
+            hoTen = user.HoTen,
+            email = user.Email,
+            soDienThoai = user.SoDienThoai,
+            maVaiTro = user.MaVaiTro,
+            vaiTro = caller.RoleName,
+            trangThaiTaiKhoan = user.TrangThaiTaiKhoan,
+            maKhuVuc = user.MaKhuVuc?.Trim(),
+            danhSachQuyen
         });
     }
 
@@ -241,7 +297,6 @@ public class PhienDangNhapController : ControllerBase
     {
         var now = DateTime.Now;
 
-        // Trích xuất Token từ Body hoặc từ Authorization Header
         var token = request?.Token?.Trim();
         if (string.IsNullOrEmpty(token) && Request.Headers.TryGetValue("Authorization", out var authHeader))
         {
@@ -252,7 +307,6 @@ public class PhienDangNhapController : ControllerBase
             }
         }
 
-        // Trích xuất Mã người dùng từ Body hoặc X-User-Id Header
         var maNguoiDung = request?.MaNguoiDung?.Trim();
         if (string.IsNullOrEmpty(maNguoiDung) && Request.Headers.TryGetValue("X-User-Id", out var userHeader))
         {
@@ -261,14 +315,12 @@ public class PhienDangNhapController : ControllerBase
 
         PhienDangNhap? activeSession = null;
 
-        // 1. Tìm phiên làm việc qua Token
         if (!string.IsNullOrEmpty(token))
         {
             activeSession = await _context.PhienDangNhap
                 .FirstOrDefaultAsync(x => x.MaRefreshToken == token && !x.DaThuHoi);
         }
 
-        // 2. Dự phòng: Tìm phiên qua Mã người dùng hoặc Tên đăng nhập
         string? resolvedMaNguoiDung = null;
         if (!string.IsNullOrEmpty(maNguoiDung))
         {
@@ -278,8 +330,9 @@ public class PhienDangNhapController : ControllerBase
             }
             else
             {
+                var alias = RbacHelper.NormalizeUsernameAlias(maNguoiDung);
                 resolvedMaNguoiDung = await _context.NguoiDung
-                    .Where(u => u.TenDangNhap == maNguoiDung)
+                    .Where(u => u.TenDangNhap == maNguoiDung || u.TenDangNhap == alias)
                     .Select(u => u.MaNguoiDung)
                     .FirstOrDefaultAsync() ?? maNguoiDung;
             }
@@ -293,7 +346,6 @@ public class PhienDangNhapController : ControllerBase
                 .FirstOrDefaultAsync();
         }
 
-        // 3. Nếu vẫn chưa thấy, tìm phiên gần nhất có thoiGianDangXuat là null
         if (activeSession == null && !string.IsNullOrEmpty(resolvedMaNguoiDung))
         {
             activeSession = await _context.PhienDangNhap
@@ -302,30 +354,33 @@ public class PhienDangNhapController : ControllerBase
                 .FirstOrDefaultAsync();
         }
 
-        // 4. Cập nhật trạng thái phiên: Đánh dấu đã thu hồi & Ghi nhận thời gian đăng xuất thực tế
         if (activeSession != null)
         {
             activeSession.DaThuHoi = true;
             activeSession.ThoiGianDangXuat = now;
         }
 
-        // 5. Ghi nhật ký kiểm toán hệ thống (Audit Trail)
-        var auditUserId = activeSession?.MaNguoiDung ?? maNguoiDung;
-        if (!string.IsNullOrEmpty(auditUserId))
+        var auditUserId = activeSession?.MaNguoiDung ?? resolvedMaNguoiDung;
+        if (!string.IsNullOrEmpty(auditUserId) && auditUserId.Length <= 6)
         {
-            _context.NhatKyHeThong.Add(new NhatKyHeThong
+            var exists = await _context.NguoiDung.AnyAsync(u => u.MaNguoiDung == auditUserId);
+            if (exists)
             {
-                MaNguoiDung = auditUserId,
-                HanhDong = "DANG_XUAT",
-                DoiTuong = auditUserId,
-                NoiDung = "Đăng xuất khỏi hệ thống thành công",
-                KetQua = 1,
-                ThoiGian = now
-            });
+                _context.NhatKyHeThong.Add(new NhatKyHeThong
+                {
+                    MaNguoiDung = auditUserId,
+                    HanhDong = "DANG_XUAT",
+                    DoiTuong = auditUserId,
+                    NoiDung = "Đăng xuất khỏi hệ thống thành công",
+                    KetQua = 1,
+                    ThoiGian = now
+                });
+            }
         }
 
         await _context.SaveChangesAsync();
-        return Ok(new { 
+        return Ok(new
+        {
             message = "Đăng xuất an toàn thành công.",
             thoiGianDangXuat = now,
             sessionUpdated = activeSession != null
@@ -335,7 +390,7 @@ public class PhienDangNhapController : ControllerBase
     // =========================================================================
     // Helper: Xác thực mật khẩu PBKDF2 của ASP.NET Core Identity V3 & fallback
     // =========================================================================
-    private static bool VerifyPassword(string hashedPassword, string providedPassword)
+    public static bool VerifyPassword(string hashedPassword, string providedPassword)
     {
         if (string.IsNullOrEmpty(hashedPassword) || string.IsNullOrEmpty(providedPassword))
             return false;
@@ -355,8 +410,12 @@ public class PhienDangNhapController : ControllerBase
             // Bỏ qua ngoại lệ format băm không đúng để kiểm tra fallback
         }
 
-        // Hỗ trợ fallback cho trường hợp dữ liệu thử nghiệm nội bộ
         return hashedPassword == providedPassword;
     }
-}
 
+    public static string HashPassword(string plainPassword)
+    {
+        var hasher = new PasswordHasher<string>();
+        return hasher.HashPassword("SmartLightUser", plainPassword);
+    }
+}
