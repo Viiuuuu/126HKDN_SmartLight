@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nhật ký hoạt động cá nhân | SmartLight</title>
+  <title id="pageHtmlTitle">Nhật ký hệ thống | SmartLight</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
@@ -12,9 +12,10 @@
 </head>
 <body class="activity-log-page">
   <div class="dashboard-wrapper">
+    <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar">
       <a class="sidebar-brand" href="index.html">
-        <span class="brand-logo-wrap"><img src="images/logo.png" alt="" class="brand-logo-img"></span>
+        <span class="brand-logo-wrap"><img src="images/logo.png" alt="SmartLight Logo" class="brand-logo-img"></span>
         <span class="brand-text"><span class="brand-name">SmartLight</span><span class="brand-sub">MUNICIPAL IOT</span></span>
         <button class="btn-close-sidebar" id="btnCloseSidebar" type="button" aria-label="Đóng menu">×</button>
       </a>
@@ -26,7 +27,7 @@
             <li><a class="nav-link" href="map.html"><span class="nav-icon material-symbols-outlined">map</span><span class="nav-label">Bản đồ giám sát</span></a></li>
             <li><a class="nav-link" href="control.html"><span class="nav-icon material-symbols-outlined">tune</span><span class="nav-label">Điều khiển chiếu sáng</span></a></li>
             <li><a class="nav-link" href="schedules.html"><span class="nav-icon material-symbols-outlined">calendar_month</span><span class="nav-label">Lịch vận hành</span></a></li>
-            <li><a class="nav-link" href="alerts.html"><span class="nav-icon material-symbols-outlined">warning</span><span class="nav-label">Cảnh báo sự cố</span><span class="nav-badge">12</span></a></li>
+            <li><a class="nav-link" href="alerts.html"><span class="nav-icon material-symbols-outlined">warning</span><span class="nav-label">Cảnh báo sự cố</span><span class="nav-badge" id="sidebarAlertCount">0</span></a></li>
           </ul>
         </div>
         <div class="nav-group">
@@ -39,23 +40,19 @@
           </ul>
         </div>
         <div class="nav-group">
-          <div class="nav-group-title">Báo cáo</div>
+          <div class="nav-group-title">Quản trị &amp; Báo cáo</div>
           <ul class="nav-list">
             <li><a class="nav-link" href="users.html" data-nav="users"><span class="nav-icon material-symbols-outlined">group</span><span class="nav-label">Quản lý người dùng</span></a></li>
             <li><a class="nav-link" href="roles.html" data-nav="roles"><span class="nav-icon material-symbols-outlined">admin_panel_settings</span><span class="nav-label">Phân quyền</span></a></li>
             <li><a class="nav-link" href="reports.html" data-nav="reports"><span class="nav-icon material-symbols-outlined">bar_chart</span><span class="nav-label">Báo cáo &amp; thống kê</span></a></li>
-          </ul>
-        </div>
-        <div class="nav-group">
-          <div class="nav-group-title">Tài khoản</div>
-          <ul class="nav-list">
-            <li><a class="nav-link active" href="activity-log.html" aria-current="page"><span class="nav-icon material-symbols-outlined">history</span><span class="nav-label">Nhật ký hoạt động</span></a></li>
+            <li id="menuItemActivityLog"><a class="nav-link active" href="activity-log.html" aria-current="page" data-nav="logs"><span class="nav-icon material-symbols-outlined">history</span><span class="nav-label" id="sidebarLogLabel">Nhật ký hệ thống</span></a></li>
           </ul>
         </div>
       </nav>
     </aside>
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
+    <!-- ==================== MAIN CONTAINER ==================== -->
     <div class="main-container">
       <header class="activity-topbar">
         <div class="activity-topbar-search">
@@ -65,58 +62,204 @@
         <div class="topbar-user">
           <span class="topbar-date" id="liveClockDisplay"></span>
           <a class="notification-link" href="alerts.html" aria-label="Cảnh báo"><span class="material-symbols-outlined">notifications</span><i></i></a>
-          <span class="user-name" id="userName">Nhân viên vận hành<small id="userRole">Nhân viên vận hành</small></span>
+          <span class="user-name" id="userName">Người dùng<small id="userRole">Vai trò</small></span>
           <span class="user-avatar material-symbols-outlined">person</span>
         </div>
       </header>
 
       <main class="activity-content">
-        <div class="breadcrumbs"><a href="index.html">Trang chủ</a><span>/</span><strong>Nhật ký hoạt động cá nhân</strong></div>
+        <!-- Breadcrumbs -->
+        <div class="breadcrumbs">
+          <a href="index.html">Trang chủ</a>
+          <span>/</span>
+          <strong id="breadcrumbTitle">Nhật ký hệ thống</strong>
+        </div>
+
+        <!-- Page Heading -->
         <section class="page-heading">
-          <div><h1>Nhật ký hoạt động cá nhân</h1><p>Xem và tra cứu lịch sử các thao tác do chính bạn thực hiện trên hệ thống.</p></div>
-          <span class="personal-scope"><span class="material-symbols-outlined">person_check</span> Chỉ tài khoản của bạn</span>
+          <div>
+            <h1 id="headingTitle">Nhật ký hệ thống</h1>
+            <p id="headingDesc">Theo dõi lịch sử thao tác của người dùng trên toàn hệ thống.</p>
+          </div>
+          <span class="personal-scope" id="scopeBadge">
+            <span class="material-symbols-outlined" id="scopeIcon">admin_panel_settings</span>
+            <span id="scopeText">Toàn hệ thống</span>
+          </span>
         </section>
 
+        <!-- Filter Card -->
         <section class="filter-card card" aria-label="Bộ lọc nhật ký">
-          <div class="filter-field date-field"><label for="startDate">Khoảng thời gian</label><div class="date-inputs"><input id="startDate" type="datetime-local" aria-label="Từ ngày"><span>—</span><input id="endDate" type="datetime-local" aria-label="Đến ngày"></div></div>
-          <div class="filter-field"><label for="actionFilter">Loại thao tác</label><select id="actionFilter"><option value="">Tất cả</option><option value="Điều khiển">Điều khiển</option><option value="Xem">Xem</option><option value="Quản lý">Quản lý</option><option value="Cảnh báo">Cảnh báo</option><option value="Đăng nhập">Đăng nhập</option></select></div>
-          <div class="filter-field"><label for="targetFilter">Đối tượng</label><select id="targetFilter"><option value="">Tất cả</option><option value="Tuyến">Tuyến chiếu sáng</option><option value="Tủ">Tủ điều khiển</option><option value="Điểm đèn">Điểm đèn</option><option value="Hệ thống">Hệ thống</option></select></div>
-          <div class="filter-field search-field"><label for="tableSearch">Tìm kiếm</label><div class="filter-search"><span class="material-symbols-outlined">search</span><input id="tableSearch" type="search" placeholder="Tìm tuyến, tủ, điểm đèn..."></div></div>
-          <div class="filter-actions"><button class="btn-reset" id="btnReset" type="button"><span class="material-symbols-outlined">restart_alt</span> Đặt lại</button><button class="btn-search" id="btnSearch" type="button"><span class="material-symbols-outlined">search</span> Tìm kiếm</button></div>
+          <!-- Khoảng thời gian -->
+          <div class="filter-field date-field">
+            <label for="startDate">Khoảng thời gian</label>
+            <div class="date-inputs">
+              <input id="startDate" type="datetime-local" aria-label="Từ ngày">
+              <span>—</span>
+              <input id="endDate" type="datetime-local" aria-label="Đến ngày">
+            </div>
+          </div>
+
+          <!-- Lọc tài khoản (Chỉ hiển thị cho Quản trị viên) -->
+          <div class="filter-field" id="userFilterWrapper">
+            <label for="userFilter">Tài khoản</label>
+            <input id="userFilter" type="text" placeholder="Tất cả hoặc mã TK...">
+          </div>
+
+          <!-- Loại thao tác -->
+          <div class="filter-field">
+            <label for="actionFilter">Loại thao tác</label>
+            <select id="actionFilter">
+              <option value="">Tất cả thao tác</option>
+              <option value="Điều khiển">Điều khiển</option>
+              <option value="Xem">Xem</option>
+              <option value="Quản lý">Quản lý</option>
+              <option value="Cảnh báo">Cảnh báo</option>
+              <option value="Đăng nhập">Đăng nhập</option>
+              <option value="Đăng xuất">Đăng xuất</option>
+            </select>
+          </div>
+
+          <!-- Trạng thái kết quả -->
+          <div class="filter-field">
+            <label for="statusFilter">Kết quả</label>
+            <select id="statusFilter">
+              <option value="">Tất cả kết quả</option>
+              <option value="1">Thành công</option>
+              <option value="0">Thất bại</option>
+            </select>
+          </div>
+
+          <!-- Đối tượng tác động -->
+          <div class="filter-field">
+            <label for="targetFilter">Đối tượng</label>
+            <select id="targetFilter">
+              <option value="">Tất cả đối tượng</option>
+              <option value="Tủ">Tủ điều khiển</option>
+              <option value="Tuyến">Tuyến chiếu sáng</option>
+              <option value="Điểm đèn">Điểm đèn</option>
+              <option value="Hệ thống">Hệ thống</option>
+              <option value="Lịch">Lịch vận hành</option>
+              <option value="Phiên">Phiên đăng nhập</option>
+            </select>
+          </div>
+
+          <!-- Tìm kiếm từ khóa -->
+          <div class="filter-field search-field">
+            <label for="tableSearch">Tìm kiếm từ khóa</label>
+            <div class="filter-search">
+              <span class="material-symbols-outlined">search</span>
+              <input id="tableSearch" type="search" placeholder="Nội dung, đối tượng, IP...">
+            </div>
+          </div>
+
+          <!-- Nút hành động -->
+          <div class="filter-actions">
+            <button class="btn-reset" id="btnReset" type="button" title="Đưa bộ lọc về mặc định"><span class="material-symbols-outlined">restart_alt</span> Đặt lại</button>
+            <button class="btn-search" id="btnSearch" type="button" title="Tìm kiếm theo điều kiện"><span class="material-symbols-outlined">search</span> Tìm kiếm</button>
+            <button class="btn-reset" id="btnRefresh" type="button" title="Đồng bộ dữ liệu mới nhất từ máy chủ"><span class="material-symbols-outlined">refresh</span> Làm mới</button>
+          </div>
         </section>
 
+        <!-- Summary Grid (4 Cards) -->
         <section class="summary-grid" aria-label="Tổng quan hoạt động">
-          <article class="summary-card card"><span class="summary-icon icon-blue material-symbols-outlined">assignment</span><div><span class="summary-label">Tổng số thao tác</span><strong id="totalCount">48</strong><small class="trend-positive">↑ 12% so với 7 ngày trước</small></div></article>
-          <article class="summary-card card"><span class="summary-icon icon-green material-symbols-outlined">check_circle</span><div><span class="summary-label">Thao tác thành công</span><strong id="successCount">46</strong><small class="trend-positive">↑ 15% so với 7 ngày trước</small></div></article>
-          <article class="summary-card card"><span class="summary-icon icon-red material-symbols-outlined">warning</span><div><span class="summary-label">Thao tác thất bại</span><strong id="failureCount">2</strong><small class="trend-negative">↓ 50% so với 7 ngày trước</small></div></article>
-          <article class="summary-card card"><span class="summary-icon icon-purple material-symbols-outlined">person</span><div><span class="summary-label">Đối tượng tác động</span><strong id="targetCount">12</strong><small class="summary-detail">Tuyến, tủ điện, điểm đèn...</small></div></article>
+          <article class="summary-card card">
+            <span class="summary-icon icon-blue material-symbols-outlined">assignment</span>
+            <div>
+              <span class="summary-label">Tổng số thao tác</span>
+              <strong id="totalCount">0</strong>
+              <small class="summary-detail">Ghi nhận trong kỳ</small>
+            </div>
+          </article>
+          <article class="summary-card card">
+            <span class="summary-icon icon-green material-symbols-outlined">check_circle</span>
+            <div>
+              <span class="summary-label">Thao tác thành công</span>
+              <strong id="successCount">0</strong>
+              <small class="trend-positive" id="successRate">100%</small>
+            </div>
+          </article>
+          <article class="summary-card card">
+            <span class="summary-icon icon-red material-symbols-outlined">warning</span>
+            <div>
+              <span class="summary-label">Thao tác thất bại</span>
+              <strong id="failureCount">0</strong>
+              <small class="trend-negative" id="failureNote">0 sự cố thao tác</small>
+            </div>
+          </article>
+          <article class="summary-card card">
+            <span class="summary-icon icon-purple material-symbols-outlined">hub</span>
+            <div>
+              <span class="summary-label">Đối tượng tác động</span>
+              <strong id="targetCount">0</strong>
+              <small class="summary-detail">Tủ, tuyến, đèn, hệ thống</small>
+            </div>
+          </article>
         </section>
 
+        <!-- Activity Table Section -->
         <section class="activity-table-card card">
-          <div class="table-heading"><h2>Danh sách nhật ký hoạt động</h2><button class="btn-export" id="btnExport" type="button"><span class="material-symbols-outlined">download</span> Xuất báo cáo</button></div>
+          <div class="table-heading">
+            <h2 id="tableHeadingTitle">Danh sách nhật ký hoạt động</h2>
+            <button class="btn-export" id="btnExport" type="button" title="Xuất dữ liệu hiển thị ra file CSV"><span class="material-symbols-outlined">download</span> Xuất báo cáo</button>
+          </div>
           <div class="table-scroll">
             <table>
-              <thead><tr><th>STT</th><th>Thời gian</th><th>Loại thao tác</th><th>Mô tả chi tiết</th><th>Đối tượng</th><th>Kết quả</th><th>Ghi chú</th><th><span class="visually-hidden">Thao tác</span></th></tr></thead>
-              <tbody id="activityRows"></tbody>
+              <thead>
+                <tr>
+                  <th style="width: 45px;">STT</th>
+                  <th style="min-width: 130px;">Thời gian</th>
+                  <th id="thUser" style="min-width: 110px;">Tài khoản</th>
+                  <th style="min-width: 120px;">Loại thao tác</th>
+                  <th style="min-width: 140px;">Đối tượng</th>
+                  <th style="min-width: 220px;">Mô tả chi tiết</th>
+                  <th style="min-width: 110px;">Địa chỉ IP</th>
+                  <th style="min-width: 100px;">Kết quả</th>
+                  <th style="min-width: 80px; text-align: center;">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="activityRows">
+                <tr>
+                  <td colspan="9" style="text-align: center; padding: 32px; color: #64748b;">
+                    Đang đồng bộ nhật ký từ máy chủ...
+                  </td>
+                </tr>
+              </tbody>
             </table>
-            <div class="empty-state" id="emptyState" hidden>Không tìm thấy hoạt động phù hợp với bộ lọc.</div>
+            <div class="empty-state" id="emptyState" hidden>Không tìm thấy nhật ký hoạt động phù hợp.</div>
           </div>
           <div class="table-footer">
-            <span id="resultSummary">Hiển thị 1 - 11 trong tổng số 48 bản ghi</span>
+            <span id="resultSummary">Đang tải dữ liệu...</span>
             <div class="pagination" id="pagination" aria-label="Phân trang"></div>
-            <label class="page-size">Hiển thị <select id="pageSize"><option value="11">11</option><option value="10">10</option><option value="25">25</option><option value="50">50</option></select></label>
+            <label class="page-size">Hiển thị 
+              <select id="pageSize">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </label>
           </div>
         </section>
-        <p class="demo-note">Dữ liệu nhật ký hiện là dữ liệu mô phỏng trong phạm vi tài khoản Nhân viên vận hành đang đăng nhập.</p>
       </main>
     </div>
   </div>
 
+  <!-- Detail Modal Dialog -->
   <dialog class="detail-dialog" id="detailDialog">
-    <div class="dialog-heading"><div><span class="dialog-eyebrow">Chi tiết nhật ký</span><h2 id="dialogTitle">Thông tin hoạt động</h2></div><button id="btnCloseDialog" type="button" aria-label="Đóng"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="dialog-heading">
+      <div>
+        <span class="dialog-eyebrow">Chi tiết sự kiện nhật ký</span>
+        <h2 id="dialogTitle">Thông tin hoạt động</h2>
+      </div>
+      <button id="btnCloseDialog" type="button" aria-label="Đóng">✕</button>
+    </div>
     <dl id="dialogDetails"></dl>
   </dialog>
+
+  <!-- Toast Container -->
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Scripts -->
   <script src="js/api-config.js"></script>
   <script src="js/activity-log.js"></script>
 </body>

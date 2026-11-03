@@ -160,14 +160,25 @@
 }
 
 .filter-card {
-  display: grid;
-  grid-template-columns: minmax(260px, 1.8fr) minmax(125px, .85fr) minmax(125px, .85fr) minmax(190px, 1.2fr);
-  align-items: end;
-  gap: 10px;
-  padding: 14px;
-  margin-bottom: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
 }
-.filter-field { min-width: 0; }
+.filter-field {
+  flex: 1 1 160px;
+  min-width: 140px;
+}
+.filter-field.date-field {
+  flex: 2 1 290px;
+  min-width: 270px;
+}
+.filter-field.search-field {
+  flex: 2 1 220px;
+  min-width: 200px;
+}
 .filter-field > label {
   display: block;
   margin: 0 0 6px;
@@ -178,6 +189,7 @@
 .date-inputs { display: flex; align-items: center; gap: 7px; }
 .date-inputs > span { color: var(--text-light); font-size: 11px; }
 .filter-field select,
+.filter-field input,
 .date-inputs input,
 .filter-search {
   width: 100%;
@@ -193,6 +205,7 @@
 }
 .date-inputs input { flex: 1; }
 .filter-field select:focus,
+.filter-field input:focus,
 .date-inputs input:focus,
 .filter-search:focus-within {
   outline: 0;
