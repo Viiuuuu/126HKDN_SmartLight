@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('actionFilter').value = '';
     document.getElementById('targetFilter').value = '';
     document.getElementById('tableSearch').value = '';
-    document.getElementById('globalSearch').value = '';
+    document.getElementById('topSearchInput').value = '';
     filteredActivities = activities;
     currentPage = 1;
     renderRows();
@@ -345,14 +345,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.getElementById('btnCloseSidebar').addEventListener('click', closeSidebar);
   backdrop.addEventListener('click', closeSidebar);
-  document.getElementById('globalSearch').addEventListener('input', (event) => {
+  document.getElementById('topSearchInput').addEventListener('input', (event) => {
     document.getElementById('tableSearch').value = event.target.value;
     applyFilters();
   });
   document.addEventListener('keydown', (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault();
-      document.getElementById('globalSearch').focus();
+      document.getElementById('topSearchInput').focus();
     }
   });
 
