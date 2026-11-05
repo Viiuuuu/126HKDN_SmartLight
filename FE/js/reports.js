@@ -6,6 +6,16 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentPage = 1;
   let period = '7';
   let searchQuery = '';
+  let useBackend = false;
+  let areaOptions = [];
+  let chartSeries = [
+    { nhan: '12/12', thucTe: 154, keHoach: 112 }, { nhan: '13/12', thucTe: 162, keHoach: 119 },
+    { nhan: '14/12', thucTe: 168, keHoach: 121 }, { nhan: '15/12', thucTe: 165, keHoach: 124 },
+    { nhan: '16/12', thucTe: 151, keHoach: 116 }, { nhan: '17/12', thucTe: 173, keHoach: 135 },
+    { nhan: '18/12', thucTe: 158, keHoach: 112 }
+  ];
+  const isoDate = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  const fmtNumber = (value, digits = 0) => Number(value || 0).toLocaleString('vi-VN', { minimumFractionDigits: digits, maximumFractionDigits: digits });
 
   const baseReports = [
     { name: 'Báo cáo tổng hợp vận hành', type: 'Tổng hợp vận hành', period: 'Tháng 12/2024', date: '2024-12-18', created: '18/12/2024 14:20', creator: 'Nguyễn Văn Minh', format: 'PDF', status: 'Sẵn sàng', area: 'Ba Đình' },
@@ -46,9 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const query = searchQuery.toLocaleLowerCase('vi-VN');
     return activeReports.filter(report =>
       (!type || report.type === type) &&
-      (!area || report.area === area) &&
-      (!start || report.date >= start) &&
-      (!end || report.date <= end) &&
+      (!area || (useBackend ? report.areaCode === area : report.area === area)) &&
+      (useBackend || !start || report.date >= start) &&
+      (useBackend || !end || report.date <= end) &&
       (!query || `${report.name} ${report.type} ${report.area} ${report.creator}`.toLocaleLowerCase('vi-VN').includes(query))
     );
   }
@@ -148,34 +158,52 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderChart() {
-    const labels = period === '7'
-      ? ['12/12', '13/12', '14/12', '15/12', '16/12', '17/12', '18/12']
-      : period === '30'
-        ? ['19/11', '24/11', '29/11', '04/12', '09/12', '14/12', '18/12']
-        : period === 'quarter'
-          ? ['T.10', '15/10', 'T.11', '15/11', 'T.12', '15/12', '18/12']
-          : ['T.1', 'T.3', 'T.5', 'T.7', 'T.9', 'T.11', 'T.12'];
-    const actual = [154, 162, 168, 165, 151, 173, 158];
-    const planned = [112, 119, 121, 124, 116, 135, 112];
-    const x = index => 58 + index * 77;
-    const y = value => 190 - value * 0.72;
+    const series = chartSeries.length ? chartSeries : [{ nhan: '--', thucTe: 0, keHoach: 0 }];
+    const labels = series.map(item => item.nhan);
+    const actual = series.map(item => Number(item.thucTe) || 0);
+    const planned = series.map(item => Number(item.keHoach) || 0);
+    const rawMax = Math.max(...actual, ...planned, 1);
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawMax)));
+    const maxValue = Math.ceil(rawMax / magnitude * 1.1 / 0.5) * 0.5 * magnitude;
+    const count = series.length;
+    const x = index => count === 1 ? 300 : 58 + index * (482 / (count - 1));
+    const y = value => 190 - (value / maxValue) * 156;
+    const fmtAxis = value => value >= 1000 ? `${(value / 1000).toFixed(value % 1000 ? 1 : 0)}k` : String(Math.round(value));
     const toPoints = values => values.map((value, index) => `${x(index)},${y(value)}`).join(' ');
-    const areaPoints = `58,190 ${toPoints(actual)} ${x(actual.length - 1)},190`;
+    const areaPoints = `${x(0)},190 ${toPoints(actual)} ${x(count - 1)},190`;
+    const labelStep = Math.max(1, Math.ceil(count / 8));
     chart.innerHTML = `
       <defs><linearGradient id="energyFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#6e8dcb" stop-opacity=".30"/><stop offset="100%" stop-color="#6e8dcb" stop-opacity=".02"/></linearGradient></defs>
-      ${[34, 84, 134, 184].map((lineY, index) => `<line class="chart-grid-line" x1="48" y1="${lineY}" x2="540" y2="${lineY}"/><text class="chart-axis-label" x="7" y="${lineY + 3}">${['40k', '30k', '20k', '10k'][index]}</text>`).join('')}
+      ${[0, 1, 2, 3].map(step => { const value = maxValue * step / 3; const lineY = y(value); return `<line class="chart-grid-line" x1="48" y1="${lineY}" x2="540" y2="${lineY}"/><text class="chart-axis-label" x="7" y="${lineY + 3}">${fmtAxis(value)}</text>`; }).join('')}
       <polygon class="chart-fill" points="${areaPoints}"/>
       <polyline class="chart-plan-line" points="${toPoints(planned)}"/>
       <polyline class="chart-actual-line" points="${toPoints(actual)}"/>
       ${actual.map((value, index) => `<circle class="chart-actual-point" cx="${x(index)}" cy="${y(value)}" r="3"/>`).join('')}
-      ${labels.map((label, index) => `<text class="chart-axis-label" text-anchor="middle" x="${x(index)}" y="211">${label}</text>`).join('')}
+      ${labels.map((label, index) => index % labelStep === 0 ? `<text class="chart-axis-label" text-anchor="middle" x="${x(index)}" y="211">${label}</text>` : '').join('')}
     `;
     chart.setAttribute('aria-label', `Biểu đồ sản lượng điện theo khoảng ${period === '7' ? '7 ngày' : period === '30' ? '30 ngày' : period === 'quarter' ? 'quý này' : 'năm nay'}`);
   }
 
-  function downloadReport(report) {
+  async function downloadReport(report) {
     if (report.status !== 'Sẵn sàng') {
       showToast('Báo cáo đang được tạo, vui lòng thử lại sau.');
+      return;
+    }
+    if (useBackend && typeof buildApiUrl === 'function') {
+      try {
+        const params = { loai: report.type, tuNgay: report.fromDate, denNgay: report.toDate, maKhuVuc: report.areaCode };
+        const response = await fetch(buildApiUrl('/BaoCao/xuat', params), { headers: getAuthHeaders() });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const url = URL.createObjectURL(await response.blob());
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${report.name.replace(/[\\/:*?"<>|]/g, '-')}.csv`;
+        link.click();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast(`Đã tải báo cáo "${report.name}".`);
+      } catch (error) {
+        showToast('Không tải được báo cáo từ máy chủ.');
+      }
       return;
     }
     const content = [
@@ -215,8 +243,30 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnCreateReport').addEventListener('click', () => dialog.showModal());
   document.getElementById('btnCloseCreateDialog').addEventListener('click', () => dialog.close());
   document.getElementById('btnCancelCreateDialog').addEventListener('click', () => dialog.close());
-  document.getElementById('createReportForm').addEventListener('submit', event => {
+  document.getElementById('createReportForm').addEventListener('submit', async event => {
     event.preventDefault();
+    if (useBackend) {
+      try {
+        const areaSelect = document.getElementById('newReportArea');
+        await window.api.post('/BaoCao/tao-bao-cao', {
+          ten: document.getElementById('newReportName').value.trim(),
+          loai: document.getElementById('newReportType').value,
+          dinhDang: document.getElementById('newReportFormat').value,
+          maKhuVuc: areaSelect.value === 'Toàn thành phố' ? null : areaSelect.value,
+          tuNgay: document.getElementById('dateFrom').value || null,
+          denNgay: document.getElementById('dateTo').value || null
+        });
+        event.target.reset();
+        dialog.close();
+        currentPage = 1;
+        await loadReportList();
+        await loadOverview();
+        showToast('Đã tạo báo cáo mới.');
+      } catch (error) {
+        showToast(error?.message || 'Không thể tạo báo cáo.');
+      }
+      return;
+    }
     const now = new Date();
     const created = new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeStyle: 'short' }).format(now);
     const report = {
@@ -226,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
       period: 'Tùy chỉnh',
       date: new Date().toISOString().slice(0, 10),
       created,
-      creator: document.getElementById('userName').childNodes[0].textContent.trim(),
+      creator: (document.querySelector('.user-profile-btn .user-name')?.textContent || 'Người dùng').trim(),
       format: document.getElementById('newReportFormat').value,
       status: 'Sẵn sàng',
       area: document.getElementById('newReportArea').value
@@ -237,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('reportArea').value = '';
     document.getElementById('dateFrom').value = '';
     document.getElementById('dateTo').value = '';
-    document.getElementById('globalSearch').value = '';
+    document.getElementById('topSearchInput').value = '';
     searchQuery = '';
     currentPage = 1;
     event.target.reset();
@@ -249,6 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnApplyFilters').addEventListener('click', () => {
     currentPage = 1;
     renderReports();
+    if (useBackend) loadOverview();
   });
   ['reportType', 'reportArea', 'dateFrom', 'dateTo'].forEach(id => {
     document.getElementById(id).addEventListener('change', () => {
@@ -260,16 +311,15 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', () => {
       period = button.dataset.period;
       document.querySelectorAll('.period-buttons button').forEach(item => item.classList.toggle('selected', item === button));
-      const end = new Date(Date.UTC(2024, 11, 18));
+      const end = new Date();
       const start = new Date(end);
-      if (period === '7' || period === '30') start.setUTCDate(end.getUTCDate() - (Number(period) - 1));
-      else if (period === 'quarter') start.setUTCMonth(9, 1);
-      else start.setUTCMonth(0, 1);
-      document.getElementById('dateFrom').value = start.toISOString().slice(0, 10);
-      document.getElementById('dateTo').value = end.toISOString().slice(0, 10);
+      if (period === '7' || period === '30') start.setDate(end.getDate() - (Number(period) - 1));
+      else if (period === 'quarter') start.setMonth(Math.floor(end.getMonth() / 3) * 3, 1);
+      else start.setMonth(0, 1);
+      document.getElementById('dateFrom').value = isoDate(start);
+      document.getElementById('dateTo').value = isoDate(end);
       currentPage = 1;
-      renderChart();
-      renderReports();
+      if (useBackend) { loadOverview(); loadReportList(); } else { renderChart(); renderReports(); }
     });
   });
   document.getElementById('btnViewAllReports').addEventListener('click', () => {
@@ -277,12 +327,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('reportArea').value = '';
     document.getElementById('dateFrom').value = '';
     document.getElementById('dateTo').value = '';
-    document.getElementById('globalSearch').value = '';
+    document.getElementById('topSearchInput').value = '';
     searchQuery = '';
     currentPage = 1;
     renderReports();
   });
-  document.getElementById('globalSearch').addEventListener('input', event => {
+  document.getElementById('topSearchInput').addEventListener('input', event => {
     searchQuery = event.target.value.trim();
     currentPage = 1;
     renderReports();
@@ -290,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', event => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault();
-      document.getElementById('globalSearch').focus();
+      document.getElementById('topSearchInput').focus();
     }
   });
 
@@ -322,6 +372,148 @@ document.addEventListener('DOMContentLoaded', () => {
     backdrop.classList.remove('visible');
   });
 
+  // ===================== Kết nối API BaoCao =====================
+  const periodLabel = { '7': '7 ngày', '30': '30 ngày', quarter: 'quý này', year: 'năm nay' };
+  const trendText = (item, invert = false) => {
+    if (!item || item.phanTram === null || item.phanTram === undefined) return '— so với kỳ trước';
+    const sign = item.phanTram > 0 ? '+' : '';
+    return `${item.phanTram > 0 ? '↗' : item.phanTram < 0 ? '↘' : '→'} ${sign}${fmtNumber(item.phanTram, 1)}% kỳ trước`;
+  };
+  function setTrend(strongId, item, goodWhenUp = true) {
+    const small = document.getElementById(strongId)?.closest('div')?.querySelector('.metric-trend');
+    if (!small) return;
+    small.textContent = trendText(item);
+    const up = item && item.phanTram > 0;
+    const good = item && item.phanTram !== null ? (goodWhenUp ? up || item.phanTram === 0 : !up) : true;
+    small.classList.toggle('positive', good);
+    small.classList.toggle('negative', !good);
+  }
+
+  function renderOverview(data) {
+    const cs = data.chiSo;
+    document.getElementById('metricReports').textContent = fmtNumber(cs.soBaoCao.giaTri);
+    document.getElementById('metricEnergy').textContent = fmtNumber(cs.dienNangTieuThu.giaTri, 1);
+    document.getElementById('metricOnline').textContent = `${fmtNumber(cs.tyLeHoatDong.giaTri, 1)}%`;
+    document.getElementById('metricIncidents').textContent = fmtNumber(cs.suCo.giaTri);
+    setTrend('metricReports', cs.soBaoCao);
+    setTrend('metricEnergy', cs.dienNangTieuThu, false);
+    setTrend('metricOnline', cs.tyLeHoatDong);
+    setTrend('metricIncidents', cs.suCo, false);
+
+    chartSeries = data.bieuDo || [];
+    renderChart();
+
+    const st = data.tinhTrangThietBi;
+    document.getElementById('deviceTotal').textContent = fmtNumber(st.tong);
+    const pct = value => (st.tong ? value * 100 / st.tong : 0);
+    const a = pct(st.binhThuong), b = a + pct(st.suCo), c = b + pct(st.matTinHieu);
+    const donut = document.getElementById('deviceDonut');
+    if (st.tong) {
+      donut.style.background = `conic-gradient(#223f8d 0 ${a}%,#e7bfae ${a}% ${b}%,#a3b9ec ${b}% ${c}%,#d8e3ff ${c}% 100%)`;
+    } else {
+      donut.style.background = '#edf0f7';
+    }
+    donut.querySelector('strong').textContent = `${fmtNumber(st.tyLeHoatDong, 1)}%`;
+    donut.setAttribute('aria-label', `${fmtNumber(st.tyLeHoatDong, 1)}% thiết bị hoạt động bình thường`);
+    const legend = document.querySelectorAll('.status-legend > div strong');
+    [st.binhThuong, st.suCo, st.matTinHieu, st.baoTri].forEach((value, index) => { if (legend[index]) legend[index].textContent = fmtNumber(value); });
+
+    const summary = document.querySelector('.district-summary');
+    summary.querySelectorAll('.district-row').forEach(row => row.remove());
+    const rows = data.suCoTheoKhuVuc || [];
+    if (!rows.length) {
+      const empty = document.createElement('div');
+      empty.className = 'district-row';
+      empty.innerHTML = '<span>Không có sự cố trong kỳ</span><strong>0 ca</strong>';
+      summary.appendChild(empty);
+    }
+    rows.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'district-row';
+      const name = document.createElement('span');
+      name.textContent = item.tenKhuVuc;
+      const count = document.createElement('strong');
+      count.textContent = `${item.soCa} ca`;
+      const bar = document.createElement('i');
+      const fill = document.createElement('b');
+      fill.style.width = `${Math.max(item.tyLe, 6)}%`;
+      bar.appendChild(fill);
+      row.append(name, count, bar);
+      summary.appendChild(row);
+    });
+  }
+
+  function currentApiRange() {
+    return {
+      tuNgay: document.getElementById('dateFrom').value || null,
+      denNgay: document.getElementById('dateTo').value || null,
+      maKhuVuc: document.getElementById('reportArea').value || null
+    };
+  }
+
+  async function loadOverview() {
+    const data = await window.api.get('/BaoCao/tong-quan', currentApiRange());
+    renderOverview(data);
+  }
+
+  async function loadReportList() {
+    const data = await window.api.get('/BaoCao/danh-sach', { pageSize: 100 });
+    const fmt = value => {
+      const d = new Date(value);
+      const pad = n => String(n).padStart(2, '0');
+      return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    };
+    activeReports = (data.danhSach || []).map(item => ({
+      id: item.id,
+      name: item.ten,
+      type: item.loai,
+      period: item.kyDuLieu,
+      date: isoDate(new Date(item.thoiGianTao)),
+      created: fmt(item.thoiGianTao),
+      creator: item.nguoiTao,
+      format: item.dinhDang,
+      status: item.trangThai,
+      area: item.khuVuc,
+      areaCode: item.maKhuVuc,
+      fromDate: item.tuNgay,
+      toDate: item.denNgay
+    }));
+    renderReports();
+  }
+
+  async function loadAreaOptions() {
+    const list = await window.api.get('/KhuVuc');
+    areaOptions = Array.isArray(list) ? list : [];
+    const fill = (select, allLabel) => {
+      select.replaceChildren(new Option(allLabel, allLabel === 'Toàn thành phố' && select.id === 'newReportArea' ? 'Toàn thành phố' : ''));
+      areaOptions.forEach(area => select.appendChild(new Option(area.tenPhuongXa, String(area.maKhuVuc).trim())));
+    };
+    fill(document.getElementById('reportArea'), 'Toàn thành phố');
+    fill(document.getElementById('newReportArea'), 'Toàn thành phố');
+  }
+
+  async function initBackend() {
+    if (!window.api || typeof window.api.get !== 'function') return;
+    try {
+      const today = new Date();
+      const from = new Date(today);
+      from.setDate(today.getDate() - 6);
+      document.getElementById('dateFrom').value = isoDate(from);
+      document.getElementById('dateTo').value = isoDate(today);
+      await loadAreaOptions();
+      await loadOverview();
+      useBackend = true;
+      document.getElementById('reportArea').addEventListener('change', () => loadOverview());
+      ['dateFrom', 'dateTo'].forEach(id => document.getElementById(id).addEventListener('change', () => loadOverview()));
+      document.querySelector('.report-demo-note')?.remove();
+      await loadReportList();
+    } catch (error) {
+      useBackend = false;
+      console.warn('[Báo cáo] Chưa kết nối được API BaoCao, hiển thị dữ liệu mẫu.', error);
+    }
+  }
+
   renderChart();
   renderReports();
+  initBackend();
 });

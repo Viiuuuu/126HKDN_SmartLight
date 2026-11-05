@@ -14,56 +14,349 @@
   <div class="dashboard-wrapper">
     <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar">
-      <a class="sidebar-brand" href="index.html">
-        <span class="brand-logo-wrap"><img src="images/logo.png" alt="SmartLight Logo" class="brand-logo-img"></span>
-        <span class="brand-text"><span class="brand-name">SmartLight</span><span class="brand-sub">MUNICIPAL IOT</span></span>
-        <button class="btn-close-sidebar" id="btnCloseSidebar" type="button" aria-label="Đóng menu">×</button>
-      </a>
-      <nav class="sidebar-nav" aria-label="Điều hướng chính">
+      <!-- Brand / Logo -->
+      <div class="sidebar-brand">
+        <div class="brand-logo-wrap">
+          <img src="images/logo.png" alt="SmartLight EVNCPC Logo" class="brand-logo-img">
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-name">SmartLight</h1>
+          <span class="brand-sub">MUNICIPAL IOT</span>
+        </div>
+        <button class="btn-close-sidebar" id="btnCloseSidebar" aria-label="Đóng menu">✕</button>
+      </div>
+
+      <!-- Navigation Menus -->
+      <nav class="sidebar-nav">
+        <!-- Section 1: GIÁM SÁT & ĐIỀU HÀNH -->
         <div class="nav-group">
-          <div class="nav-group-title">Giám sát &amp; điều hành</div>
+          <div class="nav-group-title">GIÁM SÁT & ĐIỀU HÀNH</div>
           <ul class="nav-list">
-            <li><a class="nav-link" href="index.html"><span class="nav-icon material-symbols-outlined">dashboard</span><span class="nav-label">Dashboard (Tổng quan)</span></a></li>
-            <li><a class="nav-link" href="map.html"><span class="nav-icon material-symbols-outlined">map</span><span class="nav-label">Bản đồ giám sát</span></a></li>
-            <li><a class="nav-link" href="control.html"><span class="nav-icon material-symbols-outlined">tune</span><span class="nav-label">Điều khiển chiếu sáng</span></a></li>
-            <li><a class="nav-link" href="schedules.html"><span class="nav-icon material-symbols-outlined">calendar_month</span><span class="nav-label">Lịch vận hành</span></a></li>
-            <li><a class="nav-link" href="alerts.html"><span class="nav-icon material-symbols-outlined">warning</span><span class="nav-label">Cảnh báo sự cố</span><span class="nav-badge" id="sidebarAlertCount">0</span></a></li>
+            <li>
+              <a href="index.html" class="nav-link" data-nav="dashboard">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                  </svg>
+                </span>
+                <span class="nav-label">Dashboard (Tổng quan)</span>
+              </a>
+            </li>
+            <li>
+              <a href="map.html" class="nav-link" data-nav="map">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Bản đồ giám sát</span>
+              </a>
+            </li>
+            <li>
+              <a href="control.html" class="nav-link" data-nav="control">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Điều khiển chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="schedules.html" class="nav-link" data-nav="schedule">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Lịch vận hành</span>
+              </a>
+            </li>
+            <li>
+              <a href="alerts.html" class="nav-link" data-nav="alerts">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Cảnh báo sự cố</span>
+                <span class="nav-badge" id="sidebarAlertCount">12</span>
+              </a>
+            </li>
           </ul>
         </div>
+
+        <!-- Section 2: HẠ TẦNG CHIẾU SÁNG -->
         <div class="nav-group">
-          <div class="nav-group-title">Hạ tầng chiếu sáng</div>
+          <div class="nav-group-title">HẠ TẦNG CHIẾU SÁNG</div>
           <ul class="nav-list">
-            <li><a class="nav-link" href="areas.html"><span class="nav-icon material-symbols-outlined">location_city</span><span class="nav-label">Khu vực chiếu sáng</span></a></li>
-            <li><a class="nav-link" href="cabinets.html"><span class="nav-icon material-symbols-outlined">electrical_services</span><span class="nav-label">Tủ chiếu sáng</span></a></li>
-            <li><a class="nav-link" href="routes.html"><span class="nav-icon material-symbols-outlined">alt_route</span><span class="nav-label">Tuyến chiếu sáng</span></a></li>
-            <li><a class="nav-link" href="lights.html"><span class="nav-icon material-symbols-outlined">lightbulb</span><span class="nav-label">Điểm đèn</span></a></li>
+            <li>
+              <a href="areas.html" class="nav-link" data-nav="areas">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18"></path>
+                    <path d="M5 21V7l8-4v18"></path>
+                    <path d="M19 21V11l-6-3"></path>
+                    <path d="M9 9v.01"></path>
+                    <path d="M9 12v.01"></path>
+                    <path d="M9 15v.01"></path>
+                    <path d="M9 18v.01"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Khu vực chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="cabinets.html" class="nav-link" data-nav="cabinets">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v5l3 3"></path>
+                    <path d="M9 12h6"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Tủ chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="routes.html" class="nav-link" data-nav="routes">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="6" cy="19" r="3"></circle>
+                    <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>
+                    <circle cx="18" cy="5" r="3"></circle>
+                  </svg>
+                </span>
+                <span class="nav-label">Tuyến chiếu sáng</span>
+              </a>
+            </li>
+            <li>
+              <a href="light-detail.html" class="nav-link" data-nav="lights">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                    <path d="M9 18h6"/>
+                    <path d="M10 22h4"/>
+                  </svg>
+                </span>
+                <span class="nav-label">Điểm đèn</span>
+              </a>
+            </li>
           </ul>
         </div>
+
+        <!-- Section 3: QUẢN TRỊ & BÁO CÁO -->
         <div class="nav-group">
-          <div class="nav-group-title">Quản trị &amp; Báo cáo</div>
+          <div class="nav-group-title">QUẢN TRỊ & BÁO CÁO</div>
           <ul class="nav-list">
-            <li><a class="nav-link" href="users.html" data-nav="users"><span class="nav-icon material-symbols-outlined">group</span><span class="nav-label">Quản lý người dùng</span></a></li>
-            <li><a class="nav-link" href="roles.html" data-nav="roles"><span class="nav-icon material-symbols-outlined">admin_panel_settings</span><span class="nav-label">Phân quyền</span></a></li>
-            <li><a class="nav-link" href="reports.html" data-nav="reports"><span class="nav-icon material-symbols-outlined">bar_chart</span><span class="nav-label">Báo cáo &amp; thống kê</span></a></li>
-            <li id="menuItemActivityLog"><a class="nav-link active" href="activity-log.html" aria-current="page" data-nav="logs"><span class="nav-icon material-symbols-outlined">history</span><span class="nav-label" id="sidebarLogLabel">Nhật ký hệ thống</span></a></li>
+            <li>
+              <a href="users.html" class="nav-link" data-nav="users">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Quản lý người dùng</span>
+              </a>
+            </li>
+            <li>
+              <a href="roles.html" class="nav-link" data-nav="roles">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Phân quyền</span>
+              </a>
+            </li>
+            <li>
+              <a href="reports.html" class="nav-link" data-nav="reports">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Báo cáo & thống kê</span>
+              </a>
+            </li>
+            <li id="menuItemActivityLog">
+              <a href="activity-log.html" class="nav-link active" data-nav="logs" aria-current="page">
+                <span class="nav-icon">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </span>
+                <span class="nav-label" id="sidebarLogLabel">Nhật ký hệ thống</span>
+              </a>
+            </li>
           </ul>
         </div>
       </nav>
     </aside>
+
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
     <!-- ==================== MAIN CONTAINER ==================== -->
     <div class="main-container">
-      <header class="activity-topbar">
-        <div class="activity-topbar-search">
-          <button class="mobile-menu-btn" id="btnToggleMobileSidebar" type="button" aria-label="Mở menu"><span class="material-symbols-outlined">menu</span></button>
-          <label class="activity-search"><span class="material-symbols-outlined">search</span><input id="globalSearch" type="search" placeholder="Tìm nhanh tuyến, tủ điện, sự cố... (Ctrl+K)"><kbd>Ctrl+K</kbd></label>
+      <!-- Top Header Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="btnToggleMobileSidebar" aria-label="Mở menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          
+          <!-- Search Bar -->
+          <div class="search-box">
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <input 
+              type="text" 
+              class="search-input" 
+              id="topSearchInput" 
+              placeholder="Tìm nhanh tuyến, tủ điện, sự cố... (Ctrl+K)" 
+              autocomplete="off"
+            >
+          </div>
         </div>
-        <div class="topbar-user">
-          <span class="topbar-date" id="liveClockDisplay"></span>
-          <a class="notification-link" href="alerts.html" aria-label="Cảnh báo"><span class="material-symbols-outlined">notifications</span><i></i></a>
-          <span class="user-name" id="userName">Người dùng<small id="userRole">Vai trò</small></span>
-          <span class="user-avatar material-symbols-outlined">person</span>
+
+        <div class="topbar-right">
+          <!-- Realtime Clock / Date -->
+          <div class="system-time-display">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="topbarLiveClock">Thứ Năm, 22/10/2026</span>
+          </div>
+
+          <!-- Notification Bell -->
+          <div class="notification-wrapper">
+            <button class="btn-icon-topbar" id="btnNotifications" aria-label="Thông báo hệ thống" title="Thông báo hệ thống">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span class="notification-badge-dot"></span>
+            </button>
+
+            <!-- Notification Popover -->
+            <div class="notification-dropdown" id="notificationDropdown">
+              <div class="dropdown-header">
+                <strong>Thông báo mới (3)</strong>
+                <button class="btn-text-subtle" id="btnMarkAllRead">Đọc tất cả</button>
+              </div>
+              <ul class="dropdown-list">
+                <li class="notification-item unread">
+                  <span class="noti-indicator danger"></span>
+                  <div>
+                    <p class="noti-title">Sự cố điện áp Tuyến TL - 05</p>
+                    <small class="noti-time">12 phút trước</small>
+                  </div>
+                </li>
+                <li class="notification-item unread">
+                  <span class="noti-indicator warning"></span>
+                  <div>
+                    <p class="noti-title">Tủ CS - 07 cảnh báo mở cửa</p>
+                    <small class="noti-time">45 phút trước</small>
+                  </div>
+                </li>
+                <li class="notification-item">
+                  <span class="noti-indicator info"></span>
+                  <div>
+                    <p class="noti-title">Đồng bộ dữ liệu IoT Gateway thành công</p>
+                    <small class="noti-time">2 giờ trước</small>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- User Profile Chip -->
+          <div class="user-profile-wrapper">
+            <button class="user-profile-btn" id="btnUserProfile" aria-label="Hồ sơ người dùng">
+              <div class="user-avatar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="user-meta">
+                <span class="user-name" id="userName">Nguyễn Văn Minh</span>
+                <span class="user-role" id="userRole">Quản trị hệ thống</span>
+              </div>
+              <span class="user-action-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </span>
+            </button>
+
+            <!-- User Menu Dropdown -->
+            <div class="user-dropdown" id="userDropdown">
+              <div class="user-dropdown-info">
+                <strong>Nguyễn Văn Minh</strong>
+                <small>quantri@smartlight.evncpc.vn</small>
+              </div>
+              <hr class="dropdown-divider">
+              <a href="#profile" class="user-menu-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Hồ sơ cá nhân</span>
+              </a>
+              <a href="#settings" class="user-menu-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Cấu hình thiết bị</span>
+              </a>
+              <hr class="dropdown-divider">
+              <a href="login.html" class="user-menu-item logout-link" id="linkLogout">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Đăng xuất</span>
+              </a>
+            </div>
+          </div>
         </div>
       </header>
 

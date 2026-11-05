@@ -108,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const toastContainer = document.getElementById('toastContainer');
 
   // Đồng hồ & Tìm kiếm Topbar
-  const liveClockDisplay = document.getElementById('liveClockDisplay');
-  const globalSearch = document.getElementById('globalSearch');
+  const liveClockDisplay = document.getElementById('liveClockDisplay') || document.getElementById('topbarLiveClock');
+  const globalSearch = document.getElementById('globalSearch') || document.getElementById('topSearchInput');
   const btnToggleMobileSidebar = document.getElementById('btnToggleMobileSidebar');
   const btnCloseSidebar = document.getElementById('btnCloseSidebar');
   const sidebar = document.getElementById('sidebar');

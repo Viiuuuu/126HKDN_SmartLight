@@ -1046,6 +1046,54 @@ if (document.readyState === 'loading') {
   setTimeout(applyActionButtonsRbac, 1200);
 }
 
+/**
+ * Xử lý thống nhất Thông báo / Menu người dùng / Đăng xuất cho MỌI trang.
+ * Dùng ủy quyền sự kiện ở pha capture trên document nên:
+ *  - hoạt động kể cả khi topbar được chèn động sau khi trang nạp;
+ *  - chặn các handler riêng của từng trang (tránh bật rồi tắt 2 lần).
+ */
+(function bindGlobalTopbarActions() {
+  if (window.__smartlightTopbarBound) return;
+  window.__smartlightTopbarBound = true;
+
+  const closeAll = () => {
+    document.getElementById('notificationDropdown')?.classList.remove('active');
+    document.getElementById('userDropdown')?.classList.remove('active');
+  };
+
+  document.addEventListener('click', (e) => {
+    const target = e.target;
+    if (!(target instanceof Element)) return;
+
+    const logout = target.closest('#linkLogout, .logout-link, [data-action="logout"]');
+    if (logout) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      handleLogout(e);
+      return;
+    }
+
+    const userBtn = target.closest('#btnUserProfile');
+    const notiBtn = target.closest('#btnNotifications');
+    if (userBtn || notiBtn) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const dropdown = document.getElementById(userBtn ? 'userDropdown' : 'notificationDropdown');
+      if (!dropdown) return;
+      const wasOpen = dropdown.classList.contains('active');
+      closeAll();
+      if (!wasOpen) dropdown.classList.add('active');
+      return;
+    }
+
+    if (!target.closest('.notification-dropdown, .user-dropdown')) closeAll();
+  }, true);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAll();
+  });
+})();
+
 // Đưa ra phạm vi toàn cục window
 window.api = api;
 window.API_CONFIG = API_CONFIG;
