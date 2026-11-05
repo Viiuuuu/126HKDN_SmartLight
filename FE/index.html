@@ -149,7 +149,7 @@
               </a>
             </li>
             <li>
-              <a href="light-detail.html" class="nav-link" data-nav="lights">
+              <a href="lights.html" class="nav-link" data-nav="lights">
                 <span class="nav-icon">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
@@ -272,29 +272,15 @@
             <!-- Notification Popover -->
             <div class="notification-dropdown" id="notificationDropdown">
               <div class="dropdown-header">
-                <strong>Thông báo mới (3)</strong>
+                <strong id="notiDropdownHeader">Thông báo mới (0)</strong>
                 <button class="btn-text-subtle" id="btnMarkAllRead">Đọc tất cả</button>
               </div>
-              <ul class="dropdown-list">
-                <li class="notification-item unread">
-                  <span class="noti-indicator danger"></span>
-                  <div>
-                    <p class="noti-title">Sự cố điện áp Tuyến TL - 05</p>
-                    <small class="noti-time">12 phút trước</small>
-                  </div>
-                </li>
-                <li class="notification-item unread">
-                  <span class="noti-indicator warning"></span>
-                  <div>
-                    <p class="noti-title">Tủ CS - 07 cảnh báo mở cửa</p>
-                    <small class="noti-time">45 phút trước</small>
-                  </div>
-                </li>
+              <ul class="dropdown-list" id="notificationList">
                 <li class="notification-item">
                   <span class="noti-indicator info"></span>
                   <div>
-                    <p class="noti-title">Đồng bộ dữ liệu IoT Gateway thành công</p>
-                    <small class="noti-time">2 giờ trước</small>
+                    <p class="noti-title">Đang đồng bộ thông báo...</p>
+                    <small class="noti-time">Vừa xong</small>
                   </div>
                 </li>
               </ul>
@@ -390,45 +376,41 @@
           </div>
         </section>
 
-        <!-- KPI Metrics (4 Cards) -->
-        <section class="kpi-grid">
-          <!-- Card 1: Tủ chiếu sáng -->
-          <div class="kpi-card" id="kpiCabinets" style="cursor: pointer;" onclick="location.href='cabinets.html'">
-            <div class="kpi-card-header">
-              <span class="kpi-label">Tủ chiếu sáng</span>
+        <!-- Metric Summary Bar (1 row ngắn gọn như bên trang alerts.html) -->
+        <section class="metric-summary-bar bg-white rounded-2xl px-6 py-3.5 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-4 text-xs" data-purpose="metric-summary">
+          <div class="metric-summary-items flex flex-wrap items-center gap-6 sm:gap-8">
+            <!-- Stat 1: Tủ chiếu sáng -->
+            <div class="metric-summary-item flex items-center gap-2" id="kpiCabinets" style="cursor: pointer;" onclick="location.href='cabinets.html'" title="Xem danh sách tủ chiếu sáng">
+              <span class="metric-dot dot-blue w-2 h-2 rounded-full bg-sky-500"></span>
+              <span class="metric-label text-slate-500 font-medium">Tủ chiếu sáng:</span>
+              <span class="metric-val font-extrabold text-slate-900 text-base" id="valCabinets">--</span>
             </div>
-            <div class="kpi-value-row">
-              <span class="kpi-value" id="valCabinets">128</span>
-            </div>
-          </div>
 
-          <!-- Card 2: Tuyến chiếu sáng -->
-          <div class="kpi-card" id="kpiRoutes">
-            <div class="kpi-card-header">
-              <span class="kpi-label">Tuyến chiếu sáng</span>
-            </div>
-            <div class="kpi-value-row">
-              <span class="kpi-value" id="valRoutes">342</span>
-            </div>
-          </div>
+            <div class="metric-summary-divider h-4 w-px bg-slate-200 hidden sm:block"></div>
 
-          <!-- Card 3: Điểm đèn -->
-          <div class="kpi-card" id="kpiLights">
-            <div class="kpi-card-header">
-              <span class="kpi-label">Điểm đèn</span>
+            <!-- Stat 2: Tuyến chiếu sáng -->
+            <div class="metric-summary-item flex items-center gap-2" id="kpiRoutes" style="cursor: pointer;" onclick="location.href='routes.html'" title="Xem danh sách tuyến chiếu sáng">
+              <span class="metric-dot dot-cyan w-2 h-2 rounded-full bg-cyan-500"></span>
+              <span class="metric-label text-slate-500 font-medium">Tuyến chiếu sáng:</span>
+              <span class="metric-val font-extrabold text-slate-900 text-base" id="valRoutes">--</span>
             </div>
-            <div class="kpi-value-row">
-              <span class="kpi-value" id="valLights">12.580</span>
-            </div>
-          </div>
 
-          <!-- Card 4: Sự cố phát sinh -->
-          <div class="kpi-card kpi-card-alert" id="kpiIncidents">
-            <div class="kpi-card-header">
-              <span class="kpi-label">Sự cố phát sinh</span>
+            <div class="metric-summary-divider h-4 w-px bg-slate-200 hidden sm:block"></div>
+
+            <!-- Stat 3: Điểm đèn -->
+            <div class="metric-summary-item flex items-center gap-2" id="kpiLights" style="cursor: pointer;" onclick="location.href='lights.html'" title="Xem danh sách điểm đèn">
+              <span class="metric-dot dot-amber w-2 h-2 rounded-full bg-amber-500"></span>
+              <span class="metric-label text-slate-500 font-medium">Điểm đèn:</span>
+              <span class="metric-val font-extrabold text-slate-900 text-base" id="valLights">--</span>
             </div>
-            <div class="kpi-value-row">
-              <span class="kpi-value value-danger" id="valIncidents">24</span>
+
+            <div class="metric-summary-divider h-4 w-px bg-slate-200 hidden sm:block"></div>
+
+            <!-- Stat 4: Sự cố phát sinh -->
+            <div class="metric-summary-item flex items-center gap-2" id="kpiIncidents" style="cursor: pointer;" onclick="location.href='alerts.html'" title="Xem danh sách sự cố cần xử lý">
+              <span class="metric-dot dot-rose w-2 h-2 rounded-full bg-rose-500"></span>
+              <span class="metric-label text-slate-500 font-medium">Sự cố phát sinh:</span>
+              <span class="metric-val val-danger font-extrabold text-rose-600 text-base" id="valIncidents">--</span>
             </div>
           </div>
         </section>
@@ -451,7 +433,7 @@
             </div>
 
             <div class="alerts-header-actions">
-              <a href="#all-alerts" class="btn-view-all" id="btnViewAllAlerts">
+              <a href="alerts.html" class="btn-view-all" id="btnViewAllAlerts">
                 <span>Xem tất cả</span>
                 <span class="arrow-right">→</span>
               </a>
@@ -470,63 +452,12 @@
                 </tr>
               </thead>
               <tbody id="alertsTableBody">
-                <!-- Row 1 -->
-                <tr class="alert-row" data-type="lost" data-id="AL-001">
-                  <td class="cell-time">18/10/2026 14:20</td>
-                  <td class="cell-device"><strong>Tủ CS – 03 (KV01)</strong></td>
-                  <td class="cell-content">
-                    <div class="content-wrap">Mất kết nối với tủ chiếu sáng</div>
-                  </td>
-                  <td class="cell-status">
-                    <span class="badge-status badge-lost">Mất kết nối</span>
-                  </td>
-                </tr>
-
-                <!-- Row 2 -->
-                <tr class="alert-row" data-type="warning" data-id="AL-002">
-                  <td class="cell-time">17/10/2026 12:30</td>
-                  <td class="cell-device"><strong>Tuyến TL – 05</strong></td>
-                  <td class="cell-content">
-                    <div class="content-wrap">Điện áp thấp (185V)</div>
-                  </td>
-                  <td class="cell-status">
-                    <span class="badge-status badge-warning">Cảnh báo</span>
-                  </td>
-                </tr>
-
-                <!-- Row 3 -->
-                <tr class="alert-row" data-type="incident" data-id="AL-003">
-                  <td class="cell-time">15/10/2026 10:45</td>
-                  <td class="cell-device"><strong>Điểm đèn ĐĐ – 1023</strong></td>
-                  <td class="cell-content">
-                    <div class="content-wrap">Quá dòng điện (&gt; 2.5A)</div>
-                  </td>
-                  <td class="cell-status">
-                    <span class="badge-status badge-incident">Sự cố</span>
-                  </td>
-                </tr>
-
-                <!-- Row 4 -->
-                <tr class="alert-row" data-type="warning" data-id="AL-004">
-                  <td class="cell-time">07/10/2026 10:12</td>
-                  <td class="cell-device"><strong>Tủ CS – 07 (KV03)</strong></td>
-                  <td class="cell-content">
-                    <div class="content-wrap">Cửa tủ đang mở trái phép</div>
-                  </td>
-                  <td class="cell-status">
-                    <span class="badge-status badge-warning">Cảnh báo</span>
-                  </td>
-                </tr>
-
-                <!-- Row 5 -->
-                <tr class="alert-row" data-type="incident" data-id="AL-005">
-                  <td class="cell-time">01/10/2026 08:55</td>
-                  <td class="cell-device"><strong>Điểm đèn ĐĐ – 0876</strong></td>
-                  <td class="cell-content">
-                    <div class="content-wrap">Không phản hồi điều khiển bật/tắt</div>
-                  </td>
-                  <td class="cell-status">
-                    <span class="badge-status badge-incident">Sự cố</span>
+                <tr>
+                  <td colspan="4" style="text-align: center; padding: 28px; color: #64748b;">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                      <span class="spinner" style="width: 16px; height: 16px; border: 2px solid #cbd5e1; border-top-color: #0284c7; border-radius: 50%; display: inline-block; animation: spin 1s linear infinite;"></span>
+                      Đang đồng bộ dữ liệu cảnh báo từ máy chủ...
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -584,25 +515,33 @@
 
         <div class="technical-metrics-row">
           <div class="tech-metric">
-            <small>Điện áp Pha A</small>
-            <span id="techVoltage">218 V</span>
+            <small id="techLabelVoltage">Điện áp</small>
+            <span id="techVoltage">-- V</span>
           </div>
           <div class="tech-metric">
-            <small>Dòng tải tổng</small>
-            <span id="techCurrent">14.2 A</span>
+            <small id="techLabelCurrent">Dòng tải</small>
+            <span id="techCurrent">-- A</span>
           </div>
           <div class="tech-metric">
-            <small>Công suất hiện tại</small>
-            <span id="techPower">3.1 kW</span>
+            <small id="techLabelPower">Công suất</small>
+            <span id="techPower">-- W</span>
           </div>
           <div class="tech-metric">
-            <small>Hệ số Cosφ</small>
-            <span id="techCos">0.96</span>
+            <small id="techLabelExtra">Nhiệt độ / Chỉ số</small>
+            <span id="techTemp">--</span>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <a href="map.html" class="btn-modal-action btn-view-map" style="background-color: #e0edff; color: #074476; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; font-weight: 700; font-size: 13px;">
+        <a href="alert-detail.html" class="btn-modal-action btn-detail-link" id="modalLinkDetail" style="background-color: #f1f5f9; color: #334155; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; font-weight: 700; font-size: 13px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <span>Chi tiết sự cố</span>
+        </a>
+        <a href="map.html" class="btn-modal-action btn-view-map" id="modalLinkMap" style="background-color: #e0edff; color: #074476; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; font-weight: 700; font-size: 13px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
             <line x1="8" y1="2" x2="8" y2="18"></line>
@@ -614,7 +553,7 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
           </svg>
-          <span>Điều phối đội kỹ thuật</span>
+          <span>Điều phối</span>
         </button>
         <button class="btn-modal-action btn-resolve" id="btnAcknowledgeAlert">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
