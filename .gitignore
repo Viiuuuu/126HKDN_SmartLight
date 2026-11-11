@@ -5,6 +5,9 @@
 [Oo]bj/
 **/[Bb]in/
 **/[Oo]bj/
+[Pp]ackages/
+**/[Pp]ackages/
+*.nupkg
 *.suo
 *.user
 *.userosscache

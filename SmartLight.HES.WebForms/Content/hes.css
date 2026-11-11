@@ -1,0 +1,450 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
+
+/* ==========================================================================
+   SmartLight HES SCADA Edition - Layout & Shell Styles
+   Theme Colors:
+     - Sidebar Background: #E8EFFB
+     - Primary Navy: #073B63
+     - Active Menu: #21517D
+     - Online Green: #0BB78A
+     - Offline Red: #EF4444
+     - Content Background: #F5F7FD
+     - Main Font: 'Plus Jakarta Sans', sans-serif
+   ========================================================================== */
+
+:root {
+    --hes-bg-main: #F5F7FD;
+    --hes-sidebar-bg: #E8EFFB;
+    --hes-sidebar-hover: #D7E5F9;
+    --hes-primary: #073B63;
+    --hes-menu-active: #21517D;
+    --hes-text-main: #0F172A;
+    --hes-text-muted: #64748B;
+    --hes-text-secondary: #334155;
+    --hes-online: #0BB78A;
+    --hes-online-bg: #D1F4E7;
+    --hes-offline: #EF4444;
+    --hes-offline-bg: #FEE2E2;
+    --hes-warning: #D97706;
+    --hes-warning-bg: #FEF3C7;
+    --hes-card-bg: #FFFFFF;
+    --hes-card-border: #E2E8F0;
+    --hes-card-radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body, html, input, button, select, textarea {
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+body, html {
+    height: 100%;
+    background-color: var(--hes-bg-main);
+    color: var(--hes-text-main);
+    font-size: 13.5px;
+}
+
+/* Master Layout Grid */
+.hes-app-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* ==========================================================================
+   SIDEBAR
+   ========================================================================== */
+.hes-sidebar {
+    width: 250px;
+    min-width: 250px;
+    background-color: var(--hes-sidebar-bg);
+    border-right: 1px solid #D1DFEE;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: width 0.25s ease, min-width 0.25s ease;
+    user-select: none;
+    z-index: 100;
+}
+
+/* Collapsed Sidebar */
+.hes-sidebar.collapsed {
+    width: 68px;
+    min-width: 68px;
+}
+
+.hes-sidebar.collapsed .hes-logo-info,
+.hes-sidebar.collapsed .hes-nav-title,
+.hes-sidebar.collapsed .hes-menu-text,
+.hes-sidebar.collapsed .hes-scada-status-box {
+    display: none !important;
+}
+
+.hes-sidebar.collapsed .hes-sidebar-header {
+    justify-content: center;
+    padding: 16px 8px;
+}
+
+.hes-sidebar.collapsed .hes-nav-item {
+    justify-content: center;
+    padding: 12px 0;
+    margin: 4px 8px;
+}
+
+.hes-sidebar.collapsed .hes-nav-section-header {
+    justify-content: center;
+    padding: 8px 0;
+}
+
+/* Sidebar Top Section */
+.hes-sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 16px 14px 16px;
+    border-bottom: 1px solid #DCE6F5;
+}
+
+.hes-logo-wrap {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hes-logo-wrap img,
+.hes-logo-wrap svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.hes-logo-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.hes-logo-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--hes-primary);
+    line-height: 1.2;
+}
+
+.hes-logo-sub {
+    font-size: 11px;
+    color: var(--hes-text-muted);
+    font-weight: 500;
+}
+
+/* Sidebar Navigation */
+.hes-nav-section {
+    padding: 14px 10px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.hes-nav-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px 10px 10px;
+}
+
+.hes-nav-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748B;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.hes-collapse-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #64748B;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s;
+}
+
+.hes-collapse-btn:hover {
+    background-color: var(--hes-sidebar-hover);
+    color: var(--hes-primary);
+}
+
+.hes-nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.hes-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    margin: 3px 0;
+    border-radius: 8px;
+    color: var(--hes-text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 13.5px;
+    transition: all 0.15s ease-in-out;
+}
+
+.hes-nav-item:hover {
+    background-color: var(--hes-sidebar-hover);
+    color: var(--hes-text-main);
+    text-decoration: none;
+}
+
+.hes-nav-item.active {
+    background-color: var(--hes-menu-active);
+    color: #FFFFFF !important;
+    font-weight: 600;
+}
+
+.hes-nav-item.active .hes-nav-icon svg {
+    stroke: #FFFFFF;
+}
+
+.hes-nav-icon {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hes-nav-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #475569;
+    stroke-width: 2;
+    fill: none;
+    transition: stroke 0.15s;
+}
+
+.hes-nav-item:hover .hes-nav-icon svg {
+    stroke: var(--hes-primary);
+}
+
+/* Bottom SCADA Status Box */
+.hes-scada-status-box {
+    margin: 12px;
+    padding: 12px;
+    background-color: #DDE8F8;
+    border: 1px solid #CADAF0;
+    border-radius: 10px;
+}
+
+.hes-status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.hes-status-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #475569;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.hes-telemetry-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--hes-text-main);
+    margin-bottom: 4px;
+}
+
+.hes-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--hes-online);
+    box-shadow: 0 0 0 2px rgba(11, 183, 138, 0.2);
+    display: inline-block;
+}
+
+.hes-telemetry-meta {
+    font-size: 11px;
+    color: var(--hes-text-muted);
+}
+
+/* ==========================================================================
+   TOPBAR
+   ========================================================================== */
+.hes-main-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background-color: var(--hes-bg-main);
+}
+
+.hes-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 14px 24px;
+    background-color: var(--hes-bg-main);
+    flex-wrap: wrap;
+}
+
+.hes-topbar-card {
+    background-color: var(--hes-card-bg);
+    border: 1px solid var(--hes-card-border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    white-space: nowrap;
+}
+
+.hes-topbar-card .hes-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--hes-online);
+}
+
+.hes-topbar-card .hes-dot.listening {
+    background-color: #0284C7;
+}
+
+.hes-topbar-label {
+    font-weight: 700;
+    color: #475569;
+}
+
+.hes-topbar-val-online {
+    color: var(--hes-online);
+    font-weight: 700;
+}
+
+.hes-topbar-val-listening {
+    color: #0284C7;
+    font-weight: 700;
+}
+
+.hes-topbar-val-running {
+    color: var(--hes-online);
+    font-weight: 700;
+}
+
+.hes-topbar-detail {
+    color: var(--hes-text-muted);
+    font-size: 11px;
+}
+
+.hes-clock-card {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--hes-text-main);
+    font-weight: 600;
+    margin-left: auto;
+}
+
+.hes-user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+}
+
+.hes-user-info {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+.hes-user-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--hes-text-main);
+    line-height: 1.2;
+}
+
+.hes-user-role {
+    font-size: 11px;
+    color: var(--hes-text-muted);
+}
+
+.hes-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--hes-primary);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hes-user-avatar svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+/* ==========================================================================
+   CONTENT WRAPPER
+   ========================================================================== */
+.hes-content-body {
+    flex: 1;
+    padding: 0 24px 24px 24px;
+    min-width: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    .hes-clock-card {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .hes-sidebar {
+        position: fixed;
+        left: -250px;
+        top: 0;
+        bottom: 0;
+        box-shadow: 4px 0 16px rgba(0, 0, 0, 0.1);
+    }
+    .hes-sidebar.open {
+        left: 0;
+    }
+    .hes-topbar {
+        padding: 10px 16px;
+    }
+    .hes-content-body {
+        padding: 0 16px 16px 16px;
+    }
+}
+
