@@ -1,0 +1,240 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="SmartLight.HES.WebForms.SiteMaster" %>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %> - SmartLight HES SCADA</title>
+
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet" />
+    <link href="~/Content/hes.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/dashboard.css" rel="stylesheet" type="text/css" />
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form runat="server">
+        <asp:ScriptManager runat="server">
+            <Scripts>
+                <asp:ScriptReference Name="jquery" />
+            </Scripts>
+        </asp:ScriptManager>
+
+        <div class="hes-app-container">
+            <!-- ================= SIDEBAR BÊN TRÁI ================= -->
+            <aside class="hes-sidebar" id="hesSidebar">
+                <div>
+                    <!-- Logo & Brand Header -->
+                    <div class="hes-sidebar-header">
+                        <div class="hes-logo-wrap">
+                            <img src='<%= ResolveUrl("~/images/logo.png") %>' alt="SmartLight Logo" onerror="this.src='<%= ResolveUrl("~/favicon.ico") %>'" />
+                        </div>
+                        <div class="hes-logo-info">
+                            <span class="hes-logo-title">SmartLight HES</span>
+                            <span class="hes-logo-sub">SCADA Light Edition</span>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Menu -->
+                    <div class="hes-nav-section">
+                        <div class="hes-nav-section-header">
+                            <span class="hes-nav-title">WINFORMS NAVIGATION</span>
+                            <button type="button" class="hes-collapse-btn" id="hesSidebarToggle" title="Thu gọn/Mở rộng sidebar">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <ul class="hes-nav-list">
+                            <!-- 1. Tổng quan hệ thống -->
+                            <li>
+                                <a href='<%= ResolveUrl("~/UcTongQuan.aspx") %>' class='hes-nav-item <%= IsActive("UcTongQuan") %>'>
+                                    <span class="hes-nav-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                                            <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                                            <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                                            <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                                        </svg>
+                                    </span>
+                                    <span class="hes-menu-text">Tổng quan hệ thống</span>
+                                </a>
+                            </li>
+
+                            <!-- 2. Giám sát thông số điện -->
+                            <li>
+                                <a href='<%= ResolveUrl("~/UcGiamSatThongSoDien.aspx") %>' class='hes-nav-item <%= IsActive("GiamSatThongSoDien") %>'>
+                                    <span class="hes-nav-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                        </svg>
+                                    </span>
+                                    <span class="hes-menu-text">Giám sát thông số điện</span>
+                                </a>
+                            </li>
+
+                            <!-- 3. Điều khiển thiết bị -->
+                            <li>
+                                <a href='<%= ResolveUrl("~/UcDieuKhienThietBi.aspx") %>' class='hes-nav-item <%= IsActive("DieuKhien") %>'>
+                                    <span class="hes-nav-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                                            <line x1="12" y1="2" x2="12" y2="12"></line>
+                                        </svg>
+                                    </span>
+                                    <span class="hes-menu-text">Điều khiển thiết bị</span>
+                                </a>
+                            </li>
+
+                            <!-- 4. Theo dõi lệnh -->
+                            <li>
+                                <a href='<%= ResolveUrl("~/UcTheoDoiLenh.aspx") %>' class='hes-nav-item <%= IsActive("TheoDoiLenh") %>'>
+                                    <span class="hes-nav-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                        </svg>
+                                    </span>
+                                    <span class="hes-menu-text">Theo dõi lệnh</span>
+                                </a>
+                            </li>
+
+                            <!-- 5. Truyền nhận dữ liệu -->
+                            <li>
+                                <a href='<%= ResolveUrl("~/UcTruyenNhanDuLieu.aspx") %>' class='hes-nav-item <%= IsActive("TruyenNhanDuLieu") %>'>
+                                    <span class="hes-nav-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <polyline points="17 1 21 5 17 9"></polyline>
+                                            <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                                            <polyline points="7 23 3 19 7 15"></polyline>
+                                            <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                                        </svg>
+                                    </span>
+                                    <span class="hes-menu-text">Truyền nhận dữ liệu</span>
+                                </a>
+                            </li>
+
+                            <!-- 6. Cảnh báo & Nhật ký -->
+                            <li>
+                                <a href='<%= ResolveUrl("~/UcCanhBao&NhatKy.aspx") %>' class='hes-nav-item <%= IsActive("CanhBao") %>'>
+                                    <span class="hes-nav-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                        </svg>
+                                    </span>
+                                    <span class="hes-menu-text">Cảnh báo & Nhật ký</span>
+                                </a>
+                            </li>
+
+                            <!-- 7. Cấu hình HES -->
+                            <li>
+                                <a href='<%= ResolveUrl("~/UcCauHinhHes.aspx") %>' class='hes-nav-item <%= IsActive("CauHinhHes") %>'>
+                                    <span class="hes-nav-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                        </svg>
+                                    </span>
+                                    <span class="hes-menu-text">Cấu hình HES</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Khung Trạng Thái SCADA ở cuối Sidebar -->
+                <div class="hes-scada-status-box">
+                    <div class="hes-status-header">
+                        <span class="hes-status-title">TRẠNG THÁI SCADA</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2">
+                            <line x1="4" y1="21" x2="4" y2="14"></line>
+                            <line x1="4" y1="10" x2="4" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12" y2="3"></line>
+                            <line x1="20" y1="21" x2="20" y2="16"></line>
+                            <line x1="20" y1="12" x2="20" y2="3"></line>
+                            <line x1="1" y1="14" x2="7" y2="14"></line>
+                            <line x1="9" y1="8" x2="15" y2="8"></line>
+                            <line x1="17" y1="16" x2="23" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div class="hes-telemetry-row">
+                        <span class="hes-status-dot"></span>
+                        <span>Core Telemetry: Active</span>
+                    </div>
+                    <div class="hes-telemetry-meta">
+                        <span>Mem: 42.8 MB</span> &nbsp;&bull;&nbsp; <span>Threads: 14</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ================= VÙNG NỘI DUNG CHÍNH ================= -->
+            <div class="hes-main-layout">
+                <!-- Topbar với các card nhỏ -->
+                <header class="hes-topbar">
+                    <!-- 1. SQL Server -->
+                    <div class="hes-topbar-card">
+                        <span class="hes-dot"></span>
+                        <span class="hes-topbar-label">SQL SERVER:</span>
+                        <span class="hes-topbar-val-online">ONLINE</span>
+                        <span class="hes-topbar-detail">(127.0.0.1:1433)</span>
+                    </div>
+
+                    <!-- 2. TCP Port -->
+                    <div class="hes-topbar-card">
+                        <span class="hes-dot listening"></span>
+                        <span class="hes-topbar-label">TCP PORT:</span>
+                        <span>:8088</span>
+                        <span class="hes-topbar-val-listening">LISTENING</span>
+                    </div>
+
+                    <!-- 3. Core Engine -->
+                    <div class="hes-topbar-card">
+                        <span class="hes-dot"></span>
+                        <span class="hes-topbar-label">CORE ENGINE:</span>
+                        <span class="hes-topbar-val-running">RUNNING</span>
+                    </div>
+
+                    <!-- 4. Đồng hồ UTC+7 -->
+                    <div class="hes-topbar-card hes-clock-card">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span id="hesClockDisplay">UTC+7 14:32:08</span>
+                    </div>
+
+                    <!-- 5. Admin Profile -->
+                    <div class="hes-topbar-card hes-user-card">
+                        <div class="hes-user-info">
+                            <span class="hes-user-name">Admin WinForms</span>
+                            <span class="hes-user-role">SCADA Supervisor</span>
+                        </div>
+                        <div class="hes-user-avatar">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Khu vực hiển thị nội dung trang ASPX -->
+                <main class="hes-content-body">
+                    <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                    </asp:ContentPlaceHolder>
+                </main>
+            </div>
+        </div>
+    </form>
+
+    <script src='<%= ResolveUrl("~/Scripts/hes-layout.js") %>' charset="utf-8"></script>
+</body>
+</html>
