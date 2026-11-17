@@ -49,7 +49,8 @@ const routeLookup = new Map();
 function statusLabel(rawStatus) {
   const value = Number(rawStatus);
   if (value === 1) return 'Hoạt động';
-  if (value === 0) return 'Ngừng hoạt động';
+  if (value === 2) return 'Dừng (Tắt)';
+  if (value === 3) return 'Sự cố';
   return 'Chưa xác định';
 }
 
@@ -62,11 +63,19 @@ function statusPillHtml(status) {
       </span>
     `;
   }
-  if (status === 'Ngừng hoạt động') {
+  if (status === 'Dừng (Tắt)' || status === 'Ngừng hoạt động') {
     return `
       <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
-        Ngừng hoạt động
+        Dừng (Tắt)
+      </span>
+    `;
+  }
+  if (status === 'Sự cố') {
+    return `
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-red-50 text-red-700 border border-red-200">
+        <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5"></span>
+        Sự cố
       </span>
     `;
   }

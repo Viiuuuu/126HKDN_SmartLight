@@ -98,7 +98,80 @@
     fill: none;
 }
 
-/* --- Section B: 4 Statistics Cards --- */
+/* --- Section B: 1-Row Compact Statistics Bar --- */
+.hes-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.hes-stat-chip-item {
+    background-color: var(--hes-card-bg);
+    border: 1px solid var(--hes-card-border);
+    border-radius: var(--hes-card-radius);
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    white-space: nowrap;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.hes-stat-chip-item:hover {
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.07);
+    border-color: #CBD5E1;
+}
+
+.hes-stat-chip-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--hes-text-muted);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.hes-stat-chip-val {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--hes-primary);
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.hes-stat-chip-val.text-online {
+    color: #0BB78A;
+}
+
+.hes-stat-chip-sub {
+    font-size: 12px;
+    color: var(--hes-text-secondary);
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.hes-stat-chip-note {
+    font-size: 11.5px;
+    color: var(--hes-text-muted);
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.hes-stat-chip-badge {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 8px;
+    background-color: #FEE2E2;
+    color: #DC2626;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* --- Section B: 4 Statistics Cards (Legacy support) --- */
 .hes-stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -419,7 +492,7 @@
 }
 
 .hes-donut-number {
-    font-size: 28px;
+    font-size: 34px;
     font-weight: 800;
     color: var(--hes-primary);
     line-height: 1;
@@ -5544,4 +5617,174 @@
     .hes-cfg-sql-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ==========================================================================
+   Cabinet Routes & Lamp Device Grid (UcGiamSatThongSoDien)
+   ========================================================================== */
+.hes-cabinet-routes-wrap {
+    background-color: var(--hes-card-bg);
+    border: 1px solid var(--hes-card-border);
+    border-radius: var(--hes-card-radius);
+    padding: 18px 20px;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+    margin-bottom: 20px;
+}
+
+.hes-routes-main-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-bottom: 1px solid #F1F5F9;
+    padding-bottom: 12px;
+}
+
+.hes-routes-main-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--hes-text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.hes-routes-main-badge {
+    background: #E0F2FE;
+    color: #0284C7;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 4px 11px;
+    border-radius: 14px;
+}
+
+.hes-route-group-block {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 13px 15px;
+    margin-bottom: 12px;
+}
+
+.hes-route-group-block:last-child {
+    margin-bottom: 0;
+}
+
+.hes-route-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.hes-route-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #073B63;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.hes-route-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.hes-lamps-subgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+}
+
+.hes-lamp-item-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 10px 12px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
+}
+
+.hes-lamp-item-card:hover {
+    border-color: #CBD5E1;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+}
+
+.hes-lamp-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.hes-lamp-code-badge {
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 11.5px;
+    color: #2563EB;
+}
+
+.hes-lamp-status-chip {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.hes-lamp-status-on {
+    background: #DCFCE7;
+    color: #15803D;
+}
+
+.hes-lamp-status-off {
+    background: #F1F5F9;
+    color: #64748B;
+}
+
+.hes-lamp-status-fault {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.hes-lamp-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    background: #F8FAFC;
+    border-radius: 4px;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    font-size: 11px;
+    text-align: center;
+}
+
+.hes-lamp-metric-col strong {
+    display: block;
+    font-size: 11.5px;
+    color: #1E293B;
+}
+
+.hes-lamp-metric-col span {
+    color: #94A3B8;
+    font-size: 9.5px;
+}
+
+.hes-lamp-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 10.5px;
+    color: #94A3B8;
 }

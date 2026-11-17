@@ -59,8 +59,8 @@ async function loadRouteDetails() {
     const cabinetLabel = cabinetName.startsWith('Tủ ') ? cabinetName : `Tủ ${cabinetName}`;
     const areaName = String(area?.tenPhuongXa ?? area?.TenPhuongXa ?? areaId ?? 'Chưa xác định');
     const statusValue = Number(route.trangThaiHoatDong ?? route.TrangThaiHoatDong);
-    const status = statusValue === 1 ? 'Đang hoạt động' : statusValue === 0 ? 'Ngừng hoạt động' : 'Chưa xác định';
-    routeStatusCode = statusValue === 1 ? 1 : 0;
+    const status = statusValue === 1 ? 'Đang hoạt động' : statusValue === 2 ? 'Dừng (Tắt)' : statusValue === 3 ? 'Sự cố' : 'Chưa xác định';
+    routeStatusCode = statusValue;
 
     document.title = `Chi tiết tuyến ${currentRouteCode} - ${name} | SmartLight`;
     setRouteText('detailRouteTitle', `Tuyến ${currentRouteCode}: ${name}`);
@@ -550,7 +550,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btnToggleManagement')?.addEventListener('click', async () => {
     isManaging = !isManaging;
-    const nextStatus = isManaging ? 1 : 0;
+    const nextStatus = isManaging ? 1 : 2;
     routeStatusCode = nextStatus;
     if (isManaging) {
       if (managementDot) managementDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
@@ -562,10 +562,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else {
       if (managementDot) managementDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-400';
-      if (managementText) managementText.textContent = 'Ngừng hoạt động';
+      if (managementText) managementText.textContent = 'Dừng (Tắt)';
       if (btnToggleManagementText) btnToggleManagementText.textContent = 'Kích hoạt lại';
       if (detailStatusBadge) {
-        detailStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-400"></span> Ngừng hoạt động';
+        detailStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-400"></span> Dừng (Tắt)';
         detailStatusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200';
       }
     }

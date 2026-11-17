@@ -403,12 +403,13 @@
             <label for="actionFilter">Loại thao tác</label>
             <select id="actionFilter">
               <option value="">Tất cả thao tác</option>
-              <option value="Điều khiển">Điều khiển</option>
-              <option value="Xem">Xem</option>
-              <option value="Quản lý">Quản lý</option>
-              <option value="Cảnh báo">Cảnh báo</option>
-              <option value="Đăng nhập">Đăng nhập</option>
-              <option value="Đăng xuất">Đăng xuất</option>
+              <option value="control">Điều khiển chiếu sáng</option>
+              <option value="schedule">Lịch vận hành</option>
+              <option value="manage">Quản lý hạ tầng &amp; tài khoản</option>
+              <option value="alert">Cấu hình cảnh báo</option>
+              <option value="report">Tạo báo cáo</option>
+              <option value="auth">Đăng nhập / Đăng xuất</option>
+              <option value="security">Cảnh báo bảo mật</option>
             </select>
           </div>
 
@@ -427,12 +428,17 @@
             <label for="targetFilter">Đối tượng</label>
             <select id="targetFilter">
               <option value="">Tất cả đối tượng</option>
-              <option value="Tủ">Tủ điều khiển</option>
-              <option value="Tuyến">Tuyến chiếu sáng</option>
-              <option value="Điểm đèn">Điểm đèn</option>
-              <option value="Hệ thống">Hệ thống</option>
-              <option value="Lịch">Lịch vận hành</option>
-              <option value="Phiên">Phiên đăng nhập</option>
+              <option value="LenhDieuKhien">Lệnh điều khiển</option>
+              <option value="TuChieuSang">Tủ chiếu sáng</option>
+              <option value="TuyenChieuSang">Tuyến chiếu sáng</option>
+              <option value="DiemDen">Điểm đèn</option>
+              <option value="KhuVuc">Khu vực</option>
+              <option value="LichVanHanh">Lịch vận hành</option>
+              <option value="CauHinhCanhBao">Cấu hình cảnh báo</option>
+              <option value="BaoCao">Báo cáo thống kê</option>
+              <option value="NguoiDung">Tài khoản &amp; phân quyền</option>
+              <option value="PhienDangNhap">Phiên đăng nhập</option>
+              <option value="HeThong">Bảo mật / Hệ thống</option>
             </select>
           </div>
 
@@ -441,7 +447,7 @@
             <label for="tableSearch">Tìm kiếm từ khóa</label>
             <div class="filter-search">
               <span class="material-symbols-outlined">search</span>
-              <input id="tableSearch" type="search" placeholder="Nội dung, đối tượng, IP...">
+              <input id="tableSearch" type="search" placeholder="Nội dung, đối tượng, mã đối tượng...">
             </div>
           </div>
 
@@ -505,7 +511,7 @@
                   <th style="min-width: 120px;">Loại thao tác</th>
                   <th style="min-width: 140px;">Đối tượng</th>
                   <th style="min-width: 220px;">Mô tả chi tiết</th>
-                  <th style="min-width: 110px;">Địa chỉ IP</th>
+                  <th style="min-width: 110px;">Mã đối tượng</th>
                   <th style="min-width: 100px;">Kết quả</th>
                   <th style="min-width: 80px; text-align: center;">Thao tác</th>
                 </tr>

@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Danh sách tủ điều khiển chiếu sáng - SmartLight IoT Municipal System</title>
-  <meta name="description" content="Quản trị thông tin, đo lường điện năng 3 pha, trạng thái và cấu hình các tủ chiếu sáng trong hệ thống SmartLight IoT EVNCPC.">
+  <meta name="description"
+    content="Quản trị thông tin, đo lường điện năng 3 pha, trạng thái và cấu hình các tủ chiếu sáng trong hệ thống SmartLight IoT EVNCPC.">
 
   <!-- Google Fonts: Plus Jakarta Sans, JetBrains Mono & Material Symbols Outlined -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet">
 
   <!-- Canonical App Styles -->
-  <script>try{const s=JSON.parse(sessionStorage.getItem('smartlight_user_session')||'{}'),r=String(s.maVaiTro||s.role||s.vaiTro||'').toLowerCase();if(r==='3'||r.includes('kỹ thuật')||r.includes('ky thuat')||r.includes('tech'))document.documentElement.dataset.rbacRole='technician';else if(r==='2'||r.includes('vận hành')||r.includes('van hanh')||r==='operator')document.documentElement.dataset.rbacRole='operator';}catch(e){}</script><link rel="stylesheet" href="css/style.css">
+  <script>try { const s = JSON.parse(sessionStorage.getItem('smartlight_user_session') || '{}'), r = String(s.maVaiTro || s.role || s.vaiTro || '').toLowerCase(); if (r === '3' || r.includes('kỹ thuật') || r.includes('ky thuat') || r.includes('tech')) document.documentElement.dataset.rbacRole = 'technician'; else if (r === '2' || r.includes('vận hành') || r.includes('van hanh') || r === 'operator') document.documentElement.dataset.rbacRole = 'operator'; } catch (e) { }</script>
+  <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/cabinets.css">
 
   <!-- Tailwind CSS CDN with configuration -->
@@ -130,7 +137,8 @@
               <a href="alerts.html" class="nav-link" data-nav="alerts">
                 <span class="nav-icon">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                    </path>
                     <line x1="12" y1="9" x2="12" y2="13"></line>
                     <line x1="12" y1="17" x2="12.01" y2="17"></line>
                   </svg>
@@ -190,9 +198,10 @@
               <a href="light-detail.html" class="nav-link" data-nav="lights">
                 <span class="nav-icon">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
-                    <path d="M9 18h6"/>
-                    <path d="M10 22h4"/>
+                    <path
+                      d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+                    <path d="M9 18h6" />
+                    <path d="M10 22h4" />
                   </svg>
                 </span>
                 <span class="nav-label">Điểm đèn</span>
@@ -272,7 +281,8 @@
           </button>
           <div class="search-box">
             <span class="search-icon material-symbols-outlined">search</span>
-            <input id="topSearchInput" class="search-input" placeholder="Tìm nhanh trạm, tủ điện, điểm, sự... (Ctrl+K)" type="text">
+            <input id="topSearchInput" class="search-input" placeholder="Tìm nhanh trạm, tủ điện, điểm, sự... (Ctrl+K)"
+              type="text">
           </div>
         </div>
 
@@ -287,7 +297,8 @@
           <!-- Notification Bell -->
           <a href="alerts.html" class="btn-icon-topbar" title="Xem 18 cảnh báo sự cố">
             <span class="material-symbols-outlined text-[22px]">notifications</span>
-            <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">12</span>
+            <span
+              class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">12</span>
           </a>
 
           <!-- User Profile Dropdown -->
@@ -311,109 +322,52 @@
         <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 class="page-main-title">Danh sách tủ điều khiển chiếu sáng</h1>
-            <p class="text-xs text-slate-500 mt-1">Quản trị thông tin, đo lường điện năng 3 pha, trạng thái và cấu hình các tủ chiếu sáng trong hệ thống</p>
+            <p class="text-xs text-slate-500 mt-1">Quản trị thông tin, đo lường điện năng 3 pha, trạng thái và cấu hình
+              các tủ chiếu sáng trong hệ thống</p>
           </div>
           <div class="flex items-center gap-2.5">
-            <button id="btnSyncStatus" class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/80 rounded-xl transition shadow-sm hover:border-slate-300">
+            <button id="btnSyncStatus"
+              class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/80 rounded-xl transition shadow-sm hover:border-slate-300">
               <span class="material-symbols-outlined text-[18px] text-slate-500" id="syncIcon">sync</span>
               <span>Đồng bộ trạng thái</span>
             </button>
-            <button id="btnOpenAddCabinetModal" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-[#063b66] rounded-xl transition shadow-sm shadow-primary/20">
+            <button id="btnOpenAddCabinetModal"
+              class="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-[#063b66] rounded-xl transition shadow-sm shadow-primary/20">
               <span class="material-symbols-outlined text-[18px]">add</span>
-              <span>+ Thêm tủ</span>
+              <span>Thêm tủ</span>
             </button>
           </div>
         </section>
 
-        <!-- ==================== 4 STAT SUMMARY KPI CARDS ==================== -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Card 1: Tổng số tủ -->
-          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] hover:border-blue-300 transition group cursor-pointer" onclick="filterByCard('all')">
-            <div class="flex items-center justify-between mb-2">
-              <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <span class="material-symbols-outlined text-[20px]">lightbulb</span>
-              </div>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
-                +12%
-              </span>
-            </div>
-            <div class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">TỔNG SỐ TỦ</div>
-            <div class="flex items-baseline gap-2 mt-0.5">
-              <div class="text-2xl font-extrabold text-slate-900 tracking-tight font-sans">950 <span class="text-xs font-bold text-slate-500">TỦ</span></div>
-            </div>
-            <div class="text-[11px] text-slate-400 mt-1">Tổng quy mô quản lý toàn TP</div>
-          </div>
-
-          <!-- Card 2: Online kết nối -->
-          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] hover:border-emerald-300 transition group cursor-pointer" onclick="filterByCard('online')">
-            <div class="flex items-center justify-between mb-2">
-              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <span class="material-symbols-outlined text-[20px]">wifi</span>
-              </div>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
-                95.1%
-              </span>
-            </div>
-            <div class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">ONLINE KẾT NỐI</div>
-            <div class="flex items-baseline gap-2 mt-0.5">
-              <div class="text-2xl font-extrabold text-slate-900 tracking-tight font-sans">902 <span class="text-xs font-bold text-slate-500">TỦ</span></div>
-            </div>
-            <div class="text-[11px] text-emerald-600 font-medium mt-1">Vận hành ổn định</div>
-          </div>
-
-          <!-- Card 3: Mất kết nối -->
-          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] hover:border-rose-300 transition group cursor-pointer" onclick="filterByCard('offline')">
-            <div class="flex items-center justify-between mb-2">
-              <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <span class="material-symbols-outlined text-[20px]">wifi_off</span>
-              </div>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
-                -1.2%
-              </span>
-            </div>
-            <div class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">MẤT KẾT NỐI</div>
-            <div class="flex items-baseline gap-2 mt-0.5">
-              <div class="text-2xl font-extrabold text-rose-600 tracking-tight font-sans">30 <span class="text-xs font-bold text-rose-500">TỦ</span></div>
-            </div>
-            <div class="text-[11px] text-slate-400 mt-1">Lỗi viễn thông / Mất nguồn</div>
-          </div>
-
-          <!-- Card 4: Cảnh báo sự cố -->
-          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.03)] hover:border-amber-300 transition group cursor-pointer" onclick="filterByCard('warning')">
-            <div class="flex items-center justify-between mb-2">
-              <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <span class="material-symbols-outlined text-[20px]">warning</span>
-              </div>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-600 border border-amber-100">
-                1.9%
-              </span>
-            </div>
-            <div class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">CẢNH BÁO SỰ CỐ</div>
-            <div class="flex items-baseline gap-2 mt-0.5">
-              <div class="text-2xl font-extrabold text-amber-600 tracking-tight font-sans">18 <span class="text-xs font-bold text-amber-500">TỦ</span></div>
-            </div>
-            <div class="text-[11px] text-slate-400 mt-1">Mất pha, quá nhiệt, rò điện</div>
-          </div>
-        </section>
 
         <!-- ==================== TABS ROW & VIEW UTILITIES ==================== -->
-        <section class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+        <section
+          class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
           <!-- Primary Navigation Tabs -->
           <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0" id="mainTabList">
-            <button class="px-4 py-2 text-xs font-bold rounded-xl transition bg-slate-900 text-white shadow-sm" data-tab="all" onclick="selectMainTab('all', this)">
+            <button class="px-4 py-2 text-xs font-bold rounded-xl transition bg-slate-900 text-white shadow-sm"
+              data-tab="all" onclick="selectMainTab('all', this)">
               Danh sách tủ (950)
             </button>
-            <button class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition" data-tab="offline" onclick="selectMainTab('offline', this)">
+            <button
+              class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition"
+              data-tab="offline" onclick="selectMainTab('offline', this)">
               Tủ mất kết nối (30)
             </button>
-            <button class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition inline-flex items-center gap-1.5" data-tab="warning" onclick="selectMainTab('warning', this)">
+            <button
+              class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition inline-flex items-center gap-1.5"
+              data-tab="warning" onclick="selectMainTab('warning', this)">
               <span class="w-2 h-2 rounded-full bg-amber-500"></span>
               <span>Có cảnh báo (18)</span>
             </button>
-            <button class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition" data-tab="map" onclick="location.href='map.html'">
+            <button
+              class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition"
+              data-tab="map" onclick="location.href='map.html'">
               Bản đồ chiếu sáng
             </button>
-            <button class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition inline-flex items-center gap-1.5" data-tab="decor" onclick="selectMainTab('decor', this)">
+            <button
+              class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition inline-flex items-center gap-1.5"
+              data-tab="decor" onclick="selectMainTab('decor', this)">
               <span class="text-amber-500">✨</span>
               <span>Cụm đèn trang trí</span>
             </button>
@@ -422,14 +376,18 @@
           <!-- Right View Controls -->
           <div class="flex items-center gap-2 self-end md:self-auto">
             <div class="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200/60">
-              <button id="btnViewGrid" class="p-1.5 rounded-md bg-white text-slate-800 shadow-sm transition" title="Hiển thị dạng thẻ lưới (Cards Grid)">
+              <button id="btnViewGrid" class="p-1.5 rounded-md bg-white text-slate-800 shadow-sm transition"
+                title="Hiển thị dạng thẻ lưới (Cards Grid)">
                 <span class="material-symbols-outlined text-[18px]">grid_view</span>
               </button>
-              <button id="btnViewTable" class="p-1.5 rounded-md text-slate-500 hover:text-slate-800 transition" title="Hiển thị dạng bảng (Table List)">
+              <button id="btnViewTable" class="p-1.5 rounded-md text-slate-500 hover:text-slate-800 transition"
+                title="Hiển thị dạng bảng (Table List)">
                 <span class="material-symbols-outlined text-[18px]">view_list</span>
               </button>
             </div>
-            <button id="btnExportData" class="p-2 text-slate-600 hover:text-slate-900 hover:bg-white rounded-lg border border-slate-200/80 transition shadow-sm" title="Xuất dữ liệu Excel/CSV">
+            <button id="btnExportData"
+              class="p-2 text-slate-600 hover:text-slate-900 hover:bg-white rounded-lg border border-slate-200/80 transition shadow-sm"
+              title="Xuất dữ liệu Excel/CSV">
               <span class="material-symbols-outlined text-[18px]">download</span>
             </button>
           </div>
@@ -441,28 +399,44 @@
           <div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 text-xs">
             <span class="text-slate-500 font-semibold whitespace-nowrap">Chế độ Dim:</span>
             <div class="flex items-center gap-1.5 flex-nowrap" id="dimFilterGroup">
-              <button class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-white transition dim-chip active" data-dim="all" onclick="filterByDim('all', this)">
+              <button
+                class="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-white transition dim-chip active"
+                data-dim="all" onclick="filterByDim('all', this)">
                 Tất cả (950)
               </button>
-              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip" data-dim="100" onclick="filterByDim('100', this)">
+              <button
+                class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip"
+                data-dim="100" onclick="filterByDim('100', this)">
                 100% (810)
               </button>
-              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip" data-dim="70" onclick="filterByDim('70', this)">
+              <button
+                class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip"
+                data-dim="70" onclick="filterByDim('70', this)">
                 70% (78)
               </button>
-              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip" data-dim="30" onclick="filterByDim('30', this)">
+              <button
+                class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip"
+                data-dim="30" onclick="filterByDim('30', this)">
                 30% (19)
               </button>
-              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip inline-flex items-center gap-1" data-dim="decor" onclick="filterByDim('decor', this)">
+              <button
+                class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip inline-flex items-center gap-1"
+                data-dim="decor" onclick="filterByDim('decor', this)">
                 <span>✨ Cụm đèn trang trí</span>
               </button>
-              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip" data-dim="50" onclick="filterByDim('50', this)">
+              <button
+                class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition dim-chip"
+                data-dim="50" onclick="filterByDim('50', this)">
                 50% (35)
               </button>
-              <button class="px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 transition dim-chip" data-dim="0" onclick="filterByDim('0', this)">
+              <button
+                class="px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 transition dim-chip"
+                data-dim="0" onclick="filterByDim('0', this)">
                 CẮT: 0% (5)
               </button>
-              <button class="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 transition dim-chip" data-dim="warning" onclick="filterByDim('warning', this)">
+              <button
+                class="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 transition dim-chip"
+                data-dim="warning" onclick="filterByDim('warning', this)">
                 Cảnh báo (18)
               </button>
             </div>
@@ -473,7 +447,9 @@
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
               <span class="material-symbols-outlined text-[17px]">search</span>
             </span>
-            <input id="cabinetSearchInput" type="text" class="w-full pl-9 pr-3.5 py-1.5 text-xs bg-white border border-slate-200 rounded-xl focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-slate-700 placeholder-slate-400 transition" placeholder="Tìm theo mã tủ, tên tủ, vị trí...">
+            <input id="cabinetSearchInput" type="text"
+              class="w-full pl-9 pr-3.5 py-1.5 text-xs bg-white border border-slate-200 rounded-xl focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-slate-700 placeholder-slate-400 transition"
+              placeholder="Tìm theo mã tủ, tên tủ, vị trí...">
           </div>
         </section>
 
@@ -487,14 +463,17 @@
             <div class="p-3 border-b border-slate-100 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5" id="leftPanelTitle">
-                  <span class="material-symbols-outlined text-[18px] text-primary" id="leftPanelIcon">account_tree</span>
+                  <span class="material-symbols-outlined text-[18px] text-primary"
+                    id="leftPanelIcon">account_tree</span>
                   <span id="leftPanelTitleText">Cây quản lý tủ</span>
                 </span>
                 <div class="flex items-center gap-1 text-slate-400">
-                  <button id="btnToggleAllExpand" class="p-1 hover:text-slate-700 hover:bg-slate-100 rounded transition" title="Thu gọn/Mở rộng tất cả">
+                  <button id="btnToggleAllExpand" class="p-1 hover:text-slate-700 hover:bg-slate-100 rounded transition"
+                    title="Thu gọn/Mở rộng tất cả">
                     <span class="material-symbols-outlined text-[16px]">unfold_more</span>
                   </button>
-                  <button id="btnRefreshLeftTree" class="p-1 hover:text-slate-700 hover:bg-slate-100 rounded transition" title="Làm mới cây danh mục">
+                  <button id="btnRefreshLeftTree" class="p-1 hover:text-slate-700 hover:bg-slate-100 rounded transition"
+                    title="Làm mới cây danh mục">
                     <span class="material-symbols-outlined text-[16px]">refresh</span>
                   </button>
                 </div>
@@ -515,13 +494,16 @@
                 <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
                   <span class="material-symbols-outlined text-[16px]">search</span>
                 </span>
-                <input id="leftFilterInput" type="text" class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200/80 rounded-lg focus:bg-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-slate-700 placeholder-slate-400 transition" placeholder="Lọc theo tên khu vực, tuyến, điểm đè...">
+                <input id="leftFilterInput" type="text"
+                  class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200/80 rounded-lg focus:bg-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-slate-700 placeholder-slate-400 transition"
+                  placeholder="Lọc theo tên khu vực, tuyến, điểm đè...">
               </div>
 
               <!-- Subheader Hierarchy & Collapse text -->
               <div class="flex items-center justify-between text-[11px] text-slate-400 font-medium px-0.5">
                 <span id="hierarchyNotice">Phân cấp: Khu vực | Tuyến | Điểm đèn</span>
-                <button id="btnCollapseAllText" class="text-brand-600 hover:text-brand-700 font-semibold" onclick="toggleCollapseAll()">Thu gọn hết</button>
+                <button id="btnCollapseAllText" class="text-brand-600 hover:text-brand-700 font-semibold"
+                  onclick="toggleCollapseAll()">Thu gọn hết</button>
               </div>
             </div>
 
@@ -552,7 +534,8 @@
                       <input type="checkbox" checked class="tree-checkbox">
                       <span class="material-symbols-outlined text-[17px] text-primary">location_city</span>
                       <span class="flex-1">Hải Châu</span>
-                      <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">292 tủ</span>
+                      <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">292
+                        tủ</span>
                     </div>
 
                     <!-- Children of Hải Châu -->
@@ -567,7 +550,9 @@
                           <input type="checkbox" checked class="tree-checkbox">
                           <span class="material-symbols-outlined text-[16px] text-blue-600">electric_meter</span>
                           <span class="flex-1 font-bold">T01 - Bạch Đằng</span>
-                          <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded whitespace-nowrap">Online • 30 nguồn / 12 CẦU</span>
+                          <span
+                            class="text-[10px] font-semibold text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded whitespace-nowrap">Online
+                            • 30 nguồn / 12 CẦU</span>
                         </div>
 
                         <!-- Routes of T01 -->
@@ -580,7 +565,9 @@
                                 <span class="material-symbols-outlined text-[16px]">chevron_right</span>
                               </span>
                               <input type="checkbox" checked class="tree-checkbox">
-                              <span class="flex-1 cursor-pointer hover:text-primary hover:underline" onclick="openRoutesPopup('T-TK003', event, 'Tuyến 1 - Bạch Đằng')">🛣️ Tuyến 1 - Bạch Đằng</span>
+                              <span class="flex-1 cursor-pointer hover:text-primary hover:underline"
+                                onclick="openRoutesPopup('T-TK003', event, 'Tuyến 1 - Bạch Đằng')">🛣️ Tuyến 1 - Bạch
+                                Đằng</span>
                               <span class="text-[10px] font-bold text-emerald-600">BẬT 100%</span>
                             </div>
                             <!-- Lamp points of Tuyến 1 -->
@@ -610,7 +597,9 @@
                                 <span class="material-symbols-outlined text-[16px]">chevron_right</span>
                               </span>
                               <input type="checkbox" checked class="tree-checkbox">
-                              <span class="flex-1 cursor-pointer hover:text-primary hover:underline" onclick="openRoutesPopup('T-TK003', event, 'Tuyến 2 - Trần Phú')">🛣️ Tuyến 2 - Trần Phú</span>
+                              <span class="flex-1 cursor-pointer hover:text-primary hover:underline"
+                                onclick="openRoutesPopup('T-TK003', event, 'Tuyến 2 - Trần Phú')">🛣️ Tuyến 2 - Trần
+                                Phú</span>
                               <span class="text-[10px] font-bold text-emerald-600">BẬT 100%</span>
                             </div>
                             <!-- Lamp points of Tuyến 2 -->
@@ -645,7 +634,8 @@
                           <input type="checkbox" checked class="tree-checkbox">
                           <span class="material-symbols-outlined text-[16px] text-blue-600">electric_meter</span>
                           <span class="flex-1 font-bold">T02 - Nguyễn Văn Linh</span>
-                          <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">118 tủ</span>
+                          <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">118
+                            tủ</span>
                         </div>
 
                         <!-- Routes of T02 -->
@@ -656,7 +646,8 @@
                                 <span class="material-symbols-outlined text-[16px]">chevron_right</span>
                               </span>
                               <input type="checkbox" checked class="tree-checkbox">
-                              <span class="flex-1 cursor-pointer hover:text-primary hover:underline" onclick="openRoutesPopup('T-HC002', event, 'Tuyến 1')">🛣️ Tuyến 1</span>
+                              <span class="flex-1 cursor-pointer hover:text-primary hover:underline"
+                                onclick="openRoutesPopup('T-HC002', event, 'Tuyến 1')">🛣️ Tuyến 1</span>
                               <span class="text-[10px] text-emerald-600 font-bold">BẬT 100%</span>
                             </div>
                             <div class="tree-children collapsed" id="node-t02-r1">
@@ -677,7 +668,8 @@
                                 <span class="material-symbols-outlined text-[16px]">chevron_right</span>
                               </span>
                               <input type="checkbox" class="tree-checkbox">
-                              <span class="flex-1 cursor-pointer hover:text-primary hover:underline" onclick="openRoutesPopup('T-HC002', event, 'Tuyến 2')">🛣️ Tuyến 2</span>
+                              <span class="flex-1 cursor-pointer hover:text-primary hover:underline"
+                                onclick="openRoutesPopup('T-HC002', event, 'Tuyến 2')">🛣️ Tuyến 2</span>
                               <span class="text-[10px] text-slate-400 font-bold">TẮT</span>
                             </div>
                             <div class="tree-children collapsed" id="node-t02-r2">
@@ -706,7 +698,8 @@
                       <input type="checkbox" checked class="tree-checkbox">
                       <span class="material-symbols-outlined text-[17px] text-primary">location_city</span>
                       <span class="flex-1">Thanh Khê</span>
-                      <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">160 tủ</span>
+                      <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">160
+                        tủ</span>
                     </div>
                     <div class="tree-children collapsed" id="node-thanh-khe">
                       <div class="tree-node-row text-xs text-slate-700" onclick="focusCabinetCard('T-TK003')">
@@ -736,7 +729,8 @@
                       <input type="checkbox" checked class="tree-checkbox">
                       <span class="material-symbols-outlined text-[17px] text-primary">location_city</span>
                       <span class="flex-1">Sơn Trà</span>
-                      <span class="text-[11px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">180 tủ • 1 MẤT PHA</span>
+                      <span class="text-[11px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">180 tủ •
+                        1 MẤT PHA</span>
                     </div>
                     <div class="tree-children collapsed" id="node-son-tra">
                       <div class="tree-node-row text-xs text-slate-700" onclick="focusCabinetCard('T-ST011')">
@@ -754,14 +748,16 @@
 
                   <!-- District: Ngũ Hành Sơn -->
                   <div class="tree-node">
-                    <div class="tree-node-row font-semibold text-slate-800" onclick="handleTreeNodeClick('ngu-hanh-son')">
+                    <div class="tree-node-row font-semibold text-slate-800"
+                      onclick="handleTreeNodeClick('ngu-hanh-son')">
                       <span class="tree-chevron" onclick="toggleTreeNode(event, 'node-ngu-hanh-son')">
                         <span class="material-symbols-outlined text-[16px]">chevron_right</span>
                       </span>
                       <input type="checkbox" checked class="tree-checkbox">
                       <span class="material-symbols-outlined text-[17px] text-primary">location_city</span>
                       <span class="flex-1">Ngũ Hành Sơn</span>
-                      <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">120 tủ</span>
+                      <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">120
+                        tủ</span>
                     </div>
                     <div class="tree-children collapsed" id="node-ngu-hanh-son">
                       <div class="tree-node-row text-xs text-slate-700">
@@ -798,11 +794,13 @@
                     </div>
                     <div class="cabinet-list-item active" onclick="focusCabinetCard('T-HC003')">
                       <span class="truncate">[T01-HC] Bạch Đằng - Cầu Rồng</span>
-                      <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
+                      <span
+                        class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
                     </div>
                     <div class="cabinet-list-item" onclick="focusCabinetCard('T-HC003')">
                       <span class="truncate">[T01-HC] Bạch Đằng - Chợ Hàn</span>
-                      <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
+                      <span
+                        class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
                     </div>
                   </div>
                   <!-- Tuyến 2 Tháng 9 -->
@@ -836,11 +834,13 @@
                     </div>
                     <div class="cabinet-list-item" onclick="focusCabinetCard('T-TK003')">
                       <span class="truncate">[T05] T3 Lê Duẩn</span>
-                      <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
+                      <span
+                        class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
                     </div>
                     <div class="cabinet-list-item">
                       <span class="truncate">[04-TT] Quang Trung TTYT</span>
-                      <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
+                      <span
+                        class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
                     </div>
                   </div>
                 </div>
@@ -863,7 +863,8 @@
                     </div>
                     <div class="cabinet-list-item" onclick="focusCabinetCard('T-TK009')">
                       <span class="truncate text-rose-700 font-bold">[T09] Trần Cao Vân Cắt Cây</span>
-                      <span class="text-[10px] font-extrabold text-rose-600 bg-rose-100 px-1.5 py-0.5 rounded">SỰ CỐ</span>
+                      <span class="text-[10px] font-extrabold text-rose-600 bg-rose-100 px-1.5 py-0.5 rounded">SỰ
+                        CỐ</span>
                     </div>
                   </div>
                 </div>
@@ -876,7 +877,8 @@
                     <span class="material-symbols-outlined text-[16px] text-amber-600">domain</span>
                     <span>Phường Phước Mỹ</span>
                   </span>
-                  <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">5 cảnh báo</span>
+                  <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">5 cảnh
+                    báo</span>
                 </div>
                 <div class="ward-body">
                   <div class="route-section">
@@ -886,7 +888,8 @@
                     </div>
                     <div class="cabinet-list-item" onclick="focusCabinetCard('T-ST011')">
                       <span class="truncate text-amber-800 font-semibold">[T11] Võ Nguyên Giáp Mất Pha</span>
-                      <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">MẤT PHA</span>
+                      <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">MẤT
+                        PHA</span>
                     </div>
                   </div>
                 </div>
@@ -909,7 +912,8 @@
                     </div>
                     <div class="cabinet-list-item">
                       <span class="truncate">[T15] Phạm Văn Đồng 1</span>
-                      <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
+                      <span
+                        class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">Online</span>
                     </div>
                   </div>
                 </div>
@@ -927,23 +931,30 @@
             <div class="cabinet-grid" id="cabinetsGridContainer">
 
               <!-- ==================== CARD 1: T3 HOÀNG VĂN THÁI (NORMAL / ONLINE 100%) ==================== -->
-              <div class="cabinet-card" id="card-T-TK003" style="cursor: pointer;" onclick="goToCabinetDetail('T-TK003', event)" data-status="online" data-dim="100" data-code="T-TK003" data-name="T3 Hoàng Văn Thái">
+              <div class="cabinet-card" id="card-T-TK003" style="cursor: pointer;"
+                onclick="goToCabinetDetail('T-TK003', event)" data-status="online" data-dim="100" data-code="T-TK003"
+                data-name="T3 Hoàng Văn Thái">
                 <!-- Card Header -->
                 <div class="flex items-start justify-between">
                   <div class="flex items-start gap-2.5">
                     <span class="status-dot-pulse dot-online mt-1.5" title="Online kết nối ổn định"></span>
                     <div>
-                      <h3 class="text-sm font-bold text-slate-900 leading-tight hover:text-brand-600 cursor-pointer transition" onclick="openRoutesPopup('T-TK003', event)">
+                      <h3
+                        class="text-sm font-bold text-slate-900 leading-tight hover:text-brand-600 cursor-pointer transition"
+                        onclick="openRoutesPopup('T-TK003', event)">
                         T3 Hoàng Văn Thái
                       </h3>
                       <p class="text-[11px] text-slate-500 mt-0.5">
-                        Q. Thanh Khê • <button type="button" class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-brand-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition" onclick="openRoutesPopup('T-TK003', event)">🛣️ 3 tuyến đường</button>
+                        Q. Thanh Khê • <button type="button"
+                          class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-brand-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition"
+                          onclick="openRoutesPopup('T-TK003', event)">🛣️ 3 tuyến đường</button>
                       </p>
                     </div>
                   </div>
                   <!-- Sim 4G & Timestamp -->
                   <div class="text-right">
-                    <div class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                    <div
+                      class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                       <span>4G VIETTEL</span>
                       <span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span>
                     </div>
@@ -982,11 +993,13 @@
                   </div>
                   <div class="text-center">
                     <div class="text-[10px] text-slate-400 font-medium">Công suất</div>
-                    <div class="font-mono font-bold text-slate-800">10.4 <span class="text-[9px] font-normal">kW</span></div>
+                    <div class="font-mono font-bold text-slate-800">10.4 <span class="text-[9px] font-normal">kW</span>
+                    </div>
                   </div>
                   <div class="text-center">
                     <div class="text-[10px] text-slate-400 font-medium">Sản lượng E</div>
-                    <div class="font-mono font-bold text-slate-800">148.2 <span class="text-[9px] font-normal">kWh</span></div>
+                    <div class="font-mono font-bold text-slate-800">148.2 <span
+                        class="text-[9px] font-normal">kWh</span></div>
                   </div>
                 </div>
 
@@ -997,7 +1010,8 @@
                 </div>
 
                 <!-- Card Footer Info -->
-                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                <div
+                  class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
                   <div class="flex items-center gap-2">
                     <span>Mã: <strong class="text-slate-700 font-mono">T-HC003</strong></span>
                     <span>•</span>
@@ -1008,23 +1022,30 @@
               </div>
 
               <!-- ==================== CARD 2: T11 VÕ NGUYÊN GIÁP (WARNING: MẤT PHA 2) ==================== -->
-              <div class="cabinet-card card-warning" id="card-T-ST011" style="cursor: pointer;" onclick="goToCabinetDetail('T-ST011', event)" data-status="warning" data-dim="100" data-code="T-ST011" data-name="T11 Võ Nguyên Giáp">
+              <div class="cabinet-card card-warning" id="card-T-ST011" style="cursor: pointer;"
+                onclick="goToCabinetDetail('T-ST011', event)" data-status="warning" data-dim="100" data-code="T-ST011"
+                data-name="T11 Võ Nguyên Giáp">
                 <!-- Card Header -->
                 <div class="flex items-start justify-between">
                   <div class="flex items-start gap-2.5">
                     <span class="status-dot-pulse dot-warning mt-1.5" title="Cảnh báo sự cố mất pha"></span>
                     <div>
-                      <h3 class="text-sm font-bold text-slate-900 leading-tight hover:text-amber-600 cursor-pointer transition" onclick="openRoutesPopup('T-ST011', event)">
+                      <h3
+                        class="text-sm font-bold text-slate-900 leading-tight hover:text-amber-600 cursor-pointer transition"
+                        onclick="openRoutesPopup('T-ST011', event)">
                         T11 Võ Nguyên Giáp
                       </h3>
                       <p class="text-[11px] text-slate-500 mt-0.5">
-                        Q. Sơn Trà • <button type="button" class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition" onclick="openRoutesPopup('T-ST011', event)">🛣️ 2 tuyến đường</button>
+                        Q. Sơn Trà • <button type="button"
+                          class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition"
+                          onclick="openRoutesPopup('T-ST011', event)">🛣️ 2 tuyến đường</button>
                       </p>
                     </div>
                   </div>
                   <!-- Sim 4G & Timestamp -->
                   <div class="text-right">
-                    <div class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                    <div
+                      class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                       <span>4G VINAPHONE</span>
                       <span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span>
                     </div>
@@ -1063,11 +1084,13 @@
                   </div>
                   <div class="text-center">
                     <div class="text-[10px] text-slate-400 font-medium">Công suất</div>
-                    <div class="font-mono font-bold text-slate-800">8.2 <span class="text-[9px] font-normal">kW</span></div>
+                    <div class="font-mono font-bold text-slate-800">8.2 <span class="text-[9px] font-normal">kW</span>
+                    </div>
                   </div>
                   <div class="text-center">
                     <div class="text-[10px] text-slate-400 font-medium">Sản lượng E</div>
-                    <div class="font-mono font-bold text-slate-800">94.5 <span class="text-[9px] font-normal">kWh</span></div>
+                    <div class="font-mono font-bold text-slate-800">94.5 <span class="text-[9px] font-normal">kWh</span>
+                    </div>
                   </div>
                 </div>
 
@@ -1078,36 +1101,47 @@
                 </div>
 
                 <!-- Card Footer & CTA Action -->
-                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                <div
+                  class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
                   <div class="flex items-center gap-2">
                     <span>Mã: <strong class="text-slate-700 font-mono">T-ST011</strong></span>
                     <span>•</span>
                     <span>Chế độ: <strong class="text-slate-700">AUTO</strong></span>
                   </div>
-                  <button class="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg transition shadow-sm text-xs flex items-center gap-1" onclick="openInspectionModal('T-ST011')">
+                  <button
+                    class="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg transition shadow-sm text-xs flex items-center gap-1"
+                    onclick="openInspectionModal('T-ST011')">
                     <span>Kiểm tra ngay</span>
                   </button>
                 </div>
               </div>
 
               <!-- ==================== CARD 3: T9 TRẦN CAO VÂN (CRITICAL EMERGENCY: ĐỨT CÁP / TỰ CẮT CÁP) ==================== -->
-              <div class="cabinet-card card-danger" id="card-T-TK009" style="cursor: pointer;" onclick="goToCabinetDetail('T-TK009', event)" data-status="danger" data-dim="0" data-code="T-TK009" data-name="T9 Trần Cao Vân">
+              <div class="cabinet-card card-danger" id="card-T-TK009" style="cursor: pointer;"
+                onclick="goToCabinetDetail('T-TK009', event)" data-status="danger" data-dim="0" data-code="T-TK009"
+                data-name="T9 Trần Cao Vân">
                 <!-- Card Header -->
                 <div class="flex items-start justify-between">
                   <div class="flex items-start gap-2.5">
                     <span class="status-dot-pulse dot-danger mt-1.5" title="Sự cố đặc biệt nghiêm trọng"></span>
                     <div>
-                      <h3 class="text-sm font-extrabold text-rose-700 leading-tight hover:text-rose-800 cursor-pointer transition" onclick="openRoutesPopup('T-TK009', event)">
+                      <h3
+                        class="text-sm font-extrabold text-rose-700 leading-tight hover:text-rose-800 cursor-pointer transition"
+                        onclick="openRoutesPopup('T-TK009', event)">
                         T9 Trần Cao Vân
                       </h3>
                       <p class="text-[11px] text-rose-600 font-semibold mt-0.5">
-                        Q. Thanh Khê • <button type="button" class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition" onclick="openRoutesPopup('T-TK009', event)">🛣️ 3 tuyến đường</button> • Sự cố đặc biệt nghiêm trọng
+                        Q. Thanh Khê • <button type="button"
+                          class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition"
+                          onclick="openRoutesPopup('T-TK009', event)">🛣️ 3 tuyến đường</button> • Sự cố đặc biệt nghiêm
+                        trọng
                       </p>
                     </div>
                   </div>
                   <!-- Sim 4G & Timestamp -->
                   <div class="text-right">
-                    <div class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded border border-rose-300">
+                    <div
+                      class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded border border-rose-300">
                       <span>4G VIETTEL</span>
                       <span class="material-symbols-outlined text-[14px]">error</span>
                     </div>
@@ -1153,10 +1187,13 @@
 
                 <!-- Card Footer & Emergency Action -->
                 <div class="flex items-center justify-between text-[11px] pt-1 border-t border-rose-200">
-                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-600 text-white">
+                  <span
+                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-600 text-white">
                     [TỰ CẮT CÁP]
                   </span>
-                  <button class="px-3.5 py-1 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-lg transition shadow-sm text-xs flex items-center gap-1" onclick="openEmergencyModal('T-TK009')">
+                  <button
+                    class="px-3.5 py-1 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-lg transition shadow-sm text-xs flex items-center gap-1"
+                    onclick="openEmergencyModal('T-TK009')">
                     <span class="material-symbols-outlined text-[14px]">bolt</span>
                     <span>Xử lý ngay</span>
                   </button>
@@ -1164,25 +1201,33 @@
               </div>
 
               <!-- ==================== CARD 4: T7 NGUYỄN TẤT THÀNH (OFFLINE / MẤT KẾT NỐI HEARTBEAT) ==================== -->
-              <div class="cabinet-card card-offline" id="card-T-TK007" style="cursor: pointer;" onclick="goToCabinetDetail('T-TK007', event)" data-status="offline" data-dim="rtc" data-code="T-TK007" data-name="T7 Nguyễn Tất Thành">
+              <div class="cabinet-card card-offline" id="card-T-TK007" style="cursor: pointer;"
+                onclick="goToCabinetDetail('T-TK007', event)" data-status="offline" data-dim="rtc" data-code="T-TK007"
+                data-name="T7 Nguyễn Tất Thành">
                 <!-- Card Header -->
                 <div class="flex items-start justify-between">
                   <div class="flex items-start gap-2.5">
                     <span class="status-dot-pulse dot-offline mt-1.5" title="Mất tín hiệu kết nối"></span>
                     <div>
-                      <h3 class="text-sm font-bold text-slate-600 leading-tight hover:text-slate-900 cursor-pointer transition" onclick="openRoutesPopup('T-TK007', event)">
+                      <h3
+                        class="text-sm font-bold text-slate-600 leading-tight hover:text-slate-900 cursor-pointer transition"
+                        onclick="openRoutesPopup('T-TK007', event)">
                         T7 Nguyễn Tất Thành
                       </h3>
                       <p class="text-[11px] text-slate-400 mt-0.5">
-                        Q. Thanh Khê • <button type="button" class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition" onclick="openRoutesPopup('T-TK007', event)">🛣️ 4 tuyến đường</button>
+                        Q. Thanh Khê • <button type="button"
+                          class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition"
+                          onclick="openRoutesPopup('T-TK007', event)">🛣️ 4 tuyến đường</button>
                       </p>
                     </div>
                   </div>
                   <!-- Sim 4G & Timestamp -->
                   <div class="text-right">
-                    <div class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 bg-slate-200/70 px-2 py-0.5 rounded">
+                    <div
+                      class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 bg-slate-200/70 px-2 py-0.5 rounded">
                       <span>4G VIETTEL</span>
-                      <span class="material-symbols-outlined text-[14px]">signal_cellular_connected_no_internet_0_bar</span>
+                      <span
+                        class="material-symbols-outlined text-[14px]">signal_cellular_connected_no_internet_0_bar</span>
                     </div>
                     <div class="text-[10px] font-mono text-slate-400 mt-0.5">Gián đoạn: 24/10/2024</div>
                   </div>
@@ -1223,13 +1268,16 @@
                 </div>
 
                 <!-- Card Footer & Ping Action -->
-                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-200">
+                <div
+                  class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-200">
                   <div class="flex items-center gap-2">
                     <span>Mã: <strong class="text-slate-700 font-mono">T-TK007</strong></span>
                     <span>•</span>
                     <span>Lịch: <strong class="text-slate-700">RTC</strong></span>
                   </div>
-                  <button class="px-3 py-1 bg-white hover:bg-slate-100 text-slate-700 font-semibold border border-slate-300 rounded-lg transition shadow-sm text-xs flex items-center gap-1" onclick="pingCabinetModem('T-TK007')">
+                  <button
+                    class="px-3 py-1 bg-white hover:bg-slate-100 text-slate-700 font-semibold border border-slate-300 rounded-lg transition shadow-sm text-xs flex items-center gap-1"
+                    onclick="pingCabinetModem('T-TK007')">
                     <span class="material-symbols-outlined text-[14px]">cell_tower</span>
                     <span>Ping Modem</span>
                   </button>
@@ -1237,23 +1285,30 @@
               </div>
 
               <!-- ==================== CARD 5: T2 ĐƯỜNG 2/9 (DIM 70% + CẢNH BÁO CỬA MỞ) ==================== -->
-              <div class="cabinet-card" id="card-T-HC002" style="cursor: pointer;" onclick="goToCabinetDetail('T-HC002', event)" data-status="online" data-dim="70" data-code="T-HC002" data-name="T2 Đường 2/9">
+              <div class="cabinet-card" id="card-T-HC002" style="cursor: pointer;"
+                onclick="goToCabinetDetail('T-HC002', event)" data-status="online" data-dim="70" data-code="T-HC002"
+                data-name="T2 Đường 2/9">
                 <!-- Card Header -->
                 <div class="flex items-start justify-between">
                   <div class="flex items-start gap-2.5">
                     <span class="status-dot-pulse dot-online mt-1.5" title="Đang vận hành Dim 70%"></span>
                     <div>
-                      <h3 class="text-sm font-bold text-slate-900 leading-tight hover:text-brand-600 cursor-pointer transition" onclick="openRoutesPopup('T-HC002', event)">
+                      <h3
+                        class="text-sm font-bold text-slate-900 leading-tight hover:text-brand-600 cursor-pointer transition"
+                        onclick="openRoutesPopup('T-HC002', event)">
                         T2 Đường 2/9
                       </h3>
                       <p class="text-[11px] text-slate-500 mt-0.5">
-                        Q. Hải Châu • <button type="button" class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-brand-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition" onclick="openRoutesPopup('T-HC002', event)">🛣️ 3 tuyến đường</button>
+                        Q. Hải Châu • <button type="button"
+                          class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-brand-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition"
+                          onclick="openRoutesPopup('T-HC002', event)">🛣️ 3 tuyến đường</button>
                       </p>
                     </div>
                   </div>
                   <!-- Sim 4G & Timestamp -->
                   <div class="text-right">
-                    <div class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                    <div
+                      class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                       <span>4G VINAPHONE</span>
                       <span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span>
                     </div>
@@ -1292,11 +1347,13 @@
                   </div>
                   <div class="text-center">
                     <div class="text-[10px] text-slate-400 font-medium">Công suất</div>
-                    <div class="font-mono font-bold text-slate-800">8.6 <span class="text-[9px] font-normal">kW</span></div>
+                    <div class="font-mono font-bold text-slate-800">8.6 <span class="text-[9px] font-normal">kW</span>
+                    </div>
                   </div>
                   <div class="text-center">
                     <div class="text-[10px] text-slate-400 font-medium">Sản lượng E</div>
-                    <div class="font-mono font-bold text-slate-800">112.4 <span class="text-[9px] font-normal">kWh</span></div>
+                    <div class="font-mono font-bold text-slate-800">112.4 <span
+                        class="text-[9px] font-normal">kWh</span></div>
                   </div>
                 </div>
 
@@ -1307,34 +1364,43 @@
                 </div>
 
                 <!-- Card Footer Info -->
-                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                <div
+                  class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
                   <div class="flex items-center gap-2">
                     <span>Mã: <strong class="text-slate-700 font-mono">T-HC002</strong></span>
                     <span>•</span>
                     <span>Chế độ: <strong class="text-slate-700">TIẾT KIỆM</strong></span>
                   </div>
-                  <span class="text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded">Nguồn: Lưới ổn định</span>
+                  <span class="text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded">Nguồn: Lưới ổn
+                    định</span>
                 </div>
               </div>
 
               <!-- ==================== CARD 6: T13 SƠN TRÀ ĐIỆN NGỌC (DIM 30% + ẮC QUY YẾU) ==================== -->
-              <div class="cabinet-card" id="card-T-ST013" style="cursor: pointer;" onclick="goToCabinetDetail('T-ST013', event)" data-status="online" data-dim="30" data-code="T-ST013" data-name="T13 Sơn Trà Điện Ngọc">
+              <div class="cabinet-card" id="card-T-ST013" style="cursor: pointer;"
+                onclick="goToCabinetDetail('T-ST013', event)" data-status="online" data-dim="30" data-code="T-ST013"
+                data-name="T13 Sơn Trà Điện Ngọc">
                 <!-- Card Header -->
                 <div class="flex items-start justify-between">
                   <div class="flex items-start gap-2.5">
                     <span class="status-dot-pulse dot-warning mt-1.5" title="Cảnh báo ắc quy yếu"></span>
                     <div>
-                      <h3 class="text-sm font-bold text-slate-900 leading-tight hover:text-brand-600 cursor-pointer transition" onclick="openRoutesPopup('T-ST013', event)">
+                      <h3
+                        class="text-sm font-bold text-slate-900 leading-tight hover:text-brand-600 cursor-pointer transition"
+                        onclick="openRoutesPopup('T-ST013', event)">
                         T13 Sơn Trà Điện Ngọc
                       </h3>
                       <p class="text-[11px] text-slate-500 mt-0.5">
-                        Q. Sơn Trà • <button type="button" class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-brand-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition" onclick="openRoutesPopup('T-ST013', event)">🛣️ 2 tuyến đường</button>
+                        Q. Sơn Trà • <button type="button"
+                          class="btn-routes-pill inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-brand-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition"
+                          onclick="openRoutesPopup('T-ST013', event)">🛣️ 2 tuyến đường</button>
                       </p>
                     </div>
                   </div>
                   <!-- Sim 4G & Timestamp -->
                   <div class="text-right">
-                    <div class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                    <div
+                      class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                       <span>4G VIETTEL</span>
                       <span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span>
                     </div>
@@ -1373,11 +1439,13 @@
                   </div>
                   <div class="text-center">
                     <div class="text-[10px] text-slate-400 font-medium">Công suất</div>
-                    <div class="font-mono font-bold text-slate-800">3.7 <span class="text-[9px] font-normal">kW</span></div>
+                    <div class="font-mono font-bold text-slate-800">3.7 <span class="text-[9px] font-normal">kW</span>
+                    </div>
                   </div>
                   <div class="text-center">
                     <div class="text-[10px] text-slate-400 font-medium">Sản lượng E</div>
-                    <div class="font-mono font-bold text-slate-800">51.1 <span class="text-[9px] font-normal">kWh</span></div>
+                    <div class="font-mono font-bold text-slate-800">51.1 <span class="text-[9px] font-normal">kWh</span>
+                    </div>
                   </div>
                 </div>
 
@@ -1388,7 +1456,8 @@
                 </div>
 
                 <!-- Card Footer Info -->
-                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                <div
+                  class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
                   <div class="flex items-center gap-2">
                     <span>Mã: <strong class="text-slate-700 font-mono">T-ST013</strong></span>
                     <span>•</span>
@@ -1401,10 +1470,12 @@
             </div>
 
             <!-- Alternative Table View (Hidden by default, toggled via Toolbar) -->
-            <div id="cabinetsTableContainer" class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hidden">
+            <div id="cabinetsTableContainer"
+              class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hidden">
               <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
-                  <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold tracking-wider text-[11px]">
+                  <thead
+                    class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold tracking-wider text-[11px]">
                     <tr>
                       <th class="py-3 px-4">Mã tủ</th>
                       <th class="py-3 px-4">Tên tủ</th>
@@ -1425,20 +1496,29 @@
             </div>
 
             <!-- ==================== PAGINATION ROW ==================== -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500 pt-2 pb-6">
+            <div
+              class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500 pt-2 pb-6">
               <div>
-                Hiển thị <strong class="text-slate-800">1 - 6</strong> trong tổng số <strong class="text-slate-800">950</strong> tủ điều khiển
+                Hiển thị <strong class="text-slate-800">1 - 6</strong> trong tổng số <strong
+                  class="text-slate-800">950</strong> tủ điều khiển
               </div>
               <div class="flex items-center gap-1">
-                <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-600 disabled:opacity-40" disabled>
+                <button
+                  class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-600 disabled:opacity-40"
+                  disabled>
                   <span class="material-symbols-outlined text-[16px]">chevron_left</span>
                 </button>
-                <button class="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-900 text-white font-bold transition">1</button>
-                <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">2</button>
-                <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">3</button>
+                <button
+                  class="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-900 text-white font-bold transition">1</button>
+                <button
+                  class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">2</button>
+                <button
+                  class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">3</button>
                 <span class="px-1 text-slate-400">...</span>
-                <button class="w-8 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">159</button>
-                <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-600">
+                <button
+                  class="w-8 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-700">159</button>
+                <button
+                  class="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-100 transition text-slate-600">
                   <span class="material-symbols-outlined text-[16px]">chevron_right</span>
                 </button>
               </div>
@@ -1480,8 +1560,10 @@
   </div>
 
   <!-- ==================== MODAL: CHI TIẾT TỦ ĐIỀU KHIỂN ==================== -->
-  <div id="modalCabinetDetails" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+  <div id="modalCabinetDetails"
+    class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div
+      class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
 
       <!-- Modal Header -->
       <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
@@ -1496,7 +1578,8 @@
             <p class="text-xs text-slate-500" id="detailCabinetSub">Mã tủ: T-HC003 • Quận Thanh Khê • 4G Viettel</p>
           </div>
         </div>
-        <button class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200 transition" onclick="closeCabinetDetailsModal()">✕</button>
+        <button class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200 transition"
+          onclick="closeCabinetDetailsModal()">✕</button>
       </div>
 
       <!-- Modal Body -->
@@ -1539,21 +1622,24 @@
                 <span class="font-bold text-slate-800 block">Nhánh K1 (Đông)</span>
                 <span class="text-[10px] text-emerald-600 font-semibold">ĐANG ĐÓNG</span>
               </div>
-              <input type="checkbox" checked class="w-4 h-4 accent-emerald-600 cursor-pointer" onchange="toggleContactor('K1', this.checked)">
+              <input type="checkbox" checked class="w-4 h-4 accent-emerald-600 cursor-pointer"
+                onchange="toggleContactor('K1', this.checked)">
             </div>
             <div class="border border-slate-200 rounded-xl p-3 flex items-center justify-between bg-white">
               <div>
                 <span class="font-bold text-slate-800 block">Nhánh K2 (Tây)</span>
                 <span class="text-[10px] text-emerald-600 font-semibold">ĐANG ĐÓNG</span>
               </div>
-              <input type="checkbox" checked class="w-4 h-4 accent-emerald-600 cursor-pointer" onchange="toggleContactor('K2', this.checked)">
+              <input type="checkbox" checked class="w-4 h-4 accent-emerald-600 cursor-pointer"
+                onchange="toggleContactor('K2', this.checked)">
             </div>
             <div class="border border-slate-200 rounded-xl p-3 flex items-center justify-between bg-white">
               <div>
                 <span class="font-bold text-slate-800 block">Nhánh K3 (Trang trí)</span>
                 <span class="text-[10px] text-emerald-600 font-semibold">ĐANG ĐÓNG</span>
               </div>
-              <input type="checkbox" checked class="w-4 h-4 accent-emerald-600 cursor-pointer" onchange="toggleContactor('K3', this.checked)">
+              <input type="checkbox" checked class="w-4 h-4 accent-emerald-600 cursor-pointer"
+                onchange="toggleContactor('K3', this.checked)">
             </div>
           </div>
         </div>
@@ -1564,7 +1650,8 @@
             <span class="font-bold text-slate-800">Điều chỉnh mức Dimming tức thời</span>
             <span class="font-mono font-bold text-brand-600 text-sm" id="detailDimDisplay">100%</span>
           </div>
-          <input type="range" min="0" max="100" step="10" value="100" class="w-full accent-primary cursor-pointer" id="detailDimSlider" oninput="updateModalDim(this.value)">
+          <input type="range" min="0" max="100" step="10" value="100" class="w-full accent-primary cursor-pointer"
+            id="detailDimSlider" oninput="updateModalDim(this.value)">
           <div class="flex justify-between text-[10px] font-mono text-slate-400">
             <span>0% (TẮT)</span>
             <span>30%</span>
@@ -1598,12 +1685,17 @@
 
       <!-- Modal Footer -->
       <div class="px-6 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50">
-        <button class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200 transition" onclick="closeCabinetDetailsModal()">Đóng</button>
+        <button class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200 transition"
+          onclick="closeCabinetDetailsModal()">Đóng</button>
         <div class="flex items-center gap-2">
-          <button class="px-3 py-1.5 rounded-xl text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 transition" onclick="window.location.href='cabinets-detail.html'">
+          <button
+            class="px-3 py-1.5 rounded-xl text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 transition"
+            onclick="window.location.href='cabinets-detail.html'">
             Xem chi tiết tủ SCADA
           </button>
-          <button class="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-[#063b66] transition shadow-sm" onclick="saveCabinetSettings()">
+          <button
+            class="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-[#063b66] transition shadow-sm"
+            onclick="saveCabinetSettings()">
             Lưu & Phát lệnh xuống tủ
           </button>
         </div>
@@ -1613,8 +1705,10 @@
   </div>
 
   <!-- ==================== MODAL: THÊM TỦ ĐIỀU KHIỂN ==================== -->
-  <div id="modalAddCabinet" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+  <div id="modalAddCabinet"
+    class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div
+      class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
       <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
         <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
           <span class="material-symbols-outlined text-[18px] text-primary">add_circle</span>
@@ -1626,16 +1720,19 @@
       <form id="formAddCabinet" class="p-6 space-y-3.5 text-xs">
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Mã tủ định danh *</label>
-          <input id="addCabinetCode" type="text" required placeholder="Ví dụ: T-HC015, T-ST020..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-brand-500 font-mono text-slate-800">
+          <input id="addCabinetCode" type="text" required placeholder="Ví dụ: T-HC015, T-ST020..."
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-brand-500 font-mono text-slate-800">
         </div>
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Tên tủ điều khiển *</label>
-          <input id="addCabinetName" type="text" required placeholder="Ví dụ: T15 Nguyễn Hữu Thọ..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-brand-500 text-slate-800">
+          <input id="addCabinetName" type="text" required placeholder="Ví dụ: T15 Nguyễn Hữu Thọ..."
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-brand-500 text-slate-800">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Quận / Huyện *</label>
-            <select id="addCabinetArea" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-brand-500 text-slate-800">
+            <select id="addCabinetArea"
+              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-brand-500 text-slate-800">
               <option value="hai-chau">Hải Châu</option>
               <option value="thanh-khe">Thanh Khê</option>
               <option value="son-tra">Sơn Trà</option>
@@ -1646,13 +1743,15 @@
           </div>
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Tuyến đường</label>
-            <input id="addCabinetAddress" type="text" placeholder="Ví dụ: Đường Bạch Đằng" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800">
+            <input id="addCabinetAddress" type="text" placeholder="Ví dụ: Đường Bạch Đằng"
+              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800">
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">SIM Viễn thông 4G</label>
-            <select id="addCabinetDevice" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800">
+            <select id="addCabinetDevice"
+              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800">
               <option value="viettel">Viettel 4G IoT</option>
               <option value="vinaphone">Vinaphone M2M</option>
               <option value="mobifone">Mobifone IoT</option>
@@ -1660,16 +1759,21 @@
           </div>
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Công suất định mức (kW)</label>
-            <input id="addCabinetPower" type="number" step="0.1" value="15.0" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800 font-mono">
+            <input id="addCabinetPower" type="number" step="0.1" value="15.0"
+              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white text-slate-800 font-mono">
           </div>
         </div>
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Tọa độ GPS (Vĩ độ, Kinh độ)</label>
-          <input id="addCabinetGps" type="text" placeholder="16.0678, 108.2208" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white font-mono text-slate-800">
+          <input id="addCabinetGps" type="text" placeholder="16.0678, 108.2208"
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white font-mono text-slate-800">
         </div>
         <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
-          <button type="button" class="px-3.5 py-2 text-slate-600 hover:bg-slate-100 rounded-xl transition" onclick="closeAddCabinetModal()">Hủy</button>
-          <button type="submit" class="px-4 py-2 bg-primary hover:bg-[#063b66] text-white font-bold rounded-xl transition shadow-sm">Thêm tủ mới</button>
+          <button type="button" class="px-3.5 py-2 text-slate-600 hover:bg-slate-100 rounded-xl transition"
+            onclick="closeAddCabinetModal()">Hủy</button>
+          <button type="submit"
+            class="px-4 py-2 bg-primary hover:bg-[#063b66] text-white font-bold rounded-xl transition shadow-sm">Thêm tủ
+            mới</button>
         </div>
       </form>
     </div>
@@ -1677,13 +1781,17 @@
 
 
   <!-- ==================== MODAL POPUP: CHI TIẾT CÁC TUYẾN ĐƯỜNG CỦA TỦ ==================== -->
-  <div id="modalRoutesPopup" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+  <div id="modalRoutesPopup"
+    class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div
+      class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
 
       <!-- Modal Header -->
-      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-blue-50 to-slate-50">
+      <div
+        class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-blue-50 to-slate-50">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold shadow-sm">
+          <div
+            class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold shadow-sm">
             <span class="material-symbols-outlined text-[22px]">alt_route</span>
           </div>
           <div>
@@ -1693,7 +1801,8 @@
             <p class="text-xs text-slate-500 font-medium" id="popupRoutesSub">Mã tủ: T-HC003 • Q. Thanh Khê</p>
           </div>
         </div>
-        <button class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200 transition" onclick="closeRoutesPopup()">✕</button>
+        <button class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200 transition"
+          onclick="closeRoutesPopup()">✕</button>
       </div>
 
       <!-- Modal Body -->
@@ -1727,7 +1836,8 @@
 
           <div class="border border-slate-200 rounded-xl overflow-hidden shadow-xs">
             <table class="w-full text-left border-collapse text-xs">
-              <thead class="bg-slate-100/80 text-slate-700 text-[11px] font-bold border-b border-slate-200 uppercase tracking-wider">
+              <thead
+                class="bg-slate-100/80 text-slate-700 text-[11px] font-bold border-b border-slate-200 uppercase tracking-wider">
                 <tr>
                   <th class="py-2.5 px-3">Tuyến đường</th>
                   <th class="py-2.5 px-3 text-center">Chiều dài</th>
@@ -1744,21 +1854,26 @@
           </div>
         </div>
 
-        <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-100 text-blue-900 text-[11px] flex items-center gap-2">
+        <div
+          class="p-3 bg-blue-50/60 rounded-xl border border-blue-100 text-blue-900 text-[11px] flex items-center gap-2">
           <span class="material-symbols-outlined text-[18px] text-brand-600">info</span>
-          <span>Bấm <strong>"Xem trang chi tiết tủ"</strong> bên dưới để điều khiển trực tiếp SCADA điện áp 3 pha và contactor từng nhánh.</span>
+          <span>Bấm <strong>"Xem trang chi tiết tủ"</strong> bên dưới để điều khiển trực tiếp SCADA điện áp 3 pha và
+            contactor từng nhánh.</span>
         </div>
       </div>
 
       <!-- Modal Footer -->
       <div class="px-6 py-3.5 border-t border-slate-100 flex items-center justify-between bg-slate-50">
-        <button class="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200 transition" onclick="closeRoutesPopup()">Đóng</button>
+        <button class="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200 transition"
+          onclick="closeRoutesPopup()">Đóng</button>
         <div class="flex items-center gap-2">
-          <a href="routes.html" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 transition inline-flex items-center gap-1.5 shadow-xs">
+          <a href="routes.html"
+            class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 transition inline-flex items-center gap-1.5 shadow-xs">
             <span class="material-symbols-outlined text-[16px]">map</span>
             <span>Quản lý tuyến đường</span>
           </a>
-          <button id="btnPopupGoToCabinetDetail" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-primary hover:bg-[#063b66] transition inline-flex items-center gap-1.5 shadow-sm shadow-primary/20">
+          <button id="btnPopupGoToCabinetDetail"
+            class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-primary hover:bg-[#063b66] transition inline-flex items-center gap-1.5 shadow-sm shadow-primary/20">
             <span class="material-symbols-outlined text-[16px]">visibility</span>
             <span>Xem trang chi tiết tủ</span>
           </button>
@@ -1775,4 +1890,5 @@
   <script src="js/api-config.js"></script>
   <script src="js/cabinets.js"></script>
 </body>
+
 </html>

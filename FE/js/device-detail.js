@@ -257,8 +257,15 @@ async function loadDeviceFromApi() {
       if (isCabinet) {
         device.status = Number(statusValue) === 1 ? 'Hoạt động' : 'Mất kết nối';
       } else {
-        device.status = Number(statusValue) === 1 ? 'Hoạt động' : Number(statusValue) === 0 ? 'Đang tắt' : `Trạng thái ${statusValue}`;
-        if (Number(statusValue) === 0) initialBrightness = 0;
+        const lampSt = Number(statusValue);
+        device.status = lampSt === 1
+          ? 'Hoạt động'
+          : lampSt === 2
+            ? 'Đang tắt'
+            : lampSt === 3
+              ? 'Sự cố'
+              : 'Chưa xác định';
+        if (lampSt === 2 || lampSt === 0) initialBrightness = 0;
       }
     }
     const [routes, cabinets, areas] = await Promise.all([
