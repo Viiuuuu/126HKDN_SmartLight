@@ -208,8 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!areaCode) return 'Chưa phân vùng';
     const code = String(areaCode).trim();
     const area = cache.areas[code];
-    if (area && area.tenKhuVuc) {
-      return `${area.tenKhuVuc} (${code})`;
+    const areaName = area && (area.tenPhuongXa || area.tenKhuVuc);
+    if (areaName) {
+      return `${areaName} (${code})`;
     }
     return `Khu vực ${code}`;
   }

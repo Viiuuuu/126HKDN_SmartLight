@@ -141,13 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (userFilterWrapper) userFilterWrapper.style.display = 'block';
     if (thUser) thUser.style.display = '';
   } else {
-    // Actor: Nhân viên vận hành -> Xem lịch sử hoạt động cá nhân (Use-case 2.3.4.16)
-    if (pageHtmlTitle) pageHtmlTitle.textContent = 'Nhật ký hoạt động cá nhân | SmartLight';
-    if (breadcrumbTitle) breadcrumbTitle.textContent = 'Nhật ký hoạt động cá nhân';
-    if (headingTitle) headingTitle.textContent = 'Nhật ký hoạt động cá nhân';
+    // Actor: Nhân viên vận hành -> Xem nhật ký hoạt động cá nhân (Use-case 2.3.4.16)
+    if (pageHtmlTitle) pageHtmlTitle.textContent = 'Nhật ký hoạt động | SmartLight';
+    if (breadcrumbTitle) breadcrumbTitle.textContent = 'Nhật ký hoạt động';
+    if (headingTitle) headingTitle.textContent = 'Nhật ký hoạt động';
     if (headingDesc) headingDesc.textContent = 'Xem và tra cứu lịch sử các thao tác do chính tài khoản của bạn thực hiện trên hệ thống.';
     if (sidebarLogLabel) sidebarLogLabel.textContent = 'Nhật ký hoạt động';
-    if (tableHeadingTitle) tableHeadingTitle.textContent = 'Danh sách nhật ký hoạt động cá nhân';
+    if (tableHeadingTitle) tableHeadingTitle.textContent = 'Danh sách nhật ký hoạt động';
 
     if (scopeIcon) scopeIcon.textContent = 'person_check';
     if (scopeText) scopeText.textContent = `Chỉ tài khoản của bạn (${currentUserCode})`;
@@ -228,29 +228,193 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function getActionBadge(action) {
-    const act = (action || '').toString().trim();
-    const lower = act.toLowerCase();
+  const userDirectoryMap = new Map();
+  let usersDirectoryLoaded = false;
 
-    if (lower.includes('đăng nhập')) {
-      return { badgeClass: 'action-auth', icon: 'login', label: act };
+  /** Ánh xạ chi tiết cho các mã HanhDong chuẩn từ BE (BE/Controllers & RbacHelper). */
+  const ACTION_META_MAP = {
+    DANG_NHAP: { badgeClass: 'action-auth', icon: 'login', label: 'Đăng nhập', category: 'auth' },
+    DANG_NHAP_BI_CHAN: { badgeClass: 'action-alert', icon: 'gpp_bad', label: 'Đăng nhập bị chặn', category: 'auth' },
+    DANG_XUAT: { badgeClass: 'action-auth', icon: 'logout', label: 'Đăng xuất', category: 'auth' },
+    DIEU_KHIEN_CHIEU_SANG: { badgeClass: 'action-control', icon: 'tune', label: 'Điều khiển chiếu sáng', category: 'control' },
+    THEM_LICH_VAN_HANH: { badgeClass: 'action-manage', icon: 'event_available', label: 'Thêm lịch vận hành', category: 'schedule' },
+    CAP_NHAT_LICH_VAN_HANH: { badgeClass: 'action-manage', icon: 'edit_calendar', label: 'Cập nhật lịch vận hành', category: 'schedule' },
+    XOA_LICH_VAN_HANH: { badgeClass: 'action-alert', icon: 'event_busy', label: 'Xóa lịch vận hành', category: 'schedule' },
+    THEM_KHU_VUC: { badgeClass: 'action-manage', icon: 'add_location_alt', label: 'Thêm khu vực', category: 'manage' },
+    CAP_NHAT_KHU_VUC: { badgeClass: 'action-manage', icon: 'edit_location_alt', label: 'Cập nhật khu vực', category: 'manage' },
+    XOA_KHU_VUC: { badgeClass: 'action-alert', icon: 'wrong_location', label: 'Xóa khu vực', category: 'manage' },
+    THEM_TU_CHIEU_SANG: { badgeClass: 'action-manage', icon: 'add_box', label: 'Thêm tủ chiếu sáng', category: 'manage' },
+    CAP_NHAT_TU_CHIEU_SANG: { badgeClass: 'action-manage', icon: 'settings', label: 'Cập nhật tủ chiếu sáng', category: 'manage' },
+    XOA_TU_CHIEU_SANG: { badgeClass: 'action-alert', icon: 'delete', label: 'Xóa tủ chiếu sáng', category: 'manage' },
+    THEM_TUYEN_CHIEU_SANG: { badgeClass: 'action-manage', icon: 'alt_route', label: 'Thêm tuyến chiếu sáng', category: 'manage' },
+    CAP_NHAT_TUYEN_CHIEU_SANG: { badgeClass: 'action-manage', icon: 'settings', label: 'Cập nhật tuyến chiếu sáng', category: 'manage' },
+    XOA_TUYEN_CHIEU_SANG: { badgeClass: 'action-alert', icon: 'delete', label: 'Xóa tuyến chiếu sáng', category: 'manage' },
+    THEM_DIEM_DEN: { badgeClass: 'action-manage', icon: 'lightbulb', label: 'Thêm điểm đèn', category: 'manage' },
+    CAP_NHAT_DIEM_DEN: { badgeClass: 'action-manage', icon: 'settings', label: 'Cập nhật điểm đèn', category: 'manage' },
+    XOA_DIEM_DEN: { badgeClass: 'action-alert', icon: 'delete', label: 'Xóa điểm đèn', category: 'manage' },
+    THEM_NGUOI_DUNG: { badgeClass: 'action-manage', icon: 'person_add', label: 'Thêm người dùng', category: 'manage' },
+    CAP_NHAT_NGUOI_DUNG: { badgeClass: 'action-manage', icon: 'manage_accounts', label: 'Cập nhật người dùng', category: 'manage' },
+    MO_KHOA_TAI_KHOAN: { badgeClass: 'action-manage', icon: 'lock_open', label: 'Mở khóa tài khoản', category: 'manage' },
+    KHOA_TAI_KHOAN: { badgeClass: 'action-alert', icon: 'lock', label: 'Khóa tài khoản', category: 'manage' },
+    PHAN_QUYEN_VAI_TRO: { badgeClass: 'action-manage', icon: 'admin_panel_settings', label: 'Phân quyền vai trò', category: 'manage' },
+    CAP_NHAT_PHAN_QUYEN: { badgeClass: 'action-manage', icon: 'admin_panel_settings', label: 'Cập nhật phân quyền', category: 'manage' },
+    CAU_HINH_CANH_BAO: { badgeClass: 'action-alert', icon: 'notifications_active', label: 'Cấu hình cảnh báo', category: 'alert' },
+    TAO_BAO_CAO: { badgeClass: 'action-view', icon: 'summarize', label: 'Tạo báo cáo', category: 'report' },
+    TRUY_CAP_TRAI_PHEP: { badgeClass: 'action-alert', icon: 'shield', label: 'Truy cập trái phép', category: 'security' }
+  };
+
+  /** Bảng fallback cho các mã thao tác mới hoặc chuỗi tiếng Việt cũ. */
+  const ACTION_PATTERN_RULES = [
+    { test: /dang_xuat|đăng xuất/, badgeClass: 'action-auth', icon: 'logout', category: 'auth' },
+    { test: /dang_nhap|đăng nhập/, badgeClass: 'action-auth', icon: 'login', category: 'auth' },
+    { test: /truy_cap_trai_phep|trái phép/, badgeClass: 'action-alert', icon: 'shield', category: 'security' },
+    { test: /canh_bao|cảnh báo|sự cố/, badgeClass: 'action-alert', icon: 'warning', category: 'alert' },
+    { test: /bao_cao|báo cáo/, badgeClass: 'action-view', icon: 'summarize', category: 'report' },
+    { test: /dieu_khien|điều khiển|bật|tắt|sáng/, badgeClass: 'action-control', icon: 'tune', category: 'control' },
+    { test: /lich_van_hanh|lịch/, badgeClass: 'action-manage', icon: 'event_note', category: 'schedule' },
+    { test: /xem|tra cứu/, badgeClass: 'action-view', icon: 'visibility', category: 'view' },
+    { test: /^(them_|cap_nhat_|xoa_|khoa_|mo_khoa_|phan_quyen_)|quản lý|cập nhật|thêm|sửa|xóa/, badgeClass: 'action-manage', icon: 'settings', category: 'manage' }
+  ];
+
+  const TARGET_META_MAP = {
+    lenhdieukhien: { label: 'Lệnh điều khiển', filterKey: 'lenhdieukhien' },
+    tuchieusang: { label: 'Tủ chiếu sáng', filterKey: 'tuchieusang' },
+    tuyenchieusang: { label: 'Tuyến chiếu sáng', filterKey: 'tuyenchieusang' },
+    diemden: { label: 'Điểm đèn', filterKey: 'diemden' },
+    khuvuc: { label: 'Khu vực', filterKey: 'khuvuc' },
+    lichvanhanh: { label: 'Lịch vận hành', filterKey: 'lichvanhanh' },
+    cauhinhcanhbao: { label: 'Cấu hình cảnh báo', filterKey: 'cauhinhcanhbao' },
+    nguoidung: { label: 'Người dùng', filterKey: 'nguoidung' },
+    vaitro_quyenhan: { label: 'Vai trò & quyền hạn', filterKey: 'nguoidung' },
+    baocao: { label: 'Báo cáo thống kê', filterKey: 'baocao' },
+    phiendangnhap: { label: 'Phiên đăng nhập', filterKey: 'phiendangnhap' },
+    hethong: { label: 'Hệ thống', filterKey: 'hethong' }
+  };
+
+  /** Tải danh sách người dùng (chỉ Admin) để hiển thị họ tên và cho phép tìm kiếm theo tên/mã. */
+  async function loadUserDirectoryForAdmin() {
+    if (!isAdmin || usersDirectoryLoaded) return;
+    usersDirectoryLoaded = true;
+    try {
+      const users = await window.api.get('/NguoiDung');
+      if (!Array.isArray(users)) return;
+      users.forEach(u => {
+        const code = String(u.maNguoiDung || '').trim();
+        if (!code) return;
+        userDirectoryMap.set(code.toUpperCase(), {
+          maNguoiDung: code,
+          hoTen: String(u.hoTen || '').trim(),
+          tenDangNhap: String(u.tenDangNhap || '').trim(),
+          tenVaiTro: String(u.tenVaiTro || '').trim()
+        });
+      });
+    } catch (err) {
+      console.warn('[ActivityLog] Không thể tải danh sách người dùng:', err);
     }
-    if (lower.includes('đăng xuất')) {
-      return { badgeClass: 'action-auth', icon: 'logout', label: act };
+  }
+
+  function getUserDisplay(maNguoiDung) {
+    const code = String(maNguoiDung || '').trim();
+    if (!code) {
+      return { code: '--', name: '', full: 'Hệ thống', searchText: 'hệ thống' };
     }
-    if (lower.includes('điều khiển') || lower.includes('bật') || lower.includes('tắt') || lower.includes('sáng')) {
-      return { badgeClass: 'action-control', icon: 'tune', label: act };
+    const info = userDirectoryMap.get(code.toUpperCase());
+    if (info && info.hoTen) {
+      return {
+        code,
+        name: info.hoTen,
+        full: `${info.hoTen} (${code})`,
+        searchText: `${code} ${info.hoTen} ${info.tenDangNhap} ${info.tenVaiTro}`.toLowerCase()
+      };
     }
-    if (lower.includes('xem') || lower.includes('tra cứu')) {
-      return { badgeClass: 'action-view', icon: 'visibility', label: act };
+    return { code, name: '', full: code, searchText: code.toLowerCase() };
+  }
+
+  /** Diễn giải nội dung nhật ký từ cột noiDung (hỗ trợ JSON metadata của TAO_BAO_CAO). */
+  function formatLogNoiDung(item) {
+    const raw = String(item?.noiDung ?? item?.chiTiet ?? '').trim();
+    if (!raw) return '--';
+
+    const upperAction = String(item?.hanhDong || '').trim().toUpperCase();
+    if (upperAction === 'TAO_BAO_CAO' || (raw.startsWith('{') && raw.endsWith('}'))) {
+      try {
+        const meta = JSON.parse(raw);
+        if (meta && typeof meta === 'object') {
+          const ten = meta.ten ?? meta.Ten;
+          const loai = meta.loai ?? meta.Loai;
+          const dinhDang = meta.dinhDang ?? meta.DinhDang;
+          const tenKhuVuc = meta.tenKhuVuc ?? meta.TenKhuVuc;
+          const maKhuVuc = meta.maKhuVuc ?? meta.MaKhuVuc;
+          const kyDuLieu = meta.kyDuLieu ?? meta.KyDuLieu;
+          const tuNgay = meta.tuNgay ?? meta.TuNgay;
+          const denNgay = meta.denNgay ?? meta.DenNgay;
+
+          const parts = [];
+          if (ten) parts.push(`Tên: ${ten}`);
+          if (loai) parts.push(`Loại: ${loai}`);
+          if (dinhDang) parts.push(`Định dạng: ${String(dinhDang).toUpperCase()}`);
+          if (tenKhuVuc || maKhuVuc) parts.push(`Khu vực: ${tenKhuVuc || maKhuVuc}`);
+          if (kyDuLieu) parts.push(`Kỳ: ${kyDuLieu}`);
+          if (tuNgay || denNgay) parts.push(`Thời gian: ${tuNgay || '...'} -> ${denNgay || '...'}`);
+          if (parts.length > 0) return parts.join(' | ');
+        }
+      } catch (_) {
+        // Nếu chuỗi không phải JSON hợp lệ thì giữ nguyên nội dung gốc
+      }
     }
-    if (lower.includes('quản lý') || lower.includes('cập nhật') || lower.includes('thêm') || lower.includes('sửa') || lower.includes('xóa')) {
-      return { badgeClass: 'action-manage', icon: 'settings', label: act };
+    return raw;
+  }
+
+  function getTargetInfo(item) {
+    const rawTarget = String(item?.doiTuong || '').trim();
+    const upperAction = String(item?.hanhDong || '').trim().toUpperCase();
+
+    if (upperAction === 'TAO_BAO_CAO') {
+      return { label: rawTarget ? `Báo cáo: ${rawTarget}` : 'Báo cáo thống kê', filterKey: 'baocao' };
     }
-    if (lower.includes('cảnh báo') || lower.includes('sự cố')) {
-      return { badgeClass: 'action-alert', icon: 'warning', label: act };
+    if (upperAction === 'DANG_NHAP' || upperAction === 'DANG_NHAP_BI_CHAN' || upperAction === 'DANG_XUAT') {
+      return { label: rawTarget ? `Phiên đăng nhập (${rawTarget})` : 'Phiên đăng nhập', filterKey: 'phiendangnhap' };
     }
-    return { badgeClass: 'action-view', icon: 'info', label: act || 'Hoạt động' };
+    if (upperAction === 'TRUY_CAP_TRAI_PHEP') {
+      return { label: rawTarget || 'Hệ thống', filterKey: 'hethong' };
+    }
+
+    const mapped = TARGET_META_MAP[rawTarget.toLowerCase()];
+    if (mapped) return mapped;
+
+    return {
+      label: rawTarget || 'Hệ thống',
+      filterKey: rawTarget ? rawTarget.toLowerCase() : 'hethong'
+    };
+  }
+
+  function getActionBadge(action) {
+    const raw = (action || '').toString().trim();
+    const upper = raw.toUpperCase();
+    if (ACTION_META_MAP[upper]) {
+      return ACTION_META_MAP[upper];
+    }
+
+    const lower = raw.toLowerCase();
+    for (const rule of ACTION_PATTERN_RULES) {
+      if (rule.test.test(lower)) {
+        return { badgeClass: rule.badgeClass, icon: rule.icon, label: raw || 'Hoạt động', category: rule.category };
+      }
+    }
+    return { badgeClass: 'action-view', icon: 'info', label: raw || 'Hoạt động', category: 'other' };
+  }
+
+  function matchesActionCategory(item, actionVal) {
+    if (!actionVal) return true;
+    const meta = getActionBadge(item?.hanhDong);
+    if (meta.category === actionVal) return true;
+    return String(item?.hanhDong || '').toLowerCase().includes(actionVal);
+  }
+
+  function matchesTargetCategory(item, targetVal) {
+    if (!targetVal) return true;
+    const info = getTargetInfo(item);
+    return info.filterKey === targetVal || String(item?.doiTuong || '').toLowerCase().includes(targetVal);
   }
 
   function getResultBadge(result) {
@@ -302,7 +466,10 @@ document.addEventListener('DOMContentLoaded', () => {
         queryParams.maNguoiDung = currentUserCode;
       }
 
-      const data = await window.api.get('/NhatKyHeThong', queryParams);
+      const [data] = await Promise.all([
+        window.api.get('/NhatKyHeThong', queryParams),
+        loadUserDirectoryForAdmin()
+      ]);
 
       if (Array.isArray(data)) {
         allLogs = data;
@@ -352,8 +519,8 @@ document.addEventListener('DOMContentLoaded', () => {
     filteredLogs = allLogs.filter(item => {
       // Lọc theo người dùng (Dành cho Quản trị viên)
       if (isAdmin && userVal) {
-        const itemUser = (item.maNguoiDung || '').toLowerCase();
-        if (!itemUser.includes(userVal)) return false;
+        const userDisplay = getUserDisplay(item.maNguoiDung);
+        if (!userDisplay.searchText.includes(userVal)) return false;
       }
 
       // Lọc theo thời gian
@@ -364,9 +531,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Lọc theo loại thao tác
-      if (actionVal) {
-        const itemAction = (item.hanhDong || '').toLowerCase();
-        if (!itemAction.includes(actionVal)) return false;
+      if (actionVal && !matchesActionCategory(item, actionVal)) {
+        return false;
       }
 
       // Lọc theo trạng thái kết quả
@@ -375,14 +541,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Lọc theo đối tượng tác động
-      if (targetVal) {
-        const itemTarget = (item.doiTuong || '').toLowerCase();
-        if (!itemTarget.includes(targetVal)) return false;
+      if (targetVal && !matchesTargetCategory(item, targetVal)) {
+        return false;
       }
 
       // Tìm kiếm từ khóa tự do
       if (query) {
-        const matchString = `${item.maNhatKy} ${item.maNguoiDung} ${item.hanhDong} ${item.doiTuong} ${item.chiTiet} ${item.diaChiIP}`.toLowerCase();
+        const userDisplay = getUserDisplay(item.maNguoiDung);
+        const actionMeta = getActionBadge(item.hanhDong);
+        const targetInfo = getTargetInfo(item);
+        const detailText = formatLogNoiDung(item);
+        const matchString = `${item.maNhatKy} ${userDisplay.searchText} ${item.hanhDong || ''} ${actionMeta.label} ${item.doiTuong || ''} ${targetInfo.label} ${item.maDoiTuong || ''} ${detailText}`.toLowerCase();
         if (!matchString.includes(query)) return false;
       }
 
@@ -452,8 +621,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const timeParts = formatDateTimeParts(item.thoiGian);
       const actionBadge = getActionBadge(item.hanhDong);
       const resultBadge = getResultBadge(item.ketQua);
-      const userCol = isAdmin 
-        ? `<td style="font-weight: 700; color: #1e3a8a;">${escapeHtml(item.maNguoiDung || '--')}</td>`
+      const userDisplay = getUserDisplay(item.maNguoiDung);
+      const targetInfo = getTargetInfo(item);
+      const detailText = formatLogNoiDung(item);
+      const maDoiTuongText = String(item.maDoiTuong || '').trim() || '--';
+      const userCol = isAdmin
+        ? `<td style="font-weight: 700; color: #1e3a8a;" title="${escapeHtml(userDisplay.full)}">${escapeHtml(userDisplay.code)}${userDisplay.name ? `<span style="display: block; font-weight: 500; font-size: 11px; color: #475569;">${escapeHtml(userDisplay.name)}</span>` : ''}</td>`
         : '';
 
       return `
@@ -465,14 +638,14 @@ document.addEventListener('DOMContentLoaded', () => {
           </td>
           ${userCol}
           <td>
-            <span class="action-badge ${actionBadge.badgeClass}">
+            <span class="action-badge ${actionBadge.badgeClass}" title="${escapeHtml(item.hanhDong || '')}">
               <span class="material-symbols-outlined">${actionBadge.icon}</span>
               ${escapeHtml(actionBadge.label)}
             </span>
           </td>
-          <td style="font-weight: 600; color: #0f172a;">${escapeHtml(item.doiTuong || 'Hệ thống')}</td>
-          <td class="notes-cell" title="${escapeHtml(item.chiTiet || '')}">${escapeHtml(item.chiTiet || '--')}</td>
-          <td style="font-family: monospace; color: #475569; font-size: 10px;">${escapeHtml(item.diaChiIP || '--')}</td>
+          <td style="font-weight: 600; color: #0f172a;" title="${escapeHtml(item.doiTuong || '')}">${escapeHtml(targetInfo.label)}</td>
+          <td class="notes-cell" title="${escapeHtml(detailText === '--' ? '' : detailText)}">${escapeHtml(detailText)}</td>
+          <td style="font-family: monospace; color: #475569; font-size: 11px;">${escapeHtml(maDoiTuongText)}</td>
           <td>${resultBadge}</td>
           <td style="text-align: center;">
             <button class="view-detail btn-view-log" data-id="${item.maNhatKy}" type="button" title="Xem chi tiết bản ghi">
@@ -586,6 +759,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (dialogDetails) {
+      const actionMeta = getActionBadge(item.hanhDong);
+      const userDisplay = getUserDisplay(item.maNguoiDung);
+      const targetInfo = getTargetInfo(item);
+      const detailText = formatLogNoiDung(item);
+      const maDoiTuongText = String(item.maDoiTuong || '').trim() || 'Không có';
+      const detailDisplay = detailText === '--' ? 'Không có mô tả chi tiết' : detailText;
+
       dialogDetails.innerHTML = `
         <div>
           <dt>Mã sự kiện</dt>
@@ -597,23 +777,23 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div>
           <dt>Tài khoản thực hiện</dt>
-          <dd><strong style="color: #1e3a8a;">${escapeHtml(item.maNguoiDung || 'Hệ thống')}</strong></dd>
+          <dd><strong style="color: #1e3a8a;">${escapeHtml(userDisplay.full)}</strong></dd>
         </div>
         <div>
           <dt>Loại thao tác</dt>
-          <dd><span class="action-badge ${getActionBadge(item.hanhDong).badgeClass}">${escapeHtml(item.hanhDong || '--')}</span></dd>
+          <dd><span class="action-badge ${actionMeta.badgeClass}">${escapeHtml(actionMeta.label)}</span>${item.hanhDong ? ` <small style="color:#64748b;font-family:monospace;">(${escapeHtml(item.hanhDong)})</small>` : ''}</dd>
         </div>
         <div>
           <dt>Đối tượng tác động</dt>
-          <dd>${escapeHtml(item.doiTuong || 'Hệ thống SmartLight')}</dd>
+          <dd>${escapeHtml(targetInfo.label)}</dd>
+        </div>
+        <div>
+          <dt>Mã đối tượng</dt>
+          <dd style="font-family: monospace;">${escapeHtml(maDoiTuongText)}</dd>
         </div>
         <div>
           <dt>Nội dung chi tiết</dt>
-          <dd style="white-space: pre-wrap; line-height: 1.5;">${escapeHtml(item.chiTiet || 'Không có mô tả chi tiết')}</dd>
-        </div>
-        <div>
-          <dt>Địa chỉ IP máy trạm</dt>
-          <dd style="font-family: monospace;">${escapeHtml(item.diaChiIP || 'Không xác định')}</dd>
+          <dd style="white-space: pre-wrap; line-height: 1.5;">${escapeHtml(detailDisplay)}</dd>
         </div>
         <div>
           <dt>Trạng thái kết quả</dt>
@@ -652,26 +832,33 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const headers = ['STT', 'Mã nhật ký', 'Thời gian', 'Tài khoản', 'Loại thao tác', 'Đối tượng', 'Mô tả chi tiết', 'Địa chỉ IP', 'Kết quả'];
+        const headers = ['STT', 'Mã nhật ký', 'Thời gian', 'Tài khoản', 'Loại thao tác', 'Đối tượng', 'Mô tả chi tiết', 'Mã đối tượng', 'Kết quả'];
         const csvRows = [];
         // Ký tự BOM (\uFEFF) giúp Microsoft Excel hiển thị đúng font tiếng Việt UTF-8
         csvRows.push('\uFEFF' + headers.join(','));
+
+        const csvEscape = (val) => `"${String(val ?? '').replace(/"/g, '""')}"`;
 
         filteredLogs.forEach((item, index) => {
           const timeParts = formatDateTimeParts(item.thoiGian);
           const fullTime = `${timeParts.date} ${timeParts.time}`;
           const resultStr = Number(item.ketQua) === 1 ? 'Thành công' : 'Thất bại';
+          const userDisplay = getUserDisplay(item.maNguoiDung);
+          const actionMeta = getActionBadge(item.hanhDong);
+          const targetInfo = getTargetInfo(item);
+          const rawDetail = formatLogNoiDung(item);
+          const detailText = rawDetail === '--' ? '' : rawDetail;
 
           const row = [
             index + 1,
             item.maNhatKy,
-            `"${fullTime}"`,
-            `"${(item.maNguoiDung || '').replace(/"/g, '""')}"`,
-            `"${(item.hanhDong || '').replace(/"/g, '""')}"`,
-            `"${(item.doiTuong || '').replace(/"/g, '""')}"`,
-            `"${(item.chiTiet || '').replace(/"/g, '""')}"`,
-            `"${item.diaChiIP || ''}"`,
-            `"${resultStr}"`
+            csvEscape(fullTime),
+            csvEscape(userDisplay.full),
+            csvEscape(actionMeta.label),
+            csvEscape(targetInfo.label),
+            csvEscape(detailText),
+            csvEscape(item.maDoiTuong || ''),
+            csvEscape(resultStr)
           ];
           csvRows.push(row.join(','));
         });

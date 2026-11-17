@@ -581,7 +581,7 @@ function applySidebarMenuRbac() {
         if (labelEl) labelEl.textContent = 'Nhật ký hệ thống';
       } else if (policy.key === 'operator') {
         link.setAttribute('href', 'activity-log.html');
-        if (labelEl) labelEl.textContent = 'Lịch sử hoạt động cá nhân';
+        if (labelEl) labelEl.textContent = 'Nhật ký hoạt động';
       }
     }
   });

@@ -90,10 +90,10 @@
                 <div class="hes-phase-col">
                     <div class="hes-phase-col-header">
                         <span class="hes-phase-name">PHA A</span>
-                        <span class="hes-badge-ok">Chuẩn</span>
+                        <span class="hes-badge-ok" id="badgeUa">Chuẩn</span>
                     </div>
                     <div class="hes-phase-value-row">
-                        <span class="hes-phase-val" id="valUa">225.4</span>
+                        <span class="hes-phase-val" id="valUa">--</span>
                         <span class="hes-phase-unit">V</span>
                     </div>
                     <div class="hes-phase-bar-line bar-color-yellow"></div>
@@ -103,10 +103,10 @@
                 <div class="hes-phase-col">
                     <div class="hes-phase-col-header">
                         <span class="hes-phase-name">PHA B</span>
-                        <span class="hes-badge-ok">Chuẩn</span>
+                        <span class="hes-badge-ok" id="badgeUb">Chuẩn</span>
                     </div>
                     <div class="hes-phase-value-row">
-                        <span class="hes-phase-val" id="valUb">223.8</span>
+                        <span class="hes-phase-val" id="valUb">--</span>
                         <span class="hes-phase-unit">V</span>
                     </div>
                     <div class="hes-phase-bar-line bar-color-green"></div>
@@ -116,10 +116,10 @@
                 <div class="hes-phase-col">
                     <div class="hes-phase-col-header">
                         <span class="hes-phase-name">PHA C</span>
-                        <span class="hes-badge-ok">Chuẩn</span>
+                        <span class="hes-badge-ok" id="badgeUc">Chuẩn</span>
                     </div>
                     <div class="hes-phase-value-row">
-                        <span class="hes-phase-val" id="valUc">224.1</span>
+                        <span class="hes-phase-val" id="valUc">--</span>
                         <span class="hes-phase-unit">V</span>
                     </div>
                     <div class="hes-phase-bar-line bar-color-coral"></div>
@@ -127,8 +127,8 @@
             </div>
 
             <div class="hes-measure-footer">
-                <div class="hes-footer-stat">Độ lệch pha: <strong>0.71%</strong> (Tối ưu)</div>
-                <div class="hes-footer-stat">Tần số lưới: <strong>50.02 Hz</strong></div>
+                <div class="hes-footer-stat">Độ lệch pha: <strong id="valPhaseUnbalance">0.00%</strong> <span id="valPhaseUnbalanceTag" style="font-weight:600;">(Tối ưu)</span></div>
+                <div class="hes-footer-stat">Tần số lưới: <strong>50.00 Hz</strong></div>
             </div>
         </div>
 
@@ -235,76 +235,10 @@
     </div>
 
     <!-- ==========================================================================
-         C. HÀNG 2: CARD ĐIỂM ĐÈN GIÁM SÁT ĐIỂN HÌNH
+         C. HÀNG 2: DANH SÁCH CÁC TUYẾN & ĐIỂM ĐÈN THUỘC TỦ (HOẶC ĐÈN ĐƠN LẺ)
          ========================================================================== -->
-    <div class="hes-featured-lamp-card">
-        <div class="hes-lamp-card-header">
-            <div class="hes-lamp-header-left">
-                <div class="hes-lamp-icon-circle">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"></path>
-                        <line x1="9" y1="21" x2="15" y2="21"></line>
-                    </svg>
-                </div>
-                <div class="hes-lamp-title-wrap">
-                    <div class="hes-lamp-title-row">
-                        <h3 class="hes-lamp-title">Điểm Đèn Giám Sát Điển Hình: DD_01 (Tuyến 1 - Nguyễn Huệ)</h3>
-                        <span class="hes-badge-single-phase">1 Pha (Chuẩn CSDL)</span>
-                    </div>
-                    <div class="hes-lamp-subinfo">Model LED Phillips 150W LoRaWAN Mesh &bull; Cột số C01-08 &bull; Tuyến pha A</div>
-                </div>
-            </div>
-            <div class="hes-lamp-header-right">
-                <span class="hes-lamp-last-time">Đo gần nhất: 14:31:55</span>
-                <a href="javascript:void(0)" class="hes-lamp-detail-link" onclick="alert('Mở chi tiết điểm đèn DD_01')">Xem chi tiết đèn &rarr;</a>
-            </div>
-        </div>
-
-        <div class="hes-lamp-tiles-grid">
-            <!-- Ô 1: Điện áp tức thời -->
-            <div class="hes-lamp-tile">
-                <span class="hes-tile-lbl">Điện áp tức thời</span>
-                <div class="hes-tile-val">224.2 <span class="hes-tile-unit">V</span></div>
-                <span class="hes-tile-sub color-green">Bình thường (&plusmn;1.8%)</span>
-            </div>
-
-            <!-- Ô 2: Dòng điện (I) -->
-            <div class="hes-lamp-tile">
-                <span class="hes-tile-lbl">Dòng điện (I)</span>
-                <div class="hes-tile-val">0.68 <span class="hes-tile-unit">A</span></div>
-                <span class="hes-tile-sub">Tải định mức: 0.72A</span>
-            </div>
-
-            <!-- Ô 3: Công suất thực tế -->
-            <div class="hes-lamp-tile">
-                <span class="hes-tile-lbl">Công suất thực tế</span>
-                <div class="hes-tile-val">152.4 <span class="hes-tile-unit">W</span></div>
-                <span class="hes-tile-sub">Tiêu chuẩn: 150W</span>
-            </div>
-
-            <!-- Ô 4: Nhiệt độ chip LED -->
-            <div class="hes-lamp-tile">
-                <span class="hes-tile-lbl">Nhiệt độ chip LED</span>
-                <div class="hes-tile-val">54.5 <span class="hes-tile-unit">&deg;C</span></div>
-                <span class="hes-tile-sub color-green"><span class="hes-status-dot-inline"></span> An toàn (&lt; 75&deg;C)</span>
-            </div>
-
-            <!-- Ô 5: Độ sáng hiện tại -->
-            <div class="hes-lamp-tile">
-                <span class="hes-tile-lbl">Độ sáng hiện tại</span>
-                <div class="hes-tile-val">80 <span class="hes-tile-unit">%</span></div>
-                <div class="hes-tile-progress">
-                    <div class="hes-tile-bar" style="width: 80%;"></div>
-                </div>
-            </div>
-
-            <!-- Ô 6: Chất lượng RSSI -->
-            <div class="hes-lamp-tile">
-                <span class="hes-tile-lbl">Chất lượng RSSI</span>
-                <div class="hes-tile-val">-68 <span class="hes-tile-unit">dBm</span></div>
-                <span class="hes-tile-sub">Sóng cực tốt (Hop 1)</span>
-            </div>
-        </div>
+    <div id="hesCabinetDevicesContainer">
+        <!-- Được hiển thị tự động và đầy đủ tất cả tuyến và các điểm đèn thuộc tủ được chọn từ hes-live.js -->
     </div>
 
     <!-- ==========================================================================
@@ -517,19 +451,11 @@
         </div>
 
         <div class="hes-table-footer-row">
-            <div class="hes-footer-info">
-                Hiển thị 1 đến 5 của 1,420 bản ghi &nbsp;|&nbsp; Thời gian truy vấn SQL: <strong>14ms</strong>
+            <div class="hes-footer-info" id="telemetryFooterInfo">
+                Đang đồng bộ nhật ký từ cơ sở dữ liệu dbSmartLight...
             </div>
-            <div class="hes-pagination">
-                <button type="button" class="hes-page-nav" title="Về trang đầu">&vert;&lt;</button>
-                <button type="button" class="hes-page-nav" title="Trang trước">&lt;</button>
-                <button type="button" class="hes-page-num active">1</button>
-                <button type="button" class="hes-page-num">2</button>
-                <button type="button" class="hes-page-num">3</button>
-                <span class="hes-page-ellipsis">...</span>
-                <button type="button" class="hes-page-num">284</button>
-                <button type="button" class="hes-page-nav" title="Trang sau">&gt;</button>
-                <button type="button" class="hes-page-nav" title="Đến trang cuối">&gt;&vert;</button>
+            <div class="hes-pagination" id="telemetryPagination">
+                <!-- Nút phân trang tự động sinh từ hes-live.js -->
             </div>
         </div>
     </div>
@@ -560,72 +486,16 @@
 
     <!-- Script tương tác tức thời cho trang giám sát thông số điện -->
     <script type="text/javascript">
-        function toggleMonitorMode(mode) {
-            var lblCabinet = document.getElementById('lblModeCabinet');
-            var lblLamp = document.getElementById('lblModeLamp');
-            if (mode === 'cabinet') {
-                lblCabinet.classList.add('active');
-                lblLamp.classList.remove('active');
-            } else {
-                lblLamp.classList.add('active');
-                lblCabinet.classList.remove('active');
-            }
-        }
-
-        function onDeviceChanged(deviceVal) {
-            console.log('Chuyển thiết bị giám sát:', deviceVal);
-            var btn = document.getElementById('btnInstantRead');
-            if (btn) {
-                btn.style.opacity = '0.7';
-                setTimeout(function () {
-                    btn.style.opacity = '1';
-                }, 300);
-            }
-        }
-
-        function triggerInstantRead() {
-            var icon = document.getElementById('iconLightning');
-            var btnText = document.getElementById('btnInstantText');
-            if (icon && btnText) {
-                btnText.innerText = 'Đang đọc...';
-                icon.style.transform = 'scale(1.2) rotate(15deg)';
-                setTimeout(function () {
-                    btnText.innerText = 'Lấy dữ liệu tức thời';
-                    icon.style.transform = 'none';
-
-                    // Cập nhật ngẫu nhiên nhẹ để minh họa tương tác trực quan
-                    var now = new Date();
-                    var timeStr = now.toTimeString().split(' ')[0];
-                    var liveTime = document.getElementById('hesLiveTime');
-                    if (liveTime) liveTime.innerText = timeStr;
-                    var lastSync = document.getElementById('hesLastSyncTime');
-                    if (lastSync) lastSync.innerText = 'Đồng bộ lần cuối: ' + timeStr + ' ' + now.toLocaleDateString('vi-VN');
-                }, 600);
-            }
-        }
-
-        var autoIntervals = ['Tự động: 5s', 'Tự động: 10s', 'Tự động: 30s', 'Tự động: 60s'];
-        var currentIntervalIdx = 1;
-        function toggleAutoInterval() {
-            currentIntervalIdx = (currentIntervalIdx + 1) % autoIntervals.length;
-            var txt = document.getElementById('autoIntervalText');
-            if (txt) {
-                txt.innerText = autoIntervals[currentIntervalIdx];
-            }
-        }
-
-        function exportDataExcel() {
-            alert('Trích xuất dữ liệu thông số điện bảng DuLieuGiamSatTu ra file Excel thành công!');
-        }
-
         function viewRecordDetail(recordId) {
-            alert('Xem chi tiết bản ghi dữ liệu SCADA: ' + recordId);
+            alert('Chi tiết bản ghi dữ liệu đo lường SCADA: ' + recordId);
         }
 
         function filterLogTable() {
             var input = document.getElementById('hesTableSearch');
+            if (!input) return;
             var filter = input.value.toUpperCase();
             var table = document.getElementById('hesLogTable');
+            if (!table) return;
             var trs = table.getElementsByTagName('tr');
 
             for (var i = 1; i < trs.length; i++) {

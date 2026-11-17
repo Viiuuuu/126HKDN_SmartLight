@@ -15,14 +15,6 @@
                 </svg>
             </div>
             <h1 class="hes-dash-title" style="font-size: 17px; text-transform: uppercase;">TỔNG QUAN HỆ THỐNG</h1>
-            <span class="hes-sync-badge">
-                <svg viewBox="0 0 24 24">
-                    <polyline points="23 4 23 10 17 10"></polyline>
-                    <polyline points="1 20 1 14 7 14"></polyline>
-                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                </svg>
-                <span id="hesSyncBadgeText">Đồng bộ: 14:32:45 Hôm nay</span>
-            </span>
         </div>
 
         <div>
@@ -38,66 +30,39 @@
     </div>
 
     <!-- ==========================================================================
-         B. BỐN CARD THỐNG KÊ
+         B. THANH THỐNG KÊ 1 HÀNG (CÁC CHỮ NẰM CÙNG HÀNG)
          ========================================================================== -->
-    <div class="hes-stats-grid">
-        <!-- Card 1: Tổng số tủ chiếu sáng -->
-        <div class="hes-stat-card">
-            <div class="hes-stat-label">TỔNG SỐ TỦ CHIẾU SÁNG</div>
-            <div class="hes-stat-value-row">
-                <span class="hes-stat-number">04</span>
-                <span class="hes-stat-subtext">Tủ điều khiển</span>
-            </div>
-            <div class="hes-stat-footer">
-                <span class="hes-status-dot" style="background-color: #0284C7; box-shadow: none;"></span>
-                <span>Phạm vi: Quận Hải Châu & Sơn Trà</span>
-            </div>
+    <div class="hes-stats-row">
+        <!-- Mục 1: Tổng số tủ chiếu sáng -->
+        <div class="hes-stat-chip-item">
+            <span class="hes-stat-chip-label">TỔNG SỐ TỦ:</span>
+            <strong class="hes-stat-chip-val" id="hesStatTotalTu">4</strong>
+            <span class="hes-stat-chip-sub">tủ</span>
+            <span class="hes-stat-chip-note" id="hesStatPowerKw">(Tải ON: 0.00 kW)</span>
         </div>
 
-        <!-- Card 2: Tủ đang kết nối -->
-        <div class="hes-stat-card">
-            <div class="hes-stat-label">TỦ ĐANG KẾT NỐI</div>
-            <div class="hes-stat-value-row">
-                <span class="hes-stat-number">03</span>
-                <span class="hes-stat-subtext">/ 04 Đang trực tuyến</span>
-            </div>
-            <div class="hes-stat-badges">
-                <span class="hes-badge-pill hes-badge-online">
-                    <span class="hes-status-dot" style="width: 6px; height: 6px;"></span> 75% Online
-                </span>
-                <span class="hes-badge-pill hes-badge-offline">
-                    <span class="hes-status-dot" style="width: 6px; height: 6px; background-color: #EF4444;"></span> 1 Tủ lỗi
-                </span>
-            </div>
+        <!-- Mục 2: Tủ đang kết nối -->
+        <div class="hes-stat-chip-item">
+            <span class="hes-stat-chip-label">TỦ ĐANG KẾT NỐI:</span>
+            <strong class="hes-stat-chip-val text-online" id="hesStatOnlineTu">0</strong>
+            <span class="hes-stat-chip-sub" id="hesStatOnlineSub">/ 4 tủ</span>
+            <span class="hes-stat-chip-badge" id="hesStatOfflineBadge" style="display:none;"></span>
         </div>
 
-        <!-- Card 3: Tổng số tuyến chiếu sáng -->
-        <div class="hes-stat-card">
-            <div class="hes-stat-label">TỔNG SỐ TUYẾN CHIẾU SÁNG</div>
-            <div class="hes-stat-value-row">
-                <span class="hes-stat-number">05</span>
-                <span class="hes-stat-subtext">Tuyến lộ trình</span>
-            </div>
-            <div class="hes-stat-footer" style="color: #047857;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0BB78A" stroke-width="2.5">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <span style="color: #334155; font-weight: 500;">100% Tuyến cài đặt hẹn giờ SCADA</span>
-            </div>
+        <!-- Mục 3: Tổng số tuyến chiếu sáng -->
+        <div class="hes-stat-chip-item">
+            <span class="hes-stat-chip-label">TỔNG SỐ TUYẾN:</span>
+            <strong class="hes-stat-chip-val" id="hesStatTotalTuyen">5</strong>
+            <span class="hes-stat-chip-sub">tuyến</span>
+            <span class="hes-stat-chip-note" id="hesStatActiveTuyen">(0 đang bật)</span>
         </div>
 
-        <!-- Card 4: Tổng số điểm đèn -->
-        <div class="hes-stat-card">
-            <div class="hes-stat-label">TỔNG SỐ ĐIỂM ĐÈN</div>
-            <div class="hes-stat-value-row">
-                <span class="hes-stat-number">08</span>
-                <span class="hes-stat-subtext">Bộ đèn LED Dim</span>
-            </div>
-            <div class="hes-stat-footer">
-                <span>Công suất ước tính:</span>
-                <strong style="color: var(--hes-text-main);">1.24 kW/h</strong>
-            </div>
+        <!-- Mục 4: Tổng số điểm đèn -->
+        <div class="hes-stat-chip-item">
+            <span class="hes-stat-chip-label">TỔNG SỐ ĐIỂM ĐÈN:</span>
+            <strong class="hes-stat-chip-val" id="hesStatTotalDen">8</strong>
+            <span class="hes-stat-chip-sub">điểm đèn</span>
+            <span class="hes-stat-chip-note" id="hesStatActiveDen">(0 đang sáng)</span>
         </div>
     </div>
 
@@ -259,7 +224,6 @@
                     </svg>
                     <div class="hes-donut-center">
                         <span class="hes-donut-number">4</span>
-                        <span class="hes-donut-sub">TỔNG TRẠM RTU</span>
                     </div>
                 </div>
 

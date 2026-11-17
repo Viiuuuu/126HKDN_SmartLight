@@ -236,5 +236,6 @@
     </form>
 
     <script src='<%= ResolveUrl("~/Scripts/hes-layout.js") %>' charset="utf-8"></script>
+    <script src='<%= ResolveUrl("~/Scripts/hes-live.js") %>' charset="utf-8"></script>
 </body>
 </html>

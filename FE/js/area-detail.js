@@ -97,14 +97,22 @@ function renderAreaRoutes(routes, lights, cabinetById) {
       const rate = routeLights.length
         ? Number((activeLights * 100 / routeLights.length).toFixed(1))
         : 0;
-      const isActive = Number(apiField(route, 'trangThaiHoatDong', 'TrangThaiHoatDong')) === 1;
-      const statusBadge = isActive
+      const rawRouteSt = Number(apiField(route, 'trangThaiHoatDong', 'TrangThaiHoatDong'));
+      const statusBadge = rawRouteSt === 1
         ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10.5px] font-semibold border border-emerald-200">
              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Hoạt động
            </span>`
-        : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10.5px] font-semibold border border-slate-200">
-             <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Ngừng hoạt động
-           </span>`;
+        : rawRouteSt === 2
+          ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10.5px] font-semibold border border-slate-200">
+               <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Dừng (Tắt)
+             </span>`
+          : rawRouteSt === 3
+            ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 text-red-700 text-[10.5px] font-semibold border border-red-200">
+                 <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Sự cố
+               </span>`
+            : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[10.5px] font-semibold border border-amber-200">
+                 <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Chưa xác định
+               </span>`;
 
       return `
         <tr class="hover:bg-slate-50/80 transition-colors">

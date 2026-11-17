@@ -603,7 +603,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const route = routeById.get(routeId);
         const cabinet = cabinetById.get(String(apiField(route, 'maTu', 'MaTu') || '').trim());
         const areaId = String(apiField(cabinet, 'maKhuVuc', 'MaKhuVuc') || '').trim();
-        const isActive = Number(apiField(item, 'trangThaiHoatDong', 'TrangThaiHoatDong')) === 1;
+        const lampSt = Number(apiField(item, 'trangThaiHoatDong', 'TrangThaiHoatDong'));
+        const isActive = lampSt === 1;
         const dim = apiField(item, 'doSang', 'DoSang');
         const power = apiField(item, 'congSuat', 'CongSuat');
         const lastSeen = apiField(item, 'lanDoCuoi', 'LanDoCuoi');
@@ -616,8 +617,8 @@ document.addEventListener('DOMContentLoaded', () => {
           areaId,
           route: String(apiField(route, 'tenTuyen', 'TenTuyen') || routeId),
           location: String(apiField(item, 'viTri', 'ViTri') || 'Chưa có vị trí'),
-          status: isActive ? 'Hoạt động' : 'Đang tắt',
-          statusClass: isActive ? 'status-active' : 'status-lost',
+          status: lampSt === 1 ? 'Hoạt động' : lampSt === 2 ? 'Đang tắt' : lampSt === 3 ? 'Sự cố' : 'Chưa xác định',
+          statusClass: lampSt === 1 ? 'status-active' : lampSt === 3 ? 'status-danger' : 'status-lost',
           power: power !== null && power !== undefined ? `${power} W` : 'Chưa có dữ liệu',
           dim: dim !== null && dim !== undefined ? `${dim}%` : 'Chưa có dữ liệu',
           iconType: 'lamp',

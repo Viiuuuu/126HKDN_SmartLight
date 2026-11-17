@@ -36,9 +36,11 @@ function normalizeLight(item) {
       ? 'Chưa xác định'
       : Number(rawStatus) === 1
         ? 'Hoạt động'
-        : Number(rawStatus) === 0
+        : Number(rawStatus) === 2
           ? 'Đang tắt'
-          : 'Cảnh báo';
+          : Number(rawStatus) === 3
+            ? 'Cảnh báo'
+            : 'Chưa xác định';
 
   return {
     id: String(apiValue(item, 'maDen', 'MaDen') || ''),

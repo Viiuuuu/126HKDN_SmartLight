@@ -553,7 +553,7 @@ async function loadCabinetsFromApi() {
         ? Math.round(dimValues.reduce((sum, value) => sum + value, 0) / dimValues.length)
         : null;
       const hasFault = cabinetLamps.some(lamp =>
-        Number(apiField(lamp, 'trangThaiHoatDong', 'TrangThaiHoatDong')) > 1
+        Number(apiField(lamp, 'trangThaiHoatDong', 'TrangThaiHoatDong')) === 3
       );
       const status = !connected
         ? 'offline'
@@ -593,9 +593,14 @@ async function loadCabinetsFromApi() {
           const routeActive = routeLamps.filter(lamp =>
             Number(apiField(lamp, 'trangThaiHoatDong', 'TrangThaiHoatDong')) === 1
           ).length;
-          const routeStatus = Number(apiField(route, 'trangThaiHoatDong', 'TrangThaiHoatDong')) === 1
+          const routeRawSt = Number(apiField(route, 'trangThaiHoatDong', 'TrangThaiHoatDong'));
+          const routeStatus = routeRawSt === 1
             ? (routeLamps.length && routeActive < routeLamps.length ? 'BẬT MỘT PHẦN' : 'BẬT 100%')
-            : 'TẮT';
+            : routeRawSt === 3
+              ? 'SỰ CỐ'
+              : routeRawSt === 2
+                ? 'TẮT'
+                : 'CHƯA XÁC ĐỊNH';
           return {
             name: String(apiField(route, 'tenTuyen', 'TenTuyen') || routeId),
             length: `${apiField(route, 'chieuDai', 'ChieuDai') ?? '—'} m`,

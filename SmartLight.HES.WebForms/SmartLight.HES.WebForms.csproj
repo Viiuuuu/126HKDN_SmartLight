@@ -119,8 +119,11 @@
     <Content Include="Content\hes.css" />
     <Content Include="Content\dashboard.css" />
     <Content Include="Scripts\hes-layout.js" />
+    <Content Include="Scripts\hes-live.js" />
+    <Content Include="HesApi.ashx" />
     <Content Include="images\logo.svg" />
     <Content Include="UcTongQuan.aspx" />
+    <Content Include="UcGiamSatDien.aspx" />
     <Content Include="UcGiamSatThongSoDien.aspx" />
     <Content Include="UcDieuKhienThietBi.aspx" />
     <Content Include="UcTheoDoiLenh.aspx" />
@@ -200,6 +203,13 @@
     <Compile Include="UcTongQuan.aspx.designer.cs">
       <DependentUpon>UcTongQuan.aspx</DependentUpon>
     </Compile>
+    <Compile Include="UcGiamSatDien.aspx.cs">
+      <DependentUpon>UcGiamSatDien.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UcGiamSatDien.aspx.designer.cs">
+      <DependentUpon>UcGiamSatDien.aspx</DependentUpon>
+    </Compile>
     <Compile Include="UcGiamSatThongSoDien.aspx.cs">
       <DependentUpon>UcGiamSatThongSoDien.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -241,6 +251,10 @@
     </Compile>
     <Compile Include="UcCauHinhHes.aspx.designer.cs">
       <DependentUpon>UcCauHinhHes.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Data\HesWebRepository.cs" />
+    <Compile Include="HesApi.ashx.cs">
+      <DependentUpon>HesApi.ashx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -319,5 +333,21 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\BE\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\BE\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- Fallback để luôn copy bin\roslyn ngay ở lần Build/F5 đầu tiên sau khi NuGet Restore hoàn tất -->
+  <Target Name="EnsureRoslynFiles" AfterTargets="Build">
+    <PropertyGroup>
+      <_RoslynRelSubDir>Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\tools\RoslynLatest</_RoslynRelSubDir>
+      <_RoslynSourceDir Condition="Exists('..\BE\packages\$(_RoslynRelSubDir)\csc.exe')">..\BE\packages\$(_RoslynRelSubDir)</_RoslynSourceDir>
+      <_RoslynSourceDir Condition="'$(_RoslynSourceDir)' == '' And '$(SolutionDir)' != '' And '$(SolutionDir)' != '*Undefined*' And Exists('$(SolutionDir)packages\$(_RoslynRelSubDir)\csc.exe')">$(SolutionDir)packages\$(_RoslynRelSubDir)</_RoslynSourceDir>
+      <_RoslynSourceDir Condition="'$(_RoslynSourceDir)' == '' And Exists('..\packages\$(_RoslynRelSubDir)\csc.exe')">..\packages\$(_RoslynRelSubDir)</_RoslynSourceDir>
+      <_RoslynSourceDir Condition="'$(_RoslynSourceDir)' == '' And Exists('packages\$(_RoslynRelSubDir)\csc.exe')">packages\$(_RoslynRelSubDir)</_RoslynSourceDir>
+      <_RoslynDestDir Condition="'$(WebProjectOutputDir)' != ''">$(WebProjectOutputDir)\bin\roslyn</_RoslynDestDir>
+      <_RoslynDestDir Condition="'$(_RoslynDestDir)' == ''">$(OutputPath)roslyn</_RoslynDestDir>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(_RoslynSourceDir)' != ''">
+      <_RoslynRuntimeFiles Include="$(_RoslynSourceDir)\*" />
+    </ItemGroup>
+    <Copy Condition="'$(_RoslynSourceDir)' != ''" SourceFiles="@(_RoslynRuntimeFiles)" DestinationFolder="$(_RoslynDestDir)" ContinueOnError="true" SkipUnchangedFiles="true" Retries="0" />
   </Target>
 </Project>

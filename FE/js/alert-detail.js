@@ -223,7 +223,7 @@ async function loadDeviceDetails(alert) {
           gps: 'Theo tọa độ tuyến đèn',
           lat: null,
           lng: null,
-          statusText: res.trangThaiHoatDong === 1 ? 'Đang bật' : 'Đang tắt',
+          statusText: res.trangThaiHoatDong === 1 ? 'Đang bật' : res.trangThaiHoatDong === 2 ? 'Đang tắt' : res.trangThaiHoatDong === 3 ? 'Sự cố' : 'Chưa xác định',
           isOnline: res.trangThaiHoatDong === 1,
           parentCabinet: res.maTu ? res.maTu.trim() : '--',
           length: res.chieuDai ? `${res.chieuDai} m` : '--',
@@ -234,6 +234,7 @@ async function loadDeviceDetails(alert) {
       const code = alert.maDen.trim();
       const res = await api.get(`/DiemDen/${code}`);
       if (res && res.maDen) {
+        const rawLampSt = Number(res.trangThaiHoatDong ?? res.trangThai);
         deviceDetail = {
           type: 'light',
           code: code,
@@ -242,8 +243,8 @@ async function loadDeviceDetails(alert) {
           gps: (res.viDo && res.kinhDo) ? `${res.viDo}° N, ${res.kinhDo}° E` : 'Đang cập nhật GPS',
           lat: res.viDo,
           lng: res.kinhDo,
-          statusText: res.trangThai === 1 ? 'Bật sáng' : 'Đang tắt',
-          isOnline: res.trangThai === 1,
+          statusText: rawLampSt === 1 ? 'Bật sáng' : rawLampSt === 2 ? 'Đang tắt' : rawLampSt === 3 ? 'Sự cố' : 'Chưa xác định',
+          isOnline: rawLampSt === 1,
           lampType: res.loaiBongDen || 'LED Tiết kiệm điện',
           power: res.congSuat ? `${res.congSuat} W` : '--',
           voltage: res.dienAp ? `${res.dienAp} V` : '--',
