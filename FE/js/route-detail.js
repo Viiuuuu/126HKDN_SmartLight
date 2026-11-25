@@ -6,6 +6,7 @@
 const routeParams = new URLSearchParams(window.location.search);
 const currentRouteCode = routeParams.get('id') || 'TL-001';
 let currentRouteName = 'Nguyễn Văn Linh';
+let currentCabinetId = '';
 let routeStatusCode = 1;
 
 function updateLiveClock() {
@@ -13,7 +14,7 @@ function updateLiveClock() {
   const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
   const dayStr = days[now.getDay()];
   const dateStr = String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear();
-  
+
   const clockEl = document.getElementById('liveClockDisplay') || document.getElementById('topbarLiveClock');
   if (clockEl) {
     clockEl.textContent = `${dayStr}, ${dateStr}`;
@@ -31,6 +32,7 @@ async function loadRouteDetails() {
     const route = await window.api.get(`/TuyenChieuSang/${encodeURIComponent(currentRouteCode)}`);
     if (!route) throw new Error('API không trả về thông tin tuyến.');
     const cabinetId = String(route.maTu ?? route.MaTu ?? '').trim();
+    currentCabinetId = cabinetId;
     const [cabinets, areas, allPoints] = await Promise.all([
       window.api.get('/TuChieuSang'),
       window.api.get('/KhuVuc'),
@@ -70,7 +72,7 @@ async function loadRouteDetails() {
     setRouteText('headerCabinetName', cabinetLabel);
     const cabinetLink = document.getElementById('headerCabinetName');
     if (cabinetLink && cabinetId) {
-      cabinetLink.setAttribute('href', `device-detail.html?id=${encodeURIComponent(cabinetId)}&type=${encodeURIComponent('Tủ chiếu sáng')}`);
+      cabinetLink.setAttribute('href', `cabinets-detail.html?id=${encodeURIComponent(cabinetId)}`);
     }
     setRouteText('infoArea', areaName);
     setRouteText('headerAreaName', areaName);
@@ -112,9 +114,14 @@ async function loadRouteDetails() {
       loadRouteEnergy(points),
       loadRouteLogs(points)
     ]);
+
+    // Thông báo cho UI đồng bộ trạng thái quản lý sau khi dữ liệu đã load xong
+    window.dispatchEvent(new Event('routeDetailsLoaded'));
+
   } catch (error) {
     console.warn(`Không tải được tuyến ${currentRouteCode} từ API.`, error);
     showToast(`Không tải được dữ liệu tuyến ${currentRouteCode}; đang hiển thị thông tin demo.`, 'warning');
+    window.dispatchEvent(new Event('routeDetailsLoaded'));
   }
 }
 
@@ -299,15 +306,39 @@ function showToast(message, type = 'success') {
 
 // 4. Brightness Control & Sliders Synchronization
 let currentBrightness = 70;
+let isPoweredOn = true;
+let isSendingRouteCommand = false;
+
+function syncPowerUI(isOn) {
+  isPoweredOn = isOn;
+  const powerToggleSwitch = document.getElementById('powerToggleSwitch');
+  const powerStateText = document.getElementById('powerStateText');
+  const powerIndicatorDot = document.getElementById('powerIndicatorDot');
+  const btnTogglePowerText = document.getElementById('btnTogglePowerText');
+  const routeLinePath = document.getElementById('routeLinePath');
+
+  if (powerToggleSwitch) powerToggleSwitch.checked = isOn;
+  if (isOn) {
+    if (powerStateText) powerStateText.textContent = 'Đang bật';
+    if (powerIndicatorDot) powerIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+    if (btnTogglePowerText) btnTogglePowerText.textContent = 'Tắt tuyến';
+    if (routeLinePath) routeLinePath.setAttribute('stroke', '#074476');
+  } else {
+    if (powerStateText) powerStateText.textContent = 'Đã tắt';
+    if (powerIndicatorDot) powerIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-300';
+    if (btnTogglePowerText) btnTogglePowerText.textContent = 'Bật tuyến';
+    if (routeLinePath) routeLinePath.setAttribute('stroke', '#94a3b8');
+  }
+}
 
 function updateBrightness(val, triggerToast = false) {
-  currentBrightness = parseInt(val);
+  currentBrightness = parseInt(val, 10) || 0;
   const mainSlider = document.getElementById('mainBrightnessSlider');
   const mainDisplay = document.getElementById('mainBrightnessDisplay');
   const quickSlider = document.getElementById('quickBrightnessSlider');
   const quickDisplay = document.getElementById('quickBrightnessDisplay');
 
-  // Cập nhật dải màu gradient trực tiếp trên thanh trượt (100% chuẩn, không bao giờ lệch track)
+  // Cập nhật dải màu gradient trực tiếp trên thanh trượt
   const bgGradient = `linear-gradient(to right, #1d4ed8 0%, #1d4ed8 ${currentBrightness}%, #e2e8f0 ${currentBrightness}%, #e2e8f0 100%)`;
 
   if (mainSlider) {
@@ -324,7 +355,7 @@ function updateBrightness(val, triggerToast = false) {
 
   // Update Presets Active State in both places
   document.querySelectorAll('.preset-btn').forEach(btn => {
-    if (parseInt(btn.dataset.preset) === currentBrightness) {
+    if (parseInt(btn.dataset.preset, 10) === currentBrightness) {
       btn.className = 'preset-btn py-1.5 text-xs font-bold rounded-xl bg-primary text-white shadow-xs text-center';
     } else {
       btn.className = 'preset-btn py-1.5 text-xs font-semibold rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors text-center';
@@ -340,39 +371,77 @@ function updateBrightness(val, triggerToast = false) {
   });
 
   if (triggerToast) {
-    showToast(`Mô phỏng: mức sáng tuyến ${currentRouteCode} được đặt thành ${currentBrightness}%. Chưa gửi lệnh thật.`);
+    showToast(`Đã chọn mức sáng ${currentBrightness}% cho tuyến ${currentRouteCode}.`);
+  }
+}
+
+async function sendRouteControlCommand(action, val) {
+  if (isSendingRouteCommand) return;
+  isSendingRouteCommand = true;
+
+  val = Math.max(0, Math.min(100, parseInt(val, 10) || 0));
+
+  // Kiểm tra phân quyền thao tác (Admin hoặc Operator)
+  if (window.checkActionPermission && !window.checkActionPermission('control.execute', 'điều khiển bật/tắt tuyến')) {
+    isSendingRouteCommand = false;
+    return;
+  }
+
+  const isOn = (action === 'BAT') || (action === 'DIM' && val > 0);
+  updateBrightness(val, false);
+  syncPowerUI(isOn);
+
+  if (!window.api) {
+    showToast(`Chưa kết nối Backend; trạng thái tuyến ${currentRouteCode} chỉ đổi trên giao diện.`, 'warning');
+    isSendingRouteCommand = false;
+    return;
+  }
+
+  const session = typeof window.getAuthSession === 'function' ? window.getAuthSession() : null;
+  const userCode = session?.session?.maNguoiDung || session?.session?.username || 'ND0001';
+
+  try {
+    // 1. Gửi lệnh điều khiển ghi vào bảng LenhDieuKhien trong CSDL
+    await window.api.post('/LenhDieuKhien', {
+      maTuyen: currentRouteCode,
+      hanhDong: action,
+      mucSang: action === 'DIM' ? val : null,
+      nguonLenh: 1,
+      maNguoiDung: userCode
+    });
+
+    // 2. Cập nhật đồng bộ ngay vào bảng TuyenChieuSang (trangThaiHoatDong, mucSangHienTai)
+    await window.api.put(`/TuyenChieuSang/${encodeURIComponent(currentRouteCode)}`, {
+      trangThaiHoatDong: isOn ? 1 : 2,
+      mucSangHienTai: val
+    }).catch(err => console.warn('Lỗi đồng bộ nhanh TuyenChieuSang:', err));
+
+    const actionText = action === 'BAT' ? 'Bật chiếu sáng' : action === 'TAT' ? 'Tắt chiếu sáng' : `Đặt mức sáng ${val}%`;
+    showToast(`Đã gửi lệnh ${actionText} tuyến ${currentRouteCode} và lưu vào CSDL thành công!`, 'success');
+
+    // Tải lại chi tiết tuyến để cập nhật số lượng đèn hoạt động và số liệu năng lượng
+    loadRouteDetails().catch(() => {});
+  } catch (error) {
+    console.error('Lỗi khi gửi lệnh điều khiển tuyến:', error);
+    showToast(`Lỗi gửi lệnh điều khiển tuyến ${currentRouteCode}: ${error.message || 'Thất bại'}`, 'error');
+  } finally {
+    isSendingRouteCommand = false;
   }
 }
 
 function setBrightnessPreset(val) {
-  updateBrightness(val, true);
+  val = parseInt(val, 10) || 0;
+  sendRouteControlCommand(val > 0 ? 'DIM' : 'TAT', val);
 }
 
 // 5. Power Toggle (On/Off)
-let isPoweredOn = true;
 function setPowerState(state) {
-  isPoweredOn = state;
-  const powerToggleSwitch = document.getElementById('powerToggleSwitch');
-  const powerStateText = document.getElementById('powerStateText');
-  const powerIndicatorDot = document.getElementById('powerIndicatorDot');
-  const btnTogglePowerText = document.getElementById('btnTogglePowerText');
-  const routeLinePath = document.getElementById('routeLinePath');
-
-  if (powerToggleSwitch) powerToggleSwitch.checked = isPoweredOn;
-  if (isPoweredOn) {
-    if (powerStateText) powerStateText.textContent = 'Đang bật';
-    if (powerIndicatorDot) powerIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
-    if (btnTogglePowerText) btnTogglePowerText.textContent = 'Tắt tuyến';
-    if (routeLinePath) routeLinePath.setAttribute('stroke', '#074476');
-    showToast(`Mô phỏng: đã bật chiếu sáng tuyến ${currentRouteCode}. Chưa gửi lệnh thật.`, 'info');
-  } else {
-    if (powerStateText) powerStateText.textContent = 'Đã tắt';
-    if (powerIndicatorDot) powerIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-300';
-    if (btnTogglePowerText) btnTogglePowerText.textContent = 'Bật tuyến';
-    if (routeLinePath) routeLinePath.setAttribute('stroke', '#94a3b8');
-    showToast(`Mô phỏng: đã tắt chiếu sáng tuyến ${currentRouteCode}. Chưa gửi lệnh thật.`, 'info');
-  }
+  sendRouteControlCommand(state ? 'BAT' : 'TAT', state ? 100 : 0);
 }
+
+window.sendRouteControlCommand = sendRouteControlCommand;
+window.setBrightnessPreset = setBrightnessPreset;
+window.setPowerState = setPowerState;
 
 // 7. Tab Navigation
 function switchTab(tabId) {
@@ -430,7 +499,7 @@ function handleSaveEditRoute(e) {
   if (breadcrumb) breadcrumb.textContent = `Chi tiết tuyến ${currentRouteCode} - ${name}`;
   const infoRouteName = document.getElementById('infoRouteName');
   if (infoRouteName) infoRouteName.textContent = name;
-    const infoCabinet = document.getElementById('infoCabinet');
+  const infoCabinet = document.getElementById('infoCabinet');
   if (infoCabinet) infoCabinet.textContent = cab ? `Tủ ${cab}` : 'Chưa xác định';
   const headerCabinetName = document.getElementById('headerCabinetName');
   if (headerCabinetName) headerCabinetName.textContent = cab;
@@ -531,9 +600,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const quickSlider = document.getElementById('quickBrightnessSlider');
   mainSlider?.addEventListener('input', (e) => updateBrightness(e.target.value));
   quickSlider?.addEventListener('input', (e) => updateBrightness(e.target.value));
+  mainSlider?.addEventListener('change', (e) => sendRouteControlCommand(currentBrightness > 0 ? 'DIM' : 'TAT', e.target.value));
+  quickSlider?.addEventListener('change', (e) => sendRouteControlCommand(currentBrightness > 0 ? 'DIM' : 'TAT', e.target.value));
 
   document.getElementById('btnApplyQuickDimming')?.addEventListener('click', () => {
-    showToast(`Mô phỏng: áp dụng mức sáng ${currentBrightness}% cho tuyến ${currentRouteCode}. Chưa gửi lệnh thật.`, 'info');
+    sendRouteControlCommand(currentBrightness > 0 ? 'DIM' : 'TAT', currentBrightness);
   });
 
   // Power Switch
@@ -541,34 +612,44 @@ document.addEventListener('DOMContentLoaded', () => {
   powerToggleSwitch?.addEventListener('change', (e) => setPowerState(e.target.checked));
   document.getElementById('btnTogglePower')?.addEventListener('click', () => setPowerState(!isPoweredOn));
 
-  // Management Status Toggle
-  let isManaging = true;
+  // Management Status Toggle — đồng bộ với DB
   const managementDot = document.getElementById('managementDot');
   const managementText = document.getElementById('managementText');
   const btnToggleManagementText = document.getElementById('btnToggleManagementText');
   const detailStatusBadge = document.getElementById('detailStatusBadge');
+  let isManaging = routeStatusCode === 1;
 
-  document.getElementById('btnToggleManagement')?.addEventListener('click', async () => {
-    isManaging = !isManaging;
-    const nextStatus = isManaging ? 1 : 2;
-    routeStatusCode = nextStatus;
-    if (isManaging) {
-      if (managementDot) managementDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
-      if (managementText) managementText.textContent = 'Hoạt động';
-      if (btnToggleManagementText) btnToggleManagementText.textContent = 'Ngừng hoạt động';
-      if (detailStatusBadge) {
+  function syncManagementUI(active) {
+    if (managementDot) managementDot.className = active ? 'w-2.5 h-2.5 rounded-full bg-emerald-500' : 'w-2.5 h-2.5 rounded-full bg-slate-400';
+    if (managementText) managementText.textContent = active ? 'Hoạt động' : 'Dừng (Tắt)';
+    if (btnToggleManagementText) btnToggleManagementText.textContent = active ? 'Ngừng hoạt động' : 'Kích hoạt lại';
+    if (detailStatusBadge) {
+      if (active) {
         detailStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Đang hoạt động';
         detailStatusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
-      }
-    } else {
-      if (managementDot) managementDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-400';
-      if (managementText) managementText.textContent = 'Dừng (Tắt)';
-      if (btnToggleManagementText) btnToggleManagementText.textContent = 'Kích hoạt lại';
-      if (detailStatusBadge) {
+      } else {
         detailStatusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-400"></span> Dừng (Tắt)';
         detailStatusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200';
       }
     }
+  }
+
+  // Đồng bộ UI ngay khi DOM sẵn sàng
+  syncManagementUI(isManaging);
+
+  // Khi dữ liệu tuyến được tải xong từ API, cập nhật lại UI quản lý theo DB
+  window.addEventListener('routeDetailsLoaded', () => {
+    isManaging = routeStatusCode === 1;
+    syncManagementUI(isManaging);
+  });
+
+  // Click nút Ngừng hoạt động / Kích hoạt lại
+  document.getElementById('btnToggleManagement')?.addEventListener('click', async () => {
+    const prevState = isManaging;
+    isManaging = !isManaging;
+    const nextStatus = isManaging ? 1 : 2;
+    routeStatusCode = nextStatus;
+    syncManagementUI(isManaging);
 
     if (!window.api) {
       showToast(`Mô phỏng: tuyến được đánh dấu ${isManaging ? 'Hoạt động' : 'Ngừng hoạt động'}.`, 'warning');
@@ -576,16 +657,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
+      const selectedCabinet = document.getElementById('modalInputCabinet')?.value?.trim();
       await window.api.put(`/TuyenChieuSang/${encodeURIComponent(currentRouteCode)}`, {
         maTuyen: currentRouteCode,
         tenTuyen: currentRouteName,
-        viTri: document.getElementById('infoArea')?.textContent.trim() || '',
-        maTu: document.getElementById('modalInputCabinet')?.value || '',
+        viTri: document.getElementById('infoArea')?.textContent.trim() || undefined,
+        maTu: selectedCabinet || currentCabinetId || undefined,
         trangThaiHoatDong: nextStatus
       });
-      showToast(`Đã cập nhật trạng thái tuyến ${currentRouteCode} trên Backend.`);
+      showToast(`Đã cập nhật trạng thái tuyến ${currentRouteCode} trên Backend.`, 'success');
     } catch (error) {
       console.warn('Không cập nhật được trạng thái tuyến.', error);
+      // Rollback UI về trạng thái trước khi gặp lỗi
+      isManaging = prevState;
+      routeStatusCode = prevState ? 1 : 2;
+      syncManagementUI(isManaging);
       showToast(error.message || 'Không cập nhật được trạng thái tuyến trên Backend.', 'warning');
     }
   });

@@ -2,7 +2,7 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <!-- ==========================================================================
-         A. THANH TIÊU ĐỀ DASHBOARD
+         A. THANH TIÊU ĐỀ 
          ========================================================================== -->
     <div class="hes-dash-header">
         <div class="hes-dash-title-group">

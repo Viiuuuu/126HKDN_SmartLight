@@ -1,6 +1,6 @@
 // ==================== JAVASCRIPT LOGIC FOR LIGHT POINT DETAIL ====================
 const lightParams = new URLSearchParams(window.location.search);
-const lightId = lightParams.get('id') || 'LD-0001';
+const lightId = lightParams.get('id') || 'DEN00001';
 let currentRatedPower = Number.parseFloat(lightParams.get('power')) || 120;
 const initialDim = Number.parseFloat(lightParams.get('dim'));
 let currentBrightness = Number.isFinite(initialDim) ? initialDim : 80;
@@ -109,22 +109,80 @@ function updateBrightness(val) {
   }
 }
 
-function setQuickDim(val) {
+let isSendingCommand = false;
+
+async function sendLightControlCommand(val) {
+  val = Math.max(0, Math.min(100, parseInt(val, 10) || 0));
+
+  // Kiểm tra phân quyền thao tác (Admin hoặc Operator)
+  if (window.checkActionPermission && !window.checkActionPermission('control.execute', 'điều khiển bật/tắt đèn')) {
+    return;
+  }
+
   const range = document.getElementById('dimming-range');
-  if (range) {
-    range.value = val;
-    updateBrightness(val);
-    showToast(`Mô phỏng: mức sáng điểm đèn ${lightId} là ${val}%. Chưa gửi lệnh thật.`, 'info');
+  if (range) range.value = val;
+  updateBrightness(val);
+
+  if (!window.api) {
+    showToast('Chưa kết nối Backend; mức sáng chỉ đổi trên giao diện mô phỏng.', 'warning');
+    return;
+  }
+
+  if (isSendingCommand) return;
+  isSendingCommand = true;
+
+  const action = val === 100 ? 'BAT' : val === 0 ? 'TAT' : 'DIM';
+  const session = window.getCurrentRbacSession ? window.getCurrentRbacSession() : null;
+  const userCode = session?.session?.maNguoiDung || session?.session?.username || 'ND0001';
+
+  try {
+    // 1. Gửi lệnh điều khiển ghi vào bảng LenhDieuKhien trong CSDL
+    await window.api.post('/LenhDieuKhien', {
+      maDen: lightId,
+      hanhDong: action,
+      mucSang: action === 'DIM' ? val : null,
+      nguonLenh: 1,
+      maNguoiDung: userCode
+    });
+
+    // 2. Cập nhật đồng bộ ngay vào bảng DiemDen (doSang, trangThaiHoatDong)
+    await window.api.put(`/DiemDen/${encodeURIComponent(lightId)}`, {
+      doSang: val,
+      trangThaiHoatDong: val > 0 ? 1 : 2
+    }).catch(err => console.warn('Lỗi đồng bộ nhanh DiemDen:', err));
+
+    if (currentLightRecord) {
+      currentLightRecord.doSang = val;
+      currentLightRecord.trangThaiHoatDong = val > 0 ? 1 : 2;
+    }
+
+    if (action === 'BAT') {
+      showToast(`Đã bật đèn ${lightId} (100%) và lưu vào CSDL.`, 'success');
+    } else if (action === 'TAT') {
+      showToast(`Đã tắt đèn ${lightId} (0%) và lưu vào CSDL.`, 'success');
+    } else {
+      showToast(`Đã thiết lập mức sáng ${val}% cho đèn ${lightId} và lưu vào CSDL.`, 'success');
+    }
+  } catch (error) {
+    console.error('Không gửi được lệnh điều khiển:', error);
+    showToast(error.message || 'Không thể lưu lệnh điều khiển lên Backend.', 'warning');
+  } finally {
+    isSendingCommand = false;
   }
 }
 
-function toggleLight(turnOn) {
-  if (turnOn) {
-    setQuickDim(100);
-  } else {
-    setQuickDim(0);
-  }
+function setQuickDim(val) {
+  sendLightControlCommand(val);
 }
+
+function toggleLight(turnOn) {
+  sendLightControlCommand(turnOn ? 100 : 0);
+}
+
+// Đưa ra phạm vi toàn cục window cho các nút onclick trong HTML
+window.sendLightControlCommand = sendLightControlCommand;
+window.setQuickDim = setQuickDim;
+window.toggleLight = toggleLight;
 
 // Detail Tabs Switcher
 function switchDetailTab(tabIndex) {
@@ -202,10 +260,14 @@ formEditLight?.addEventListener('submit', async (e) => {
   }
 
   try {
+    const routeCode = currentLightRecord?.maTuyen || currentLightRecord?.MaTuyen;
+    const location = currentLightRecord?.viTri || currentLightRecord?.ViTri;
     await window.api.put(`/DiemDen/${encodeURIComponent(lightId)}`, {
       maDen: lightId,
       tenDen: newName,
-      congSuat: Number.parseFloat(newPower) || null
+      congSuat: Number.parseFloat(newPower) || null,
+      viTri: location || undefined,
+      maTuyen: routeCode || undefined
     });
     showToast(`Đã cập nhật thông số điểm đèn ${lightId} trên Backend.`);
   } catch (error) {
@@ -285,15 +347,24 @@ function setLightText(id, value) {
   else element.textContent = value;
 }
 
+let currentLightRecord = null;
+
 function applyLightRecord(record) {
+  if (!record) return;
+  currentLightRecord = record;
   const name = record.tenDen ?? record.TenDen ?? currentLightName;
   const id = record.maDen ?? record.MaDen ?? lightId;
   const location = record.viTri ?? record.ViTri ?? currentLightName;
   const power = Number(record.congSuat ?? record.CongSuat);
   const dim = Number(record.doSang ?? record.DoSang);
+  const status = Number(record.trangThaiHoatDong ?? record.TrangThaiHoatDong);
   currentLightName = name;
   if (Number.isFinite(power) && power > 0) currentRatedPower = power;
-  if (Number.isFinite(dim) && dim >= 0 && dim <= 100) currentBrightness = dim;
+  if (status === 2) {
+    currentBrightness = 0;
+  } else if (Number.isFinite(dim) && dim >= 0 && dim <= 100) {
+    currentBrightness = dim;
+  }
 
   document.title = `Chi tiết điểm đèn: ${id} - SmartLight`;
   setLightText('breadcrumbLampCode', id);
@@ -307,6 +378,43 @@ function applyLightRecord(record) {
   const range = document.getElementById('dimming-range');
   if (range) range.value = currentBrightness;
   updateBrightness(currentBrightness);
+
+  const routeCode = record.maTuyen ?? record.MaTuyen;
+  if (routeCode) {
+    loadLightInfrastructure(routeCode);
+  }
+}
+
+async function loadLightInfrastructure(routeCode) {
+  if (!routeCode || !window.api) return;
+  try {
+    const [routes, cabinets, areas] = await Promise.all([
+      window.api.get('/TuyenChieuSang').catch(() => []),
+      window.api.get('/TuChieuSang').catch(() => []),
+      window.api.get('/KhuVuc').catch(() => [])
+    ]);
+
+    const route = Array.isArray(routes) ? routes.find(r => String(r.maTuyen || r.MaTuyen || '').trim() === String(routeCode).trim()) : null;
+    const cabCode = String(route?.maTu || route?.MaTu || '').trim();
+    const cabinet = Array.isArray(cabinets) ? cabinets.find(c => String(c.maTu || c.MaTu || '').trim() === cabCode) : null;
+    const areaCode = String(cabinet?.maKhuVuc || cabinet?.MaKhuVuc || '').trim();
+    const area = Array.isArray(areas) ? areas.find(a => String(a.maKhuVuc || a.MaKhuVuc || '').trim() === areaCode) : null;
+
+    const routeName = String(route?.tenTuyen || route?.TenTuyen || routeCode);
+    const cabinetName = String(cabinet?.tenTu || cabinet?.TenTu || (cabCode ? `Tủ ${cabCode}` : 'Chưa gắn tủ'));
+    const wardName = String(area?.tenPhuongXa || area?.TenPhuongXa || 'Phường Hải Châu');
+    const districtName = String(area?.moTa || area?.MoTa || 'Quận Hải Châu, TP. Đà Nẵng');
+
+    setLightText('heroRouteName', routeName);
+    setLightText('heroCabinetName', cabinetName.startsWith('Tủ') ? cabinetName : `Tủ ${cabinetName}`);
+    setLightText('heroAreaName', `${wardName}, Đà Nẵng`);
+    setLightText('specRouteName', routeName);
+    setLightText('specRouteCabinet', `Thuộc ${cabinetName}`);
+    setLightText('specDistrictName', districtName.includes('Quận') ? districtName.split(',')[0].trim() : 'Quận Hải Châu');
+    setLightText('specWardName', wardName);
+  } catch (err) {
+    console.warn('Lỗi tải hạ tầng liên kết điểm đèn:', err);
+  }
 }
 
 async function loadLightTelemetry() {
@@ -360,7 +468,12 @@ setLightText('editLampName', currentLightName);
 setLightText('specRatedPower', `${currentRatedPower}W`);
 setLightText('mapMarkerLabel', `${lightId} (${currentBrightness}%)`);
 const initialBrightnessRange = document.getElementById('dimming-range');
-if (initialBrightnessRange) initialBrightnessRange.value = currentBrightness;
+if (initialBrightnessRange) {
+  initialBrightnessRange.value = currentBrightness;
+  initialBrightnessRange.addEventListener('change', (e) => {
+    sendLightControlCommand(e.target.value);
+  });
+}
 updateBrightness(currentBrightness);
 loadLightDetail();
 

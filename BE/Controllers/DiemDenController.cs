@@ -6,6 +6,25 @@ using BE.Security;
 
 namespace BE.Controllers;
 
+public class UpdateDiemDenRequest
+{
+    public string? TenDen { get; set; }
+    public string? LoaiBongDen { get; set; }
+    public string? ViTri { get; set; }
+    public decimal? ViDo { get; set; }
+    public decimal? KinhDo { get; set; }
+    public decimal? CongSuat { get; set; }
+    public decimal? DienAp { get; set; }
+    public decimal? DongDien { get; set; }
+    public decimal? CongSuatThucTe { get; set; }
+    public decimal? NhietDoLed { get; set; }
+    public DateTime? LanDoCuoi { get; set; }
+    public byte? DoSang { get; set; }
+    public byte? TrangThaiHoatDong { get; set; }
+    public string? MoTa { get; set; }
+    public string? MaTuyen { get; set; }
+}
+
 [ApiController]
 [Route("api/[controller]")]
 public class DiemDenController : ControllerBase
@@ -167,7 +186,7 @@ public class DiemDenController : ControllerBase
 
     // PUT: api/DiemDen/DEN00001 (Admin & Operator)
     [HttpPut("{id}")]
-    public async Task<ActionResult<DiemDen>> Update(string id, [FromBody] DiemDen model)
+    public async Task<ActionResult<DiemDen>> Update(string id, [FromBody] UpdateDiemDenRequest model)
     {
         var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
             _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Cập nhật thông tin điểm đèn");
@@ -182,19 +201,29 @@ public class DiemDenController : ControllerBase
         if (!string.IsNullOrWhiteSpace(model.TenDen)) item.TenDen = model.TenDen.Trim();
         if (!string.IsNullOrWhiteSpace(model.LoaiBongDen)) item.LoaiBongDen = model.LoaiBongDen.Trim();
         if (!string.IsNullOrWhiteSpace(model.ViTri)) item.ViTri = model.ViTri.Trim();
-        if (!string.IsNullOrWhiteSpace(model.MaTuyen)) item.MaTuyen = model.MaTuyen.Trim();
-        NormalizeLampState(model);
-        item.ViDo = model.ViDo ?? item.ViDo;
-        item.KinhDo = model.KinhDo ?? item.KinhDo;
-        item.CongSuat = model.CongSuat ?? item.CongSuat;
-        item.DienAp = model.DienAp ?? item.DienAp;
-        item.DongDien = model.DongDien ?? item.DongDien;
-        item.CongSuatThucTe = model.CongSuatThucTe ?? item.CongSuatThucTe;
-        item.NhietDoLed = model.NhietDoLed ?? item.NhietDoLed;
-        item.DoSang = model.DoSang ?? item.DoSang;
-        item.TrangThaiHoatDong = model.TrangThaiHoatDong;
-        item.LanDoCuoi = model.LanDoCuoi ?? item.LanDoCuoi;
-        item.MoTa = model.MoTa;
+        if (!string.IsNullOrWhiteSpace(model.MaTuyen))
+        {
+            var routeCode = model.MaTuyen.Trim();
+            var routeExists = await _context.TuyenChieuSang.AnyAsync(x => x.MaTuyen == routeCode);
+            if (routeExists)
+            {
+                item.MaTuyen = routeCode;
+            }
+        }
+        if (model.ViDo.HasValue) item.ViDo = model.ViDo;
+        if (model.KinhDo.HasValue) item.KinhDo = model.KinhDo;
+        if (model.CongSuat.HasValue) item.CongSuat = model.CongSuat > 0 ? model.CongSuat : null;
+        if (model.DienAp.HasValue) item.DienAp = model.DienAp;
+        if (model.DongDien.HasValue) item.DongDien = model.DongDien;
+        if (model.CongSuatThucTe.HasValue) item.CongSuatThucTe = model.CongSuatThucTe;
+        if (model.NhietDoLed.HasValue) item.NhietDoLed = model.NhietDoLed;
+        if (model.DoSang.HasValue) item.DoSang = (byte)Math.Clamp((int)model.DoSang.Value, 0, 100);
+        if (model.TrangThaiHoatDong.HasValue)
+        {
+            item.TrangThaiHoatDong = model.TrangThaiHoatDong.Value > 3 ? (byte)3 : model.TrangThaiHoatDong.Value;
+        }
+        if (model.LanDoCuoi.HasValue) item.LanDoCuoi = model.LanDoCuoi;
+        if (model.MoTa != null) item.MoTa = model.MoTa.Trim();
         item.NgayCapNhat = DateTime.Now;
 
         await _context.SaveChangesAsync();

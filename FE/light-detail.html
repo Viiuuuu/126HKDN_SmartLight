@@ -51,7 +51,7 @@
 <body>
 
   <!-- Toast Notification Container -->
-  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <div id="toastContainer" class="fixed top-20 right-6 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- Main System Wrapper -->
   <div class="dashboard-wrapper w-full flex">
@@ -371,11 +371,11 @@
                 <span id="heroLocationText">Đường Lê Duẩn - Điểm số 001</span>
               </span>
               <span class="text-slate-300">•</span>
-              <span>Tuyến TL-01</span>
+              <span id="heroRouteName">Tuyến chiếu sáng</span>
               <span class="text-slate-300">•</span>
-              <span>Tủ CS-01</span>
+              <span id="heroCabinetName">Tủ điều khiển</span>
               <span class="text-slate-300">•</span>
-              <span>Quận Ba Đình, Hà Nội</span>
+              <span id="heroAreaName">Khu vực quản lý</span>
             </div>
           </div>
           
@@ -469,8 +469,8 @@
                   <span class="text-[10.5px] uppercase tracking-wider font-bold text-slate-400">Tuyến vận hành</span>
                 </div>
                 <div>
-                  <div class="text-sm font-bold text-slate-800">Tuyến TL-01</div>
-                  <div class="text-xs text-slate-500 mt-0.5">Phân đoạn A2</div>
+                  <div class="text-sm font-bold text-slate-800" id="specRouteName">Đang tải...</div>
+                  <div class="text-xs text-slate-500 mt-0.5" id="specRouteCabinet">Đang tải tủ...</div>
                 </div>
               </div>
               
@@ -480,8 +480,8 @@
                   <span class="text-[10.5px] uppercase tracking-wider font-bold text-slate-400">Khu vực</span>
                 </div>
                 <div>
-                  <div class="text-sm font-bold text-slate-800">Quận Ba Đình</div>
-                  <div class="text-xs text-slate-500 mt-0.5">Phường Điện Biên</div>
+                  <div class="text-sm font-bold text-slate-800" id="specDistrictName">Đang tải...</div>
+                  <div class="text-xs text-slate-500 mt-0.5" id="specWardName">Đang tải phường/xã...</div>
                 </div>
               </div>
               

@@ -6,6 +6,21 @@ using BE.Security;
 
 namespace BE.Controllers;
 
+public class UpdateTuChieuSangRequest
+{
+    public string? TenTu { get; set; }
+    public string? DiaChi { get; set; }
+    public decimal? ViDo { get; set; }
+    public decimal? KinhDo { get; set; }
+    public bool? TrangThaiKetNoi { get; set; }
+    public string? TrangThaiNguon { get; set; }
+    public DateTime? LanKetNoiCuoi { get; set; }
+    public byte? CheDoVanHanh { get; set; }
+    public string? MaThietBi { get; set; }
+    public string? MoTa { get; set; }
+    public string? MaKhuVuc { get; set; }
+}
+
 [ApiController]
 [Route("api/[controller]")]
 public class TuChieuSangController : ControllerBase
@@ -104,7 +119,7 @@ public class TuChieuSangController : ControllerBase
 
     // PUT: api/TuChieuSang/TC00001 (Admin & Operator)
     [HttpPut("{id}")]
-    public async Task<ActionResult<TuChieuSang>> Update(string id, [FromBody] TuChieuSang model)
+    public async Task<ActionResult<TuChieuSang>> Update(string id, [FromBody] UpdateTuChieuSangRequest model)
     {
         var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
             _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Cập nhật thông tin tủ chiếu sáng");
@@ -118,18 +133,36 @@ public class TuChieuSangController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(model.TenTu)) item.TenTu = model.TenTu.Trim();
         if (!string.IsNullOrWhiteSpace(model.DiaChi)) item.DiaChi = model.DiaChi.Trim();
-        if (!string.IsNullOrWhiteSpace(model.MaKhuVuc)) item.MaKhuVuc = model.MaKhuVuc.Trim();
-        NormalizeCabinetState(model);
-        item.ViDo = model.ViDo ?? item.ViDo;
-        item.KinhDo = model.KinhDo ?? item.KinhDo;
-        item.TrangThaiKetNoi = model.TrangThaiKetNoi;
-        item.TrangThaiNguon = string.IsNullOrWhiteSpace(model.TrangThaiNguon)
-            ? item.TrangThaiNguon
-            : model.TrangThaiNguon.Trim();
-        item.LanKetNoiCuoi = model.LanKetNoiCuoi ?? item.LanKetNoiCuoi;
-        item.CheDoVanHanh = model.CheDoVanHanh;
-        item.MaThietBi = model.MaThietBi;
-        item.MoTa = model.MoTa;
+        if (!string.IsNullOrWhiteSpace(model.MaKhuVuc))
+        {
+            var areaCode = model.MaKhuVuc.Trim();
+            var areaExists = await _context.KhuVuc.AnyAsync(x => x.MaKhuVuc == areaCode);
+            if (areaExists)
+            {
+                item.MaKhuVuc = areaCode;
+            }
+        }
+
+        if (model.ViDo.HasValue) item.ViDo = model.ViDo;
+        if (model.KinhDo.HasValue) item.KinhDo = model.KinhDo;
+        if (model.TrangThaiKetNoi.HasValue) item.TrangThaiKetNoi = model.TrangThaiKetNoi.Value;
+        if (!string.IsNullOrWhiteSpace(model.TrangThaiNguon))
+        {
+            var source = model.TrangThaiNguon.Trim().ToUpperInvariant();
+            item.TrangThaiNguon = source switch
+            {
+                "ON" => "ON",
+                "OFF" => "OFF",
+                _ => "UNKNOWN"
+            };
+        }
+        if (model.LanKetNoiCuoi.HasValue) item.LanKetNoiCuoi = model.LanKetNoiCuoi;
+        if (model.CheDoVanHanh.HasValue)
+        {
+            item.CheDoVanHanh = model.CheDoVanHanh.Value > 2 ? (byte)2 : model.CheDoVanHanh.Value;
+        }
+        if (model.MaThietBi != null) item.MaThietBi = model.MaThietBi.Trim();
+        if (model.MoTa != null) item.MoTa = model.MoTa.Trim();
         item.NgayCapNhat = DateTime.Now;
 
         await _context.SaveChangesAsync();

@@ -151,12 +151,86 @@ public class LenhDieuKhienController : ControllerBase
             HanhDong = action,
             MucSang = request.MucSang,
             NguonLenh = 1,
-            TrangThaiLenh = 0,
+            TrangThaiLenh = 1, // 1: Da tiep nhan / Dang thuc hien
             ThoiGianTao = DateTime.Now,
+            ThoiGianGui = DateTime.Now,
             MaNguoiDung = userId
         };
 
         _context.LenhDieuKhien.Add(command);
+
+        // Cap nhat ngay trang thai thiet bi trong co so du lieu
+        if (request.MaDen is not null)
+        {
+            var lamp = await _context.DiemDen.FirstOrDefaultAsync(x => x.MaDen == request.MaDen && !x.DaXoa);
+            if (lamp != null)
+            {
+                if (action == "BAT")
+                {
+                    lamp.TrangThaiHoatDong = 1;
+                    lamp.DoSang = 100;
+                }
+                else if (action == "TAT")
+                {
+                    lamp.TrangThaiHoatDong = 2;
+                    lamp.DoSang = 0;
+                }
+                else if (action == "DIM" && request.MucSang.HasValue)
+                {
+                    lamp.TrangThaiHoatDong = request.MucSang.Value > 0 ? (byte)1 : (byte)2;
+                    lamp.DoSang = request.MucSang.Value;
+                }
+                lamp.NgayCapNhat = DateTime.Now;
+            }
+        }
+        else if (request.MaTuyen is not null)
+        {
+            var route = await _context.TuyenChieuSang.FirstOrDefaultAsync(x => x.MaTuyen == request.MaTuyen && !x.DaXoa);
+            if (route != null)
+            {
+                if (action == "BAT")
+                {
+                    route.TrangThaiHoatDong = 1;
+                    route.MucSangHienTai = 100;
+                }
+                else if (action == "TAT")
+                {
+                    route.TrangThaiHoatDong = 2;
+                    route.MucSangHienTai = 0;
+                }
+                else if (action == "DIM" && request.MucSang.HasValue)
+                {
+                    route.TrangThaiHoatDong = request.MucSang.Value > 0 ? (byte)1 : (byte)2;
+                    route.MucSangHienTai = request.MucSang.Value;
+                }
+                route.NgayCapNhat = DateTime.Now;
+
+                // Dong bo cac den truc thuoc tuyen
+                var routeLamps = await _context.DiemDen.Where(d => d.MaTuyen == route.MaTuyen && !d.DaXoa).ToListAsync();
+                foreach (var l in routeLamps)
+                {
+                    if (action == "BAT") { l.TrangThaiHoatDong = 1; l.DoSang = 100; }
+                    else if (action == "TAT") { l.TrangThaiHoatDong = 2; l.DoSang = 0; }
+                    else if (action == "DIM" && request.MucSang.HasValue)
+                    {
+                        l.TrangThaiHoatDong = request.MucSang.Value > 0 ? (byte)1 : (byte)2;
+                        l.DoSang = request.MucSang.Value;
+                    }
+                    l.NgayCapNhat = DateTime.Now;
+                }
+            }
+        }
+        else if (request.MaTu is not null)
+        {
+            var cabinet = await _context.TuChieuSang.FirstOrDefaultAsync(x => x.MaTu == request.MaTu && !x.DaXoa);
+            if (cabinet != null)
+            {
+                if (action == "BAT") cabinet.TrangThaiNguon = "ON";
+                else if (action == "TAT") cabinet.TrangThaiNguon = "OFF";
+                cabinet.NgayCapNhat = DateTime.Now;
+            }
+        }
+
         await _context.SaveChangesAsync();
 
         var targetCode = request.MaTu ?? request.MaTuyen ?? request.MaDen;

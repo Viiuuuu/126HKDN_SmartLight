@@ -497,5 +497,20 @@ SELECT * FROM TuyenChieuSang
 SELECT * FROM DiemDen
 SELECT * FROM NguoiDung
 SELECT * FROM LichVanHanh
+SELECT * FROM ChiTietLichVanHanh
 SELECT * FROM CanhBao
 select * from PhienDangNhap
+
+SELECT 
+    t.maTu,
+    t.tenTu,
+    tcs.maTuyen,
+    tcs.tenTuyen,
+    dd.maDen,
+    dd.tenDen,
+    dd.doSang,
+    dd.trangThaiHoatDong
+FROM TuChieuSang t
+INNER JOIN TuyenChieuSang tcs ON t.maTu = tcs.maTu
+INNER JOIN DiemDen dd ON tcs.maTuyen = dd.maTuyen
+WHERE t.maTu = 'TC00001';
