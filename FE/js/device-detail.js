@@ -125,6 +125,10 @@ function renderDevice() {
   setText('commandStatus', `${device.status} · Dữ liệu mô phỏng`);
 
   if (isCabinet) {
+    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+    const cabNav = document.querySelector('.nav-link[data-nav="cabinets"]') || document.querySelector('a[href*="cabinets"]');
+    if (cabNav) cabNav.classList.add('active');
+
     document.querySelector('.device-icon').textContent = 'electrical_services';
     document.querySelector('.mesh-tag').textContent = 'TỦ ĐIỀU KHIỂN';
     document.querySelector('.quick-control > strong').textContent = 'Điều khiển mô phỏng';

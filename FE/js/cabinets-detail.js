@@ -221,8 +221,11 @@ function setCabinetInput(id, value) {
   if (element) element.value = value;
 }
 
+let currentCabinetRecord = null;
+
 function applyCabinetRecord(cabinet) {
   if (!cabinet) return;
+  currentCabinetRecord = cabinet;
   const id = String(apiField(cabinet, 'maTu', 'MaTu') || cabinetCode).trim();
   const name = String(apiField(cabinet, 'tenTu', 'TenTu') || id);
   const address = String(apiField(cabinet, 'diaChi', 'DiaChi') || '');
@@ -752,10 +755,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
+      const areaCode = currentCabinetRecord?.maKhuVuc || currentCabinetRecord?.MaKhuVuc;
       await window.api.put(`/TuChieuSang/${encodeURIComponent(cabinetCode)}`, {
         maTu: cabinetCode,
         tenTu: newName || undefined,
         diaChi: newArea || undefined,
+        maKhuVuc: areaCode || undefined,
         viDo,
         kinhDo
       });
