@@ -186,7 +186,7 @@
             </div>
         </div>
 
-        <div class="hes-table-responsive" style="overflow-x: hidden;">
+        <div class="hes-table-responsive" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
             <table class="hes-data-table hes-table-fit" id="trackingCmdTable">
                 <thead>
                     <tr>

@@ -235,9 +235,9 @@
                 </div>
 
                 <!-- Tóm tắt đối tượng đang chọn -->
-                <div id="ctrlTargetSummary" style="margin-bottom: 12px; padding: 9px 12px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; font-size: 12px; display: flex; align-items: center; justify-content: space-between;">
-                    <span style="color: #64748B; font-weight: 600;">MỤC TIÊU LỆNH:</span>
-                    <strong id="ctrlTargetLabel" style="color: #073B63; font-size: 12.5px;">Chưa chọn đối tượng</strong>
+                <div id="ctrlTargetSummary" style="margin-bottom: 12px; padding: 9px 12px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                    <span style="color: #64748B; font-weight: 600; flex-shrink: 0;">MỤC TIÊU LỆNH:</span>
+                    <strong id="ctrlTargetLabel" style="color: #073B63; font-size: 12.5px; word-break: break-word; text-align: right; flex: 1 1 auto; min-width: 0;">Chưa chọn đối tượng</strong>
                 </div>
 
                 <!-- 1. ĐIỀU KHIỂN ĐÓNG CẮT NGUỒN ĐIỆN -->
@@ -290,18 +290,20 @@
 
                     <!-- Thanh trượt slider -->
                     <div class="hes-slider-container">
-                        <input type="range" class="hes-range-slider" id="dimRangeSlider" min="0" max="100" value="70" oninput="onDimSliderInput(this.value)" />
+                        <div class="hes-slider-wrap">
+                            <input type="range" class="hes-range-slider" id="dimRangeSlider" min="0" max="100" value="70" style="--dim-level: 70%;" oninput="onDimSliderInput(this.value)" />
+                        </div>
                         <div class="hes-slider-ticks">
-                            <span>0% (Tối)</span>
+                            <span>0%</span>
                             <span>25%</span>
                             <span>50%</span>
                             <span>75%</span>
-                            <span>100% (Cực đại)</span>
+                            <span>100%</span>
                         </div>
                     </div>
 
                     <!-- Nút gửi lệnh DIM -->
-                    <button type="button" class="hes-btn-send-dim" id="btnSendDim" onclick="openSafetyModal('DIM', (window.currentDimLevel || 70) + '%')">
+                    <button type="button" class="hes-btn-send-dim" id="btnSendDim" onclick="openSafetyModal('DIM', (window.currentDimLevel !== undefined ? window.currentDimLevel : 70) + '%')">
                         <svg viewBox="0 0 24 24">
                             <polygon points="5 3 19 12 5 21 5 3"></polygon>
                         </svg>
@@ -349,7 +351,7 @@
             </div>
         </div>
 
-        <div class="hes-table-responsive" style="overflow-x: hidden;">
+        <div class="hes-table-responsive" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
             <table class="hes-data-table hes-table-fit" id="cmdLogTable">
                 <thead>
                     <tr>
