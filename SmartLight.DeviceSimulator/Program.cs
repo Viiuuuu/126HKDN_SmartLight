@@ -12,26 +12,6 @@ if (options.ShowHelp)
     return 0;
 }
 
-SimulatedCabinet cabinet;
-try
-{
-    cabinet = SimulatorCatalog.CreateByDeviceId(options.DeviceId);
-}
-catch (ArgumentException ex)
-{
-    Console.Error.WriteLine($"Lỗi cấu hình: {ex.Message}");
-    return 1;
-}
-
-var engine = new CabinetSimulationEngine(cabinet);
-using var appCts = new CancellationTokenSource();
-
-Console.CancelKeyPress += (_, e) =>
-{
-    e.Cancel = true;
-    appCts.Cancel();
-};
-
 var logLock = new object();
 void Log(string message)
 {
@@ -41,25 +21,69 @@ void Log(string message)
     }
 }
 
-var worker = new HesTcpClientWorker(
-    engine,
-    options.Host,
-    options.Port,
-    TimeSpan.FromSeconds(options.HeartbeatSeconds),
-    TimeSpan.FromSeconds(options.TelemetrySeconds),
-    Log);
+using var appCts = new CancellationTokenSource();
+Console.CancelKeyPress += (_, e) =>
+{
+    e.Cancel = true;
+    appCts.Cancel();
+};
 
-PrintBanner(engine, options);
-var workerTask = worker.RunAsync(appCts.Token);
+var isAllMode = options.DeviceId.Equals("ALL", StringComparison.OrdinalIgnoreCase);
+var deviceIdsToRun = isAllMode
+    ? SimulatorCatalog.SupportedDeviceIds
+    : [options.DeviceId];
+
+var workers = new List<HesTcpClientWorker>();
+var engines = new List<CabinetSimulationEngine>();
+
+foreach (var dId in deviceIdsToRun)
+{
+    try
+    {
+        var cab = SimulatorCatalog.CreateByDeviceId(dId);
+        var eng = new CabinetSimulationEngine(cab);
+        var w = new HesTcpClientWorker(
+            eng,
+            options.Host,
+            options.Port,
+            TimeSpan.FromSeconds(options.HeartbeatSeconds),
+            TimeSpan.FromSeconds(options.TelemetrySeconds),
+            Log);
+        engines.Add(eng);
+        workers.Add(w);
+    }
+    catch (ArgumentException ex)
+    {
+        Console.Error.WriteLine($"Lỗi cấu hình {dId}: {ex.Message}");
+        return 1;
+    }
+}
+
+if (isAllMode)
+{
+    Console.WriteLine("=================================================================");
+    Console.WriteLine("  SMARTLIGHT - GIẢ LẬP ĐỒNG THỜI TOÀN BỘ 4 TỦ CHIẾU SÁNG (ALL)");
+    Console.WriteLine("=================================================================");
+    Console.WriteLine($"  HES Endpoint : {options.Host}:{options.Port}");
+    Console.WriteLine($"  Số tủ chạy   : {engines.Count} tủ ({string.Join(", ", engines.Select(e => e.MaTu))})");
+    Console.WriteLine("  Tất cả 4 tủ sẽ tự động kết nối TCP và duy trì Online đồng thời!");
+    Console.WriteLine("=================================================================");
+}
+else
+{
+    PrintBanner(engines[0], options);
+}
+
+var workerTasks = workers.Select(w => w.RunAsync(appCts.Token)).ToList();
 
 if (!options.Headless && !Console.IsInputRedirected)
 {
-    _ = Task.Run(async () => await RunConsoleMenuAsync(engine, worker, appCts), appCts.Token);
+    _ = Task.Run(async () => await RunConsoleMenuAsync(engines[0], workers[0], appCts), appCts.Token);
 }
 
 try
 {
-    await workerTask;
+    await Task.WhenAll(workerTasks);
 }
 catch (OperationCanceledException)
 {
@@ -163,7 +187,7 @@ internal sealed record SimulatorOptions(
 {
     public static SimulatorOptions Parse(string[] args)
     {
-        var deviceId = "SIM-TU-001";
+        var deviceId = "ALL"; // Mặc định chạy đồng thời toàn bộ 4 tủ khi không truyền tham số
         var host = "127.0.0.1";
         var port = 8088;
         var hbSec = 10;
@@ -179,6 +203,10 @@ internal sealed record SimulatorOptions(
                 case "--help":
                 case "-h":
                     help = true;
+                    break;
+                case "--all":
+                case "-a":
+                    deviceId = "ALL";
                     break;
                 case "--headless":
                     headless = true;
@@ -212,7 +240,8 @@ internal sealed record SimulatorOptions(
     public static void PrintHelp()
     {
         Console.WriteLine("Cách dùng: dotnet run --project SmartLight.DeviceSimulator -- [tùy chọn]");
-        Console.WriteLine("  -d, --device <maThietBi>   Mã thiết bị tủ (SIM-TU-001..004, mặc định: SIM-TU-001)");
+        Console.WriteLine("  -a, --all                  Chạy đồng thời TẤT CẢ 4 tủ chiếu sáng (SIM-TU-001..004)");
+        Console.WriteLine("  -d, --device <maThietBi>   Mã thiết bị tủ (SIM-TU-001..004 hoặc ALL, mặc định: SIM-TU-001)");
         Console.WriteLine("      --host <ip>            IP của HES TCP Server (mặc định: 127.0.0.1)");
         Console.WriteLine("  -p, --port <port>          Cổng TCP của HES Server (mặc định: 8088)");
         Console.WriteLine("      --heartbeat-sec <s>    Chu kỳ gửi HEARTBEAT tính bằng giây (mặc định: 10)");

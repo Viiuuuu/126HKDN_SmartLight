@@ -149,11 +149,11 @@
             <!-- 2. Nhóm thiết bị -->
             <div class="hes-filter-field">
                 <label class="hes-filter-lbl">Nhóm thiết bị</label>
-                <select class="hes-filter-select" id="filterAlertDevice">
+                <select class="hes-filter-select" id="filterAlertDevice" onchange="if(window.applyAlertFilter) window.applyAlertFilter();">
                     <option value="">Tất cả thiết bị</option>
-                    <option value="TCS">Tủ điều khiển (TCS-*)</option>
-                    <option value="DD">Điểm đèn (DD-*)</option>
-                    <option value="Gateway">HES Gateway / Server</option>
+                    <option value="TC">Tủ điều khiển (TC-*)</option>
+                    <option value="TCS">Tuyến chiếu sáng (TCS-*)</option>
+                    <option value="DEN">Điểm đèn (DEN-*)</option>
                 </select>
             </div>
 
@@ -211,7 +211,7 @@
             </div>
         </div>
 
-        <div class="hes-table-responsive" style="overflow-x: hidden;">
+        <div class="hes-table-responsive" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
             <table class="hes-data-table hes-table-fit" id="alarmTable">
                 <thead>
                     <tr>
@@ -585,74 +585,5 @@
             <span class="hes-badge-ready">READY</span>
         </div>
     </div>
-
-    <!-- Script tương tác Cảnh báo & Nhật ký -->
-    <script type="text/javascript">
-        function selectAlarmRow(code, devName, nodeId, ua, ub, uc, leak, subName, gps, sim, eta, rowEl) {
-            var trs = document.querySelectorAll('#alarmTable tbody tr');
-            trs.forEach(function (r) { r.classList.remove('selected-row'); });
-            if (rowEl) rowEl.classList.add('selected-row');
-
-            document.getElementById('detailAlarmCode').innerText = code;
-            document.getElementById('detailNodeId').innerText = 'Node ID: ' + nodeId;
-            document.getElementById('valDetailUa').innerText = ua;
-            document.getElementById('valDetailUb').innerText = ub;
-            document.getElementById('valDetailUc').innerText = uc;
-            document.getElementById('valDetailIn').innerText = leak;
-            document.getElementById('detailSubstationName').innerText = subName;
-            document.getElementById('detailGps').innerText = gps;
-            document.getElementById('detailSim').innerText = sim;
-            document.getElementById('detailEta').innerText = eta;
-        }
-
-        function applyAlertFilter() {
-            var lvl = document.getElementById('filterAlertLevel').value.toUpperCase();
-            var dev = document.getElementById('filterAlertDevice').value.toUpperCase();
-            var stat = document.getElementById('filterAlertStatus').value.toUpperCase();
-            var table = document.getElementById('alarmTable');
-            var trs = table.querySelectorAll('tbody tr');
-
-            trs.forEach(function (tr) {
-                var text = tr.textContent.toUpperCase();
-                var matchLvl = (lvl === '' || text.indexOf(lvl) > -1);
-                var matchDev = (dev === '' || text.indexOf(dev) > -1);
-                var matchStat = (stat === '' || text.indexOf(stat) > -1);
-
-                if (matchLvl && matchDev && matchStat) {
-                    tr.style.display = '';
-                } else {
-                    tr.style.display = 'none';
-                }
-            });
-        }
-
-        function ackAllAlerts() {
-            if (confirm('Bạn có chắc chắn muốn xác nhận toàn bộ cảnh báo đang chờ xử lý?')) {
-                alert('Đã ghi nhận xác nhận hàng loạt (Ack All) vào cơ sở dữ liệu!');
-            }
-        }
-
-        function refreshAlerts() {
-            var btn = document.querySelector('.hes-btn-refresh');
-            if (btn) {
-                btn.style.opacity = '0.6';
-                setTimeout(function () {
-                    btn.style.opacity = '1';
-                    alert('Đã cập nhật danh sách cảnh báo mới nhất từ máy chủ SCADA!');
-                }, 300);
-            }
-        }
-
-        function saveAuditLog() {
-            var note = document.getElementById('auditNotes').value;
-            var act = document.getElementById('auditActionSelect').options[document.getElementById('auditActionSelect').selectedIndex].text;
-            if (!note) {
-                alert('Vui lòng nhập nội dung ghi chú xử lý kỹ thuật!');
-                return;
-            }
-            alert('Đã lưu biên bản xử lý sự cố [' + act + '] thành công vào Audit Log SQL!');
-            document.getElementById('auditNotes').value = '';
-        }
-    </script>
 </asp:Content>
 

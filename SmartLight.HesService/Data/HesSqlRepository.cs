@@ -354,6 +354,7 @@ public sealed class HesSqlRepository : IHesRepository
                 updateCmd.CommandText = """
                     UPDATE dbo.LenhDieuKhien
                     SET trangThaiLenh = 3,
+                        thoiGianGui = ISNULL(thoiGianGui, @ts),
                         thoiGianPhanHoi = @ts,
                         noiDungPhanHoi = @msg
                     WHERE maLenh = @maLenh AND trangThaiLenh = 0;
@@ -460,7 +461,24 @@ public sealed class HesSqlRepository : IHesRepository
         var normalizedAction = hanhDong.Trim().ToUpperInvariant();
         byte? effectiveDim = normalizedAction == "DIM"
             ? Math.Clamp(mucSang ?? (byte)100, (byte)0, (byte)100)
-            : null;
+            : null; // Bắt buộc là NULL với lệnh BAT và TAT theo ràng buộc CK_Lenh_MucSang
+
+        string? targetTu = null;
+        string? targetTuyen = null;
+        string? targetDen = null;
+
+        if (!string.IsNullOrWhiteSpace(maDen))
+        {
+            targetDen = maDen.Trim();
+        }
+        else if (!string.IsNullOrWhiteSpace(maTuyen))
+        {
+            targetTuyen = maTuyen.Trim();
+        }
+        else if (!string.IsNullOrWhiteSpace(maTu))
+        {
+            targetTu = maTu.Trim();
+        }
 
         await using var conn = await OpenConnectionAsync(ct);
         await using var cmd = conn.CreateCommand();
@@ -480,9 +498,9 @@ public sealed class HesSqlRepository : IHesRepository
             VALUES
                 (@maTu, @maTuyen, @maDen, @hanhDong, @mucSang, @nguonLenh, 0, @now, @resolvedUser);
             """;
-        cmd.Parameters.AddWithValue("@maTu", string.IsNullOrWhiteSpace(maTu) ? DBNull.Value : maTu.Trim());
-        cmd.Parameters.AddWithValue("@maTuyen", string.IsNullOrWhiteSpace(maTuyen) ? DBNull.Value : maTuyen.Trim());
-        cmd.Parameters.AddWithValue("@maDen", string.IsNullOrWhiteSpace(maDen) ? DBNull.Value : maDen.Trim());
+        cmd.Parameters.AddWithValue("@maTu", string.IsNullOrWhiteSpace(targetTu) ? DBNull.Value : targetTu);
+        cmd.Parameters.AddWithValue("@maTuyen", string.IsNullOrWhiteSpace(targetTuyen) ? DBNull.Value : targetTuyen);
+        cmd.Parameters.AddWithValue("@maDen", string.IsNullOrWhiteSpace(targetDen) ? DBNull.Value : targetDen);
         cmd.Parameters.AddWithValue("@hanhDong", normalizedAction);
         cmd.Parameters.AddWithValue("@mucSang", effectiveDim.HasValue ? effectiveDim.Value : DBNull.Value);
         cmd.Parameters.AddWithValue("@nguonLenh", nguonLenh);
@@ -612,10 +630,19 @@ public sealed class HesSqlRepository : IHesRepository
             NormalizePowerState(telemetry.Tu.TrangThaiNguon) == "ON" &&
             (telemetry.Tu.DienApPha1 < 185m || telemetry.Tu.DienApPha2 < 185m || telemetry.Tu.DienApPha3 < 185m))
         {
+            int? underVoltConfigId = null;
+            await using (var cfgCmd = conn.CreateCommand())
+            {
+                cfgCmd.Transaction = tx;
+                cfgCmd.CommandText = "SELECT TOP (1) maCauHinh FROM dbo.CauHinhCanhBao WHERE loaiCanhBao IN ('SUT_AP', 'DIEN_AP', 'CANH_BAO_DIEN') AND dangBat = 1 ORDER BY maCauHinh ASC;";
+                var obj = await cfgCmd.ExecuteScalarAsync(ct);
+                if (obj != null && obj != DBNull.Value) underVoltConfigId = Convert.ToInt32(obj);
+            }
+
             await RaiseOpenAlertIfAbsentAsync(
                 conn,
                 tx,
-                null,
+                underVoltConfigId,
                 2,
                 cleanTu,
                 null,
@@ -698,12 +725,12 @@ public sealed class HesSqlRepository : IHesRepository
                 DECLARE @exactTuyen CHAR(10) = NULL;
                 DECLARE @exactDen CHAR(10) = NULL;
 
-                IF @maTu IS NOT NULL
-                    SELECT TOP (1) @exactTu = maTu FROM dbo.TuChieuSang WHERE RTRIM(maTu) = @maTu AND daXoa = 0;
+                IF @maDen IS NOT NULL
+                    SELECT TOP (1) @exactDen = maDen FROM dbo.DiemDen WHERE RTRIM(maDen) = @maDen AND daXoa = 0;
                 ELSE IF @maTuyen IS NOT NULL
                     SELECT TOP (1) @exactTuyen = maTuyen FROM dbo.TuyenChieuSang WHERE RTRIM(maTuyen) = @maTuyen AND daXoa = 0;
-                ELSE IF @maDen IS NOT NULL
-                    SELECT TOP (1) @exactDen = maDen FROM dbo.DiemDen WHERE RTRIM(maDen) = @maDen AND daXoa = 0;
+                ELSE IF @maTu IS NOT NULL
+                    SELECT TOP (1) @exactTu = maTu FROM dbo.TuChieuSang WHERE RTRIM(maTu) = @maTu AND daXoa = 0;
 
                 IF @exactTu IS NOT NULL OR @exactTuyen IS NOT NULL OR @exactDen IS NOT NULL
                 BEGIN

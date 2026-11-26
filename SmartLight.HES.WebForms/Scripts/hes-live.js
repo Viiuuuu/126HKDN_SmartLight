@@ -212,7 +212,7 @@
                 if (elTotalTu) elTotalTu.textContent = String(total);
                 if (elPowerKw) elPowerKw.innerHTML = '(Tải ON: <strong>' + num(powerKw, 2) + ' kW</strong>)';
                 if (elOnlineTu) elOnlineTu.textContent = String(online);
-                if (elOnlineSub) elOnlineSub.textContent = '/ ' + total + ' tủ (' + onlinePct + '% Online)';
+                if (elOnlineSub) elOnlineSub.textContent = '/ ' + total + ' tủ';
                 if (elOfflineBadge) {
                     if (offline > 0) {
                         elOfflineBadge.style.display = 'inline-flex';
@@ -898,10 +898,36 @@
 
         window.currentDimLevel = 70;
 
+        function syncDimSliderVisual(n) {
+            var slider = document.getElementById('dimRangeSlider');
+            if (slider) slider.style.setProperty('--dim-level', n + '%');
+        }
+
+        function setDimControlValue(val) {
+            var n = parseInt(val);
+            if (isNaN(n)) n = 0;
+            if (n < 0) n = 0;
+            if (n > 100) n = 100;
+            window.currentDimLevel = n;
+            var slider = document.getElementById('dimRangeSlider');
+            if (slider) {
+                slider.value = n;
+                syncDimSliderVisual(n);
+            }
+            var numInput = document.getElementById('dimNumberInput');
+            if (numInput) numInput.value = n;
+            var label = document.getElementById('btnSendDimLabel');
+            if (label) {
+                var prefix = selected.type === 'TU' ? 'DIM TOÀN BỘ TỦ' : (selected.type === 'TUYEN' ? 'DIM TOÀN TUYẾN' : 'DIM ĐÈN');
+                label.textContent = prefix + ' (' + n + '%)';
+            }
+        }
+
         window.onDimSliderInput = function (val) {
             window.currentDimLevel = parseInt(val) || 0;
             var numInput = document.getElementById('dimNumberInput');
             if (numInput) numInput.value = window.currentDimLevel;
+            syncDimSliderVisual(window.currentDimLevel);
             var label = document.getElementById('btnSendDimLabel');
             if (label) {
                 var prefix = selected.type === 'TU' ? 'DIM TOÀN BỘ TỦ' : (selected.type === 'TUYEN' ? 'DIM TOÀN TUYẾN' : 'DIM ĐÈN');
@@ -919,12 +945,16 @@
             if (slider) slider.value = n;
             var numInput = document.getElementById('dimNumberInput');
             if (numInput) numInput.value = n;
+            syncDimSliderVisual(n);
             var label = document.getElementById('btnSendDimLabel');
             if (label) {
                 var prefix = selected.type === 'TU' ? 'DIM TOÀN BỘ TỦ' : (selected.type === 'TUYEN' ? 'DIM TOÀN TUYẾN' : 'DIM ĐÈN');
                 label.textContent = prefix + ' (' + n + '%)';
             }
         };
+
+        // Khởi tạo visual slider chuẩn ngay khi tải trang
+        syncDimSliderVisual(window.currentDimLevel);
 
         window.closeSafetyModal = function () {
             var modal = document.getElementById('safetyModalBackdrop');
@@ -979,7 +1009,7 @@
             var btnDim = document.getElementById('btnSendDimLabel');
             var ctrlNotice = document.getElementById('ctrlTargetNotice');
             var targetSummary = document.getElementById('ctrlTargetLabel');
-            var dimLvl = window.currentDimLevel || 70;
+            var dimLvl = (typeof window.currentDimLevel === 'number') ? window.currentDimLevel : 70;
 
             if (targetSummary) {
                 var typeHeader = selected.type === 'TU' ? 'TỦ CHIẾU SÁNG' : (selected.type === 'TUYEN' ? 'TUYẾN CHIẾU SÁNG' : 'ĐIỂM ĐÈN');
@@ -1032,6 +1062,23 @@
                 var tu = (data.cabinets || []).find(function (c) { return c.maTu === code; });
                 if (!tu) return null;
                 var isOn = String(tu.trangThaiNguon || '').toUpperCase() === 'ON';
+                var tuLamps = (data.lamps || []).filter(function (l) { return l.maTu === tu.maTu; });
+                var tuRoutes = (data.routes || []).filter(function (r) { return r.maTu === tu.maTu; });
+                var dimVal = 0;
+                var validLamps = tuLamps.filter(function (l) { return l.doSang !== null && l.doSang !== undefined; });
+                if (validLamps.length > 0) {
+                    dimVal = Math.round(validLamps.reduce(function (sum, l) { return sum + Number(l.doSang); }, 0) / validLamps.length);
+                } else if (tuRoutes.length > 0) {
+                    var validRoutes = tuRoutes.filter(function (r) { return r.mucSangHienTai !== null && r.mucSangHienTai !== undefined; });
+                    if (validRoutes.length > 0) {
+                        dimVal = Math.round(validRoutes.reduce(function (sum, r) { return sum + Number(r.mucSangHienTai); }, 0) / validRoutes.length);
+                    } else {
+                        dimVal = isOn ? 100 : 0;
+                    }
+                } else {
+                    dimVal = isOn ? 100 : 0;
+                }
+                if (dimVal === 0 && isOn) dimVal = 100;
                 return {
                     type: 'TU',
                     code: tu.maTu,
@@ -1040,7 +1087,7 @@
                     sub: 'Tủ điều khiển (' + (Number(tu.trangThaiKetNoi) === 1 ? 'Online TCP' : 'Offline') + ' | ' + (tu.maThietBi || '') + ')',
                     power: tu.congSuat !== null && tu.congSuat !== undefined ? num(tu.congSuat, 3) + ' kW' : '--',
                     temp: tu.dienApPha1 !== null && tu.dienApPha1 !== undefined ? 'Ua=' + num(tu.dienApPha1, 1) + ' V' : '--',
-                    dim: isOn ? 100 : 0,
+                    dim: dimVal,
                     active: isOn,
                     lastSeen: fmtDateTime(tu.lanKetNoiCuoi)
                 };
@@ -1051,6 +1098,21 @@
                 var rawTyStatus = Number(ty.trangThaiHoatDong);
                 var activeTy = rawTyStatus === 1;
                 var tyStatusTxt = rawTyStatus === 1 ? 'HOẠT ĐỘNG' : rawTyStatus === 2 ? 'DỪNG' : rawTyStatus === 3 ? 'SỰ CỐ' : 'CHƯA XÁC ĐỊNH';
+                var rLamps = (data.lamps || []).filter(function (l) { return l.maTuyen === ty.maTuyen; });
+                var tyDim = 0;
+                if (ty.mucSangHienTai !== null && ty.mucSangHienTai !== undefined && Number(ty.mucSangHienTai) > 0) {
+                    tyDim = Number(ty.mucSangHienTai);
+                } else if (rLamps.length > 0) {
+                    var validRLamps = rLamps.filter(function (l) { return l.doSang !== null && l.doSang !== undefined; });
+                    if (validRLamps.length > 0) {
+                        tyDim = Math.round(validRLamps.reduce(function (sum, l) { return sum + Number(l.doSang); }, 0) / validRLamps.length);
+                    } else {
+                        tyDim = activeTy ? 100 : 0;
+                    }
+                } else {
+                    tyDim = activeTy ? 100 : 0;
+                }
+                if (tyDim === 0 && activeTy) tyDim = 100;
                 return {
                     type: 'TUYEN',
                     code: ty.maTuyen,
@@ -1059,7 +1121,7 @@
                     sub: 'Tuyến chiếu sáng (Thuộc Tủ ' + ty.maTu + ') - ' + tyStatusTxt,
                     power: '--',
                     temp: ty.viTri || '--',
-                    dim: ty.mucSangHienTai !== null && ty.mucSangHienTai !== undefined ? Number(ty.mucSangHienTai) : (activeTy ? 100 : 0),
+                    dim: tyDim,
                     active: activeTy,
                     lastSeen: '--'
                 };
@@ -1074,6 +1136,8 @@
                 var rOwner = (data.routes || []).find(function (r) { return r.maTuyen === l.maTuyen; });
                 if (rOwner) parentTu = rOwner.maTu;
             }
+            var dDim = (l.doSang !== null && l.doSang !== undefined) ? Number(l.doSang) : (activeDen ? 100 : 0);
+            if (dDim === 0 && activeDen) dDim = 100;
             return {
                 type: 'DEN',
                 code: l.maDen,
@@ -1082,7 +1146,7 @@
                 sub: 'Điểm đèn (Tuyến ' + l.maTuyen + (parentTu ? ', Tủ ' + parentTu : '') + ') - ' + denStatusTxt,
                 power: l.congSuatThucTe !== null && l.congSuatThucTe !== undefined ? num(l.congSuatThucTe, 1) + ' W' : '--',
                 temp: l.nhietDoLed !== null && l.nhietDoLed !== undefined ? num(l.nhietDoLed, 1) + ' °C' : '--',
-                dim: l.doSang !== null && l.doSang !== undefined ? Number(l.doSang) : (activeDen ? 100 : 0),
+                dim: dDim,
                 active: activeDen,
                 lastSeen: fmtDateTime(l.lanDoCuoi)
             };
@@ -1197,7 +1261,11 @@
                     var defaultCode = (data.lamps && data.lamps[0] && data.lamps[0].maDen) || (data.cabinets && data.cabinets[0] && data.cabinets[0].maTu) || '';
                     var defaultType = (data.lamps && data.lamps[0]) ? 'DEN' : 'TU';
                     var built = buildTargetNode(defaultType, defaultCode, data);
-                    if (built) selected = built;
+                    if (built) {
+                        selected = built;
+                        var initDim = (selected.dim !== undefined && selected.dim !== null) ? Number(selected.dim) : (selected.active ? 100 : 0);
+                        setDimControlValue(initDim);
+                    }
                 } else {
                     var refreshedNode = buildTargetNode(selected.type, selected.code, data);
                     if (refreshedNode) selected = refreshedNode;
@@ -1245,6 +1313,8 @@
                 var built = buildTargetNode(row.getAttribute('data-type'), row.getAttribute('data-code'), treeData);
                 if (built) {
                     selected = built;
+                    var targetDim = (selected.dim !== undefined && selected.dim !== null) ? Number(selected.dim) : (selected.active ? 100 : 0);
+                    setDimControlValue(targetDim);
                     updateDetailCard();
                     renderTree(treeData);
                 }
@@ -1257,7 +1327,12 @@
                 return;
             }
             window.pendingAction = action;
-            window.pendingVal = value;
+            if (action === 'DIM') {
+                var dimVal = (typeof window.currentDimLevel === 'number') ? window.currentDimLevel : 70;
+                window.pendingVal = dimVal + '%';
+            } else {
+                window.pendingVal = value;
+            }
             var modal = document.getElementById('safetyModalBackdrop');
             var targetCodeEl = document.getElementById('modalTargetCode');
             var cmdTypeEl = document.getElementById('modalCmdType');

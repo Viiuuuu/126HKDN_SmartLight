@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "SmartLight.DeviceSimulator": {
+      "commandName": "Project",
+      "commandLineArgs": "--all"
+    }
+  }
+}
+

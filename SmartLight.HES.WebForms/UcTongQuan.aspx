@@ -43,7 +43,7 @@
 
         <!-- Mục 2: Tủ đang kết nối -->
         <div class="hes-stat-chip-item">
-            <span class="hes-stat-chip-label">TỦ ĐANG KẾT NỐI:</span>
+            <span class="hes-stat-chip-label">TỦ KẾT NỐI:</span>
             <strong class="hes-stat-chip-val text-online" id="hesStatOnlineTu">0</strong>
             <span class="hes-stat-chip-sub" id="hesStatOnlineSub">/ 4 tủ</span>
             <span class="hes-stat-chip-badge" id="hesStatOfflineBadge" style="display:none;"></span>
@@ -59,10 +59,10 @@
 
         <!-- Mục 4: Tổng số điểm đèn -->
         <div class="hes-stat-chip-item">
-            <span class="hes-stat-chip-label">TỔNG SỐ ĐIỂM ĐÈN:</span>
+            <span class="hes-stat-chip-label">TỔNG SỐ ĐÈN:</span>
             <strong class="hes-stat-chip-val" id="hesStatTotalDen">8</strong>
-            <span class="hes-stat-chip-sub">điểm đèn</span>
-            <span class="hes-stat-chip-note" id="hesStatActiveDen">(0 đang sáng)</span>
+            <span class="hes-stat-chip-sub">đèn</span>
+            <span class="hes-stat-chip-note" id="hesStatActiveDen">(0 đang bật)</span>
         </div>
     </div>
 
@@ -308,7 +308,7 @@
             </div>
         </div>
 
-        <div class="hes-table-responsive" style="overflow-x: hidden;">
+        <div class="hes-table-responsive" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
             <table class="hes-data-table hes-table-fit" id="hesCabinetTable">
                 <thead>
                     <tr>

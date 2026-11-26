@@ -914,7 +914,7 @@
                 </div>
             </div>
 
-            <div class="hes-comm-table-responsive" style="overflow-x: hidden;">
+            <div class="hes-comm-table-responsive" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
                 <table class="hes-cfg-audit-table hes-table-fit">
                     <thead>
                         <tr>

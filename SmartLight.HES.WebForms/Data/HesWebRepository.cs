@@ -66,8 +66,8 @@ namespace SmartLight.HES.WebForms.Data
             {
                 var req = (HttpWebRequest)WebRequest.Create(_hesServiceUrl + relativePath);
                 req.Method = method;
-                req.Timeout = 2000;
-                req.ReadWriteTimeout = 2000;
+                req.Timeout = 4000;
+                req.ReadWriteTimeout = 4000;
                 req.Accept = "application/json";
 
                 if (payload != null)
@@ -555,11 +555,14 @@ namespace SmartLight.HES.WebForms.Data
             if (action != "BAT" && action != "TAT" && action != "DIM")
                 throw new ArgumentException("Hành động phải là BAT, TAT hoặc DIM.");
 
-            byte? effectiveDim = action == "DIM" ? (byte)Math.Min(100, Math.Max(0, (int)(mucSang ?? 100))) : (byte?)null;
+            byte? effectiveDim = action == "DIM"
+                ? (byte)Math.Min(100, Math.Max(0, (int)(mucSang ?? 100)))
+                : (byte?)null; // Bắt buộc là NULL với lệnh BAT và TAT theo ràng buộc CK_Lenh_MucSang
 
             using (var conn = CreateOpenConnection())
             using (var cmd = conn.CreateCommand())
             {
+                // Ràng buộc CHECK CK_Lenh_DoiTuong: đúng 1 trong 3 trường (maTu, maTuyen, maDen) nhận giá trị, 2 trường còn lại NULL
                 cmd.CommandText = @"
                     DECLARE @user CHAR(10);
                     SELECT TOP (1) @user = maNguoiDung
