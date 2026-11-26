@@ -213,6 +213,10 @@ const formEditLight = document.getElementById('formEditLight');
 
 btnOpenEditModal?.addEventListener('click', () => {
   if (modalEditLight) {
+    const latitude = currentLightRecord?.viDo ?? currentLightRecord?.ViDo;
+    const longitude = currentLightRecord?.kinhDo ?? currentLightRecord?.KinhDo;
+    document.getElementById('editLampLatitude').value = latitude ?? '';
+    document.getElementById('editLampLongitude').value = longitude ?? '';
     modalEditLight.classList.remove('hidden');
     modalEditLight.classList.add('flex');
   }
@@ -236,6 +240,21 @@ formEditLight?.addEventListener('submit', async (e) => {
   const newName = newNameEl ? newNameEl.value : '';
   const newPower = newPowerEl ? newPowerEl.value : '';
   const newHeight = newHeightEl ? newHeightEl.value : '';
+  const latitudeText = document.getElementById('editLampLatitude')?.value.trim() || '';
+  const longitudeText = document.getElementById('editLampLongitude')?.value.trim() || '';
+  const latitude = latitudeText === ''
+    ? (currentLightRecord?.viDo ?? currentLightRecord?.ViDo ?? null)
+    : Number(latitudeText);
+  const longitude = longitudeText === ''
+    ? (currentLightRecord?.kinhDo ?? currentLightRecord?.KinhDo ?? null)
+    : Number(longitudeText);
+
+  if ((latitudeText === '') !== (longitudeText === '') ||
+      (latitude !== null && (!Number.isFinite(latitude) || latitude < -90 || latitude > 90)) ||
+      (longitude !== null && (!Number.isFinite(longitude) || longitude < -180 || longitude > 180))) {
+    showToast('Vui lòng nhập đủ cặp tọa độ hợp lệ: vĩ độ -90..90, kinh độ -180..180.', 'warning');
+    return;
+  }
 
   const lampSubName = document.getElementById('lampSubName');
   const heroLocation = document.getElementById('heroLocationText');
@@ -267,8 +286,12 @@ formEditLight?.addEventListener('submit', async (e) => {
       tenDen: newName,
       congSuat: Number.parseFloat(newPower) || null,
       viTri: location || undefined,
-      maTuyen: routeCode || undefined
+      maTuyen: routeCode || undefined,
+      viDo: latitude,
+      kinhDo: longitude
     });
+    currentLightRecord.viDo = latitude;
+    currentLightRecord.kinhDo = longitude;
     showToast(`Đã cập nhật thông số điểm đèn ${lightId} trên Backend.`);
   } catch (error) {
     console.warn('Không cập nhật được thông số điểm đèn.', error);

@@ -121,6 +121,28 @@ public sealed class HesSqlRepository : IHesRepository
 
     public async Task SaveTelemetryAsync(string maTu, TelemetryMessage telemetry, DateTime measuredAtLocal, CancellationToken ct)
     {
+        const int maxAttempts = 4;
+
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                await SaveTelemetryOnceAsync(maTu, telemetry, measuredAtLocal, ct);
+                return;
+            }
+            catch (SqlException ex) when (ex.Number == 1205 && attempt < maxAttempts)
+            {
+                var delay = TimeSpan.FromMilliseconds(100 * attempt + Random.Shared.Next(40, 140));
+                _logger.LogWarning(ex,
+                    "SQL deadlock while saving telemetry for {MaTu}; retrying attempt {Attempt}/{MaxAttempts} after {DelayMs} ms.",
+                    maTu, attempt + 1, maxAttempts, delay.TotalMilliseconds);
+                await Task.Delay(delay, ct);
+            }
+        }
+    }
+
+    private async Task SaveTelemetryOnceAsync(string maTu, TelemetryMessage telemetry, DateTime measuredAtLocal, CancellationToken ct)
+    {
         if (string.IsNullOrWhiteSpace(maTu)) return;
         var cleanTu = maTu.Trim();
 

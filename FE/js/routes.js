@@ -337,7 +337,7 @@ function closeEditModal() {
   if (editRouteModal) editRouteModal.classList.add('hidden');
 }
 
-function openEditModal(code, name, cab, area, length, points, status) {
+function openEditModal(code, name, cab, area, length, points, status, geometry = '') {
   const editRouteModal = document.getElementById('editRouteModal');
   if (!editRouteModal) return;
   document.getElementById('editRouteId').value = code;
@@ -348,6 +348,7 @@ function openEditModal(code, name, cab, area, length, points, status) {
   document.getElementById('editRouteLength').value = length;
   document.getElementById('editRoutePoints').value = points;
   document.getElementById('editRouteStatus').value = status === 'Hoạt động' ? '1' : '0';
+  document.getElementById('editRouteGeometry').value = geometry || '';
   document.getElementById('editModalSub').textContent = `Mã tuyến: ${code}`;
   editRouteModal.classList.remove('hidden');
 }
@@ -432,7 +433,8 @@ async function handleUpdateRoute(e) {
       viTri: area,
       maTu: cabinetId,
       trangThaiHoatDong: statusCode,
-      chieuDai: Number.isFinite(lengthKm) ? Math.round(lengthKm * 1000) : null
+      chieuDai: Number.isFinite(lengthKm) ? Math.round(lengthKm * 1000) : null,
+      hinhDangGeoJson: document.getElementById('editRouteGeometry').value.trim()
     });
     showToast(`Đã cập nhật tuyến ${name} (${code}) trên Backend.`);
     closeEditModal();
@@ -682,7 +684,8 @@ document.addEventListener('DOMContentLoaded', () => {
           ? (record.length / 1000).toFixed(2)
           : row.children[5].textContent.replace(' km', '').trim(),
         row.children[6].textContent.trim(),
-        row.children[8].textContent.includes('Hoạt động') ? 'Hoạt động' : 'Ngừng hoạt động'
+        row.children[8].textContent.includes('Hoạt động') ? 'Hoạt động' : 'Ngừng hoạt động',
+        record?.raw?.hinhDangGeoJson || record?.raw?.HinhDangGeoJson || ''
       );
     }
   });
@@ -711,7 +714,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ? (record.length / 1000).toFixed(2)
         : row.children[5].textContent.replace(' km', '').trim(),
       row.children[6].textContent.trim(),
-      row.children[8].textContent.includes('Hoạt động') ? 'Hoạt động' : 'Ngừng hoạt động'
+      row.children[8].textContent.includes('Hoạt động') ? 'Hoạt động' : 'Ngừng hoạt động',
+      record?.raw?.hinhDangGeoJson || record?.raw?.HinhDangGeoJson || ''
     );
   });
 

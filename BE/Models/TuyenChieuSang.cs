@@ -30,6 +30,9 @@ public class TuyenChieuSang
     [Column("chieuDai")]
     public int? ChieuDai { get; set; }
 
+    [Column("hinhDangGeoJson", TypeName = "nvarchar(max)")]
+    public string? HinhDangGeoJson { get; set; }
+
     [Column("mucSangHienTai")]
     public byte? MucSangHienTai { get; set; }
 

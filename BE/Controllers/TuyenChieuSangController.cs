@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using BE.Data;
 using BE.Models;
 using BE.Security;
@@ -13,6 +14,7 @@ public class UpdateTuyenChieuSangRequest
     public byte? TrangThaiHoatDong { get; set; }
     public string? MoTa { get; set; }
     public int? ChieuDai { get; set; }
+    public string? HinhDangGeoJson { get; set; }
     public byte? MucSangHienTai { get; set; }
     public string? MaTu { get; set; }
 }
@@ -70,6 +72,44 @@ public class TuyenChieuSangController : ControllerBase
         }
     }
 
+    private static bool IsValidRouteGeometry(string? geoJson)
+    {
+        if (string.IsNullOrWhiteSpace(geoJson)) return true;
+
+        try
+        {
+            using var document = JsonDocument.Parse(geoJson);
+            var root = document.RootElement;
+            if (root.ValueKind != JsonValueKind.Object ||
+                !root.TryGetProperty("type", out var type) ||
+                type.ValueKind != JsonValueKind.String ||
+                type.GetString() != "LineString" ||
+                !root.TryGetProperty("coordinates", out var coordinates) ||
+                coordinates.ValueKind != JsonValueKind.Array || coordinates.GetArrayLength() < 2)
+            {
+                return false;
+            }
+
+            foreach (var point in coordinates.EnumerateArray())
+            {
+                if (point.ValueKind != JsonValueKind.Array || point.GetArrayLength() < 2) return false;
+                var values = point.EnumerateArray().ToArray();
+                if (!values[0].TryGetDouble(out var longitude) ||
+                    !values[1].TryGetDouble(out var latitude) ||
+                    longitude is < -180 or > 180 || latitude is < -90 or > 90)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
+    }
+
     // POST: api/TuyenChieuSang (Admin & Operator)
     [HttpPost]
     public async Task<ActionResult<TuyenChieuSang>> Create([FromBody] TuyenChieuSang model)
@@ -86,6 +126,10 @@ public class TuyenChieuSangController : ControllerBase
         if (string.IsNullOrWhiteSpace(model.TenTuyen) || string.IsNullOrWhiteSpace(model.ViTri))
         {
             return BadRequest(new { message = "Tên tuyến và vị trí không được để trống." });
+        }
+        if (!IsValidRouteGeometry(model.HinhDangGeoJson))
+        {
+            return BadRequest(new { message = "Hình học tuyến phải là GeoJSON LineString hợp lệ với ít nhất 2 tọa độ [kinh độ, vĩ độ]." });
         }
 
         model.MaTuyen = model.MaTuyen.Trim();
@@ -132,6 +176,16 @@ public class TuyenChieuSangController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(model.TenTuyen)) item.TenTuyen = model.TenTuyen.Trim();
         if (!string.IsNullOrWhiteSpace(model.ViTri)) item.ViTri = model.ViTri.Trim();
+        if (model.HinhDangGeoJson != null)
+        {
+            if (!IsValidRouteGeometry(model.HinhDangGeoJson))
+            {
+                return BadRequest(new { message = "Hình học tuyến phải là GeoJSON LineString hợp lệ với ít nhất 2 tọa độ [kinh độ, vĩ độ]." });
+            }
+            item.HinhDangGeoJson = string.IsNullOrWhiteSpace(model.HinhDangGeoJson)
+                ? null
+                : model.HinhDangGeoJson.Trim();
+        }
         if (!string.IsNullOrWhiteSpace(model.MaTu))
         {
             var cabCode = model.MaTu.Trim();

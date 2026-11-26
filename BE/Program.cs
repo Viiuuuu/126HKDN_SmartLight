@@ -30,7 +30,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Only redirect when Kestrel has an HTTPS endpoint configured. The `http`
+// launch profile serves port 5203 only; redirecting it to 7274 makes the FE's
+// HTTP fallback fail because nothing is listening on that HTTPS port.
+var hasHttpsEndpoint = app.Urls.Any(address =>
+    Uri.TryCreate(address, UriKind.Absolute, out var uri) && uri.Scheme == Uri.UriSchemeHttps);
+if (hasHttpsEndpoint)
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("AllowAll");
 
