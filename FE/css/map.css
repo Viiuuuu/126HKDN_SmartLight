@@ -105,9 +105,21 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  z-index: 1;
+}
+
+.leaflet-container {
+  font-family: inherit;
+}
+
+.leaflet-control-zoom,
+.leaflet-control-layers {
+  display: none;
+}
+
+.leaflet-smartlight-marker {
+  background: transparent;
+  border: none;
 }
 
 .map-svg-overlay {
@@ -349,6 +361,45 @@
   height: 46px;
   padding: 6px;
   overflow: hidden;
+}
+
+.filter-panel.collapsed .panel-header {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  justify-content: center;
+}
+
+.filter-panel.collapsed .panel-header-title {
+  position: absolute;
+  inset: 3px;
+  z-index: 0;
+}
+
+.filter-panel.collapsed .panel-header-title > span,
+.filter-panel.collapsed .btn-toggle-filter > span,
+.filter-panel.collapsed .btn-toggle-filter svg {
+  display: none;
+}
+
+.filter-panel.collapsed .btn-toggle-filter {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  justify-content: center;
+  font-size: 0;
+  border-radius: 7px;
+}
+
+.filter-panel.collapsed .btn-toggle-filter:hover,
+.filter-panel.collapsed .btn-toggle-filter:focus-visible {
+  background-color: #e0edff;
+  outline: 2px solid #2563eb;
+  outline-offset: -2px;
 }
 
 .filter-panel.collapsed .panel-collapsible-content {
@@ -857,19 +908,26 @@
    -------------------------------------------------------------------------- */
 .map-legend-bar {
   position: absolute;
-  bottom: 24px;
-  left: 24px;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
   z-index: 20;
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
   border: 1px solid #e2e8f0;
-  border-radius: var(--radius-md);
-  padding: 8px 16px;
+  border-radius: 14px;
+  padding: 8px 18px;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+  gap: 14px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.map-legend-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .legend-title {
@@ -883,9 +941,132 @@
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-size: 12.5px;
   color: var(--text-body);
+  white-space: nowrap;
+}
+
+.legend-map-marker {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.legend-map-marker.cabinet-marker {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: #123c60;
+  box-shadow: 0 0 0 2px #dbeafe;
+  color: #ffffff;
+}
+
+.legend-map-marker.lamp-marker {
+  width: 21px;
+  height: 26px;
+  color: #f97316;
+}
+
+.legend-map-marker svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.legend-map-marker.lamp-marker svg {
+  width: 21px;
+  height: 25px;
+  fill: #f97316;
+  stroke: #ffffff;
+  stroke-width: 1.5;
+}
+
+.smartlight-leaflet-icon {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.device-map-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.device-map-icon::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  bottom: -3px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+}
+
+.device-map-icon.status-active::after {
+  background: #4169dd;
+}
+
+.device-map-icon.status-warning::after {
+  background: #ea580c;
+}
+
+.device-map-icon.status-lost::after {
+  background: #dc2626;
+}
+
+.device-map-icon svg {
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.cabinet-map-icon {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 7px;
+  background: #123c60;
+  color: #ffffff;
+}
+
+.cabinet-map-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.lamp-map-icon {
+  width: 26px;
+  height: 30px;
+  color: #ffffff;
+  filter: drop-shadow(0 2px 3px rgba(15, 23, 42, 0.28));
+}
+
+.lamp-map-icon svg {
+  width: 24px;
+  height: 28px;
+  fill: #f97316;
+  stroke: #ffffff;
+  stroke-width: 1.5;
+}
+
+.legend-route-line {
+  display: inline-block;
+  flex: 0 0 24px;
+  height: 3px;
+  border-radius: 3px;
+  background-color: #2563eb;
 }
 
 .legend-icon-badge {
@@ -902,10 +1083,12 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-left: auto;
   padding-left: 10px;
   border-left: 1px solid #e2e8f0;
   font-size: 11px;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .scale-ruler {
@@ -1124,9 +1307,10 @@
 
 @media (max-width: 900px) {
   .map-legend-bar {
-    bottom: 80px;
     left: 12px;
     right: 12px;
+    bottom: 80px;
+    justify-content: flex-start;
   }
 
   .floating-panel {

@@ -10,6 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script>try{const s=JSON.parse(sessionStorage.getItem('smartlight_user_session')||'{}'),r=String(s.maVaiTro||s.role||s.vaiTro||'').toLowerCase();if(r==='3'||r.includes('kỹ thuật')||r.includes('ky thuat')||r.includes('tech'))document.documentElement.dataset.rbacRole='technician';else if(r==='2'||r.includes('vận hành')||r.includes('van hanh')||r==='operator')document.documentElement.dataset.rbacRole='operator';}catch(e){}</script><link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 </head>
 <body>
   <div class="dashboard-wrapper">
@@ -392,27 +394,8 @@
 
         <!-- ==================== MAP WORKPLACE STAGE ==================== -->
         <div class="map-canvas-container" id="mapStage">
-          <!-- Background Layer: Da Nang Satellite/Map Visual with Fallback Gradient Vector -->
-          <div class="map-bg-layer" id="mapBgLayer" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC1WqKvNqgJQ6bBKeXwhM-w58l7YthgMXJKJKtXgCImfyQHR7x73K22VGM6GBwCg_uQz4z6LvEQZRBV2iWccOF6PwLtsj13n5nMAOsioLEP7JlBEH1-IxT0F4SOZpvUTU_bT822jyxwqAx2sXUz5n3x9RzP9Caun-2AYMnMLY1f-000eXfK4X09LpxL8UbOe0TJIDgv8-kQ_lQOPrvZSvcUgKGP9quU1hwCt16_sZFM6eMowE7ZgYGi');">
-          </div>
-
-          <!-- Stylized Municipal Lighting Feeder Lines Overlay (SVG) -->
-          <svg class="map-svg-overlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 740">
-            <defs>
-              <linearGradient id="roadGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8"/>
-                <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0.4"/>
-              </linearGradient>
-              <linearGradient id="warningGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#fb923c" stop-opacity="0.8"/>
-                <stop offset="100%" stop-color="#ea580c" stop-opacity="0.5"/>
-              </linearGradient>
-            </defs>
-            <!-- Simulated Municipal Lighting Feeder Lines -->
-            <path d="M 380 180 Q 480 320 550 370 T 680 620" fill="none" stroke="url(#roadGlow)" stroke-width="3.5" stroke-dasharray="6,6" opacity="0.85"/>
-            <path d="M 610 280 C 580 320 550 370 490 680" fill="none" stroke="url(#warningGlow)" stroke-width="2.5" opacity="0.7"/>
-            <path d="M 450 240 L 480 310 L 550 370 L 630 390 L 670 480" fill="none" stroke="#bae6fd" stroke-width="2" opacity="0.6"/>
-          </svg>
+          <!-- Leaflet/OpenStreetMap -->
+          <div class="map-bg-layer" id="mapBgLayer"></div>
 
           <!-- ==================== MAP NODES (rendered from API) ==================== -->
           <div class="map-node-layer" id="mapDeviceLayer"></div>
@@ -428,7 +411,7 @@
                 </div>
                 <span id="panelTitleText">Bộ lọc tìm kiếm</span>
               </div>
-              <button class="btn-toggle-filter" id="btnToggleFilter" type="button">
+              <button class="btn-toggle-filter" id="btnToggleFilter" type="button" aria-expanded="true" aria-label="Thu gọn bộ lọc" title="Thu gọn bộ lọc">
                 <span id="collapseText">Thu gọn</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="11 17 6 12 11 7"></polyline>
@@ -733,20 +716,15 @@
           <div class="map-legend-bar">
             <span class="legend-title">Chú giải:</span>
             <div class="legend-item">
-              <div class="legend-icon-badge" style="background-color: #0f3b60;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <circle cx="12" cy="12" r="9"></circle>
-                  <path d="M12 7v5l3 3"></path>
-                </svg>
-              </div>
+              <span class="legend-map-marker cabinet-marker" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"></rect><path d="M8 7h8M8 10h8M8 13h5M12 16.5h.01"></path></svg>
+              </span>
               <span>Tủ chiếu sáng</span>
             </div>
             <div class="legend-item">
-              <div class="legend-icon-badge" style="background-color: #ffedd5; color: #ea580c; border-radius: 50%;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/>
-                </svg>
-              </div>
+              <span class="legend-map-marker lamp-marker" aria-hidden="true">
+                <svg viewBox="0 0 24 28"><path d="M12 1.5a9 9 0 0 0-5.8 15.9c1.1.9 1.8 2 2.1 3.1h7.4c.3-1.1 1-2.2 2.1-3.1A9 9 0 0 0 12 1.5Z"></path><path d="M9 23h6M10 26h4M9.5 13.5l2.5-4 2.5 4M12 10v6"></path></svg>
+              </span>
               <span>Điểm đèn</span>
             </div>
             <div class="legend-item">
@@ -864,6 +842,8 @@
   <!-- Mobile Overlay Backdrop -->
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <!-- Map JavaScript Script -->
   <script src="js/api-config.js"></script>
   <script src="js/map.js"></script>

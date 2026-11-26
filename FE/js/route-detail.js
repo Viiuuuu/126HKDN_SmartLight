@@ -100,6 +100,7 @@ async function loadRouteDetails() {
       modalInputArea: areaName,
       modalInputLength: Number.isFinite(rawLength) ? (rawLength / 1000).toFixed(2) : '',
       modalInputPoints: points.length,
+      modalInputGeometry: route.hinhDangGeoJson ?? route.HinhDangGeoJson ?? '',
       modalRouteCodeInput: currentRouteCode
     };
     Object.entries(editInputs).forEach(([id, value]) => {
@@ -491,6 +492,7 @@ function handleSaveEditRoute(e) {
   const area = document.getElementById('modalInputArea').value.trim();
   const length = document.getElementById('modalInputLength').value;
   const points = document.getElementById('modalInputPoints').value;
+  const geometry = document.getElementById('modalInputGeometry')?.value.trim() || '';
 
   currentRouteName = name;
   const titleEl = document.getElementById('detailRouteTitle');
@@ -530,7 +532,8 @@ function handleSaveEditRoute(e) {
     viTri: area,
     maTu: cab,
     trangThaiHoatDong: Number(routeStatusCode),
-    chieuDai: Number.isFinite(lengthKm) ? Math.round(lengthKm * 1000) : null
+    chieuDai: Number.isFinite(lengthKm) ? Math.round(lengthKm * 1000) : null,
+    hinhDangGeoJson: geometry
   }).then(() => {
     showToast(`Đã cập nhật tuyến ${currentRouteCode} trên Backend.`);
   }).catch(error => {

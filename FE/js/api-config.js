@@ -13,8 +13,8 @@
  */
 
 const KNOWN_API_URLS = [
-  'https://localhost:7274/api',
-  'http://localhost:5203/api'
+  'http://localhost:5203/api',
+  'https://localhost:7274/api'
 ];
 
 const DEFAULT_API_URL = (function () {
@@ -22,7 +22,7 @@ const DEFAULT_API_URL = (function () {
   if (customUrl && customUrl.trim() !== '') {
     return customUrl.trim().replace(/\/+$/, '');
   }
-  return 'https://localhost:7274/api';
+  return 'http://localhost:5203/api';
 })();
 
 const API_CONFIG = {
@@ -868,12 +868,18 @@ async function apiFetch(endpoint, options = {}) {
 
       if (!response.ok) {
         let errorMessage = `Yêu cầu thất bại với mã trạng thái ${response.status}`;
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorData.title || errorMessage;
-        } catch (_) {
-          const text = await response.text();
-          if (text) errorMessage = text;
+        const responseText = await response.text();
+        const contentType = response.headers.get('content-type') || '';
+
+        if (responseText && contentType.includes('application/json')) {
+          try {
+            const errorData = JSON.parse(responseText);
+            errorMessage = errorData.message || errorData.title || errorData.detail || errorMessage;
+          } catch (_) {
+            // Keep the HTTP status message if the server returned invalid JSON.
+          }
+        } else if (responseText && !contentType.includes('text/html')) {
+          errorMessage = responseText.slice(0, 300);
         }
         const err = new Error(errorMessage);
         err.status = response.status;

@@ -84,6 +84,7 @@ CREATE TABLE TuyenChieuSang (
         CHECK (trangThaiHoatDong IN (0,1,2,3)), -- 0: Chua XD, 1: Hoat dong, 2: Dung, 3: Su co
     moTa NVARCHAR(255),
     chieuDai INT CHECK (chieuDai > 0),   -- met; de NULL neu chua co
+    hinhDangGeoJson NVARCHAR(MAX), -- GeoJSON LineString, coordinates [kinhDo, viDo]
     mucSangHienTai TINYINT CHECK (mucSangHienTai BETWEEN 0 AND 100),
     daXoa BIT NOT NULL DEFAULT 0,
     ngayTao DATETIME NOT NULL DEFAULT GETDATE(),
@@ -360,25 +361,25 @@ INSERT INTO TuChieuSang
 SELECT v.ma,v.ten,v.diaChi,v.viDo,v.kinhDo,0,'UNKNOWN',
        NULL,0,v.thietBi,N'Tủ mô phỏng phục vụ đồ án SmartLight',v.khu
 FROM (VALUES
- ('TC00001',N'Tủ Bạch Đằng 01',N'Đường Bạch Đằng, phường Hải Châu, Đà Nẵng',CAST(16.0675000 AS DECIMAL(10,7)),CAST(108.2235000 AS DECIMAL(10,7)),'SIM-TU-001','KV001'),
- ('TC00002',N'Tủ 2 Tháng 9 01',N'Đường 2 Tháng 9, phường Hòa Cường, Đà Nẵng',CAST(16.0427000 AS DECIMAL(10,7)),CAST(108.2210000 AS DECIMAL(10,7)),'SIM-TU-002','KV002'),
- ('TC00003',N'Tủ Điện Biên Phủ 01',N'Đường Điện Biên Phủ, phường Thanh Khê, Đà Nẵng',CAST(16.0655000 AS DECIMAL(10,7)),CAST(108.1935000 AS DECIMAL(10,7)),'SIM-TU-003','KV003'),
- ('TC00004',N'Tủ Võ Nguyên Giáp 01',N'Đường Võ Nguyên Giáp, phường An Hải, Đà Nẵng',CAST(16.0680000 AS DECIMAL(10,7)),CAST(108.2450000 AS DECIMAL(10,7)),'SIM-TU-004','KV004')
+ ('TC00001',N'Tủ Bạch Đằng 01',N'Đường Bạch Đằng, phường Hải Châu, Đà Nẵng',CAST(16.0673294 AS DECIMAL(10,7)),CAST(108.2248996 AS DECIMAL(10,7)),'SIM-TU-001','KV001'),
+ ('TC00002',N'Tủ 2 Tháng 9 01',N'Đường 2 Tháng 9, phường Hòa Cường, Đà Nẵng',CAST(16.0423409 AS DECIMAL(10,7)),CAST(108.2231117 AS DECIMAL(10,7)),'SIM-TU-002','KV002'),
+ ('TC00003',N'Tủ Điện Biên Phủ 01',N'Đường Điện Biên Phủ, phường Thanh Khê, Đà Nẵng',CAST(16.0657024 AS DECIMAL(10,7)),CAST(108.1937988 AS DECIMAL(10,7)),'SIM-TU-003','KV003'),
+ ('TC00004',N'Tủ Võ Nguyên Giáp 01',N'Đường Võ Nguyên Giáp, phường An Hải, Đà Nẵng',CAST(16.0680336 AS DECIMAL(10,7)),CAST(108.2451573 AS DECIMAL(10,7)),'SIM-TU-004','KV004')
 ) v(ma,ten,diaChi,viDo,kinhDo,thietBi,khu)
 WHERE NOT EXISTS (SELECT 1 FROM TuChieuSang t WHERE t.maTu=v.ma);
 
 -- 3. TUYEN CHIEU SANG: moi tu co the quan ly nhieu tuyen
 -- Ban dau khi chua chay gia lap: trangThaiHoatDong=0 (Chua xac dinh), mucSangHienTai=0
 INSERT INTO TuyenChieuSang
-(maTuyen,tenTuyen,viTri,trangThaiHoatDong,chieuDai,mucSangHienTai,maTu)
-SELECT v.ma,v.ten,v.viTri,0,v.chieuDai,0,v.maTu
+(maTuyen,tenTuyen,viTri,trangThaiHoatDong,chieuDai,mucSangHienTai,maTu,hinhDangGeoJson)
+SELECT v.ma,v.ten,v.viTri,0,v.chieuDai,0,v.maTu,v.hinhDangGeoJson
 FROM (VALUES
- ('TCS00001',N'Tuyến Bạch Đằng A',N'Đoạn mô phỏng trên đường Bạch Đằng',500,'TC00001'),
- ('TCS00002',N'Tuyến Bạch Đằng B',N'Đoạn mô phỏng thứ hai trên đường Bạch Đằng',400,'TC00001'),
- ('TCS00003',N'Tuyến 2 Tháng 9',N'Đoạn mô phỏng trên đường 2 Tháng 9',600,'TC00002'),
- ('TCS00004',N'Tuyến Điện Biên Phủ',N'Đoạn mô phỏng trên đường Điện Biên Phủ',450,'TC00003'),
- ('TCS00005',N'Tuyến Võ Nguyên Giáp',N'Đoạn mô phỏng trên đường Võ Nguyên Giáp',550,'TC00004')
-) v(ma,ten,viTri,chieuDai,maTu)
+ ('TCS00001',N'Tuyến Bạch Đằng A',N'Đoạn mô phỏng trên đường Bạch Đằng',500,'TC00001',N'{"type":"LineString","coordinates":[[108.224900,16.067329],[108.224921,16.067723],[108.224928,16.067819]]}'),
+ ('TCS00002',N'Tuyến Bạch Đằng B',N'Đoạn mô phỏng thứ hai trên đường Bạch Đằng',400,'TC00001',N'{"type":"LineString","coordinates":[[108.224928,16.067819],[108.224950,16.068190],[108.224969,16.068504]]}'),
+ ('TCS00003',N'Tuyến 2 Tháng 9',N'Đoạn mô phỏng trên đường 2 Tháng 9',600,'TC00002',N'{"type":"LineString","coordinates":[[108.223112,16.042341],[108.223125,16.042218],[108.223158,16.041954],[108.223166,16.041872],[108.223168,16.041786],[108.223330,16.041807],[108.223293,16.041966],[108.223281,16.042053],[108.223220,16.042557],[108.223034,16.044123],[108.223025,16.044252],[108.223002,16.044418],[108.222857,16.044406],[108.222880,16.044236],[108.222945,16.043675]]}'),
+ ('TCS00004',N'Tuyến Điện Biên Phủ',N'Đoạn mô phỏng trên đường Điện Biên Phủ',450,'TC00003',N'{"type":"LineString","coordinates":[[108.193799,16.065702],[108.194169,16.065689]]}'),
+ ('TCS00005',N'Tuyến Võ Nguyên Giáp',N'Đoạn mô phỏng trên đường Võ Nguyên Giáp',550,'TC00004',N'{"type":"LineString","coordinates":[[108.2451573,16.0680336],[108.2451365,16.0686305]]}')
+) v(ma,ten,viTri,chieuDai,maTu,hinhDangGeoJson)
 WHERE NOT EXISTS (SELECT 1 FROM TuyenChieuSang t WHERE t.maTuyen=v.ma);
 
 -- 4. DIEM DEN: 2 diem / tuyen tai mot vai tuyen de test nhom va theo doi
@@ -389,14 +390,14 @@ INSERT INTO DiemDen
 SELECT v.ma,v.ten,N'LED',v.viTri,v.viDo,v.kinhDo,v.cs,
  0.00, 0.000, 0.00, 0.00, NULL, 0, 0, v.maTuyen
 FROM (VALUES
- ('DEN00001',N'Đèn Bạch Đằng 01',N'Đường Bạch Đằng',CAST(16.0675000 AS DECIMAL(10,7)),CAST(108.2235000 AS DECIMAL(10,7)),120.00,'TCS00001'),
- ('DEN00002',N'Đèn Bạch Đằng 02',N'Đường Bạch Đằng',CAST(16.0680000 AS DECIMAL(10,7)),CAST(108.2237000 AS DECIMAL(10,7)),120.00,'TCS00001'),
- ('DEN00003',N'Đèn Bạch Đằng 03',N'Đường Bạch Đằng',CAST(16.0685000 AS DECIMAL(10,7)),CAST(108.2239000 AS DECIMAL(10,7)),100.00,'TCS00002'),
- ('DEN00004',N'Đèn 2 Tháng 9 01',N'Đường 2 Tháng 9',CAST(16.0427000 AS DECIMAL(10,7)),CAST(108.2210000 AS DECIMAL(10,7)),150.00,'TCS00003'),
- ('DEN00005',N'Đèn 2 Tháng 9 02',N'Đường 2 Tháng 9',CAST(16.0432000 AS DECIMAL(10,7)),CAST(108.2211000 AS DECIMAL(10,7)),150.00,'TCS00003'),
- ('DEN00006',N'Đèn Điện Biên Phủ 01',N'Đường Điện Biên Phủ',CAST(16.0655000 AS DECIMAL(10,7)),CAST(108.1935000 AS DECIMAL(10,7)),100.00,'TCS00004'),
- ('DEN00007',N'Đèn Võ Nguyên Giáp 01',N'Đường Võ Nguyên Giáp',CAST(16.0680000 AS DECIMAL(10,7)),CAST(108.2450000 AS DECIMAL(10,7)),120.00,'TCS00005'),
- ('DEN00008',N'Đèn Võ Nguyên Giáp 02',N'Đường Võ Nguyên Giáp',CAST(16.0685000 AS DECIMAL(10,7)),CAST(108.2452000 AS DECIMAL(10,7)),120.00,'TCS00005')
+ ('DEN00001',N'Đèn Bạch Đằng 01',N'Đường Bạch Đằng',CAST(16.0673294 AS DECIMAL(10,7)),CAST(108.2248996 AS DECIMAL(10,7)),120.00,'TCS00001'),
+ ('DEN00002',N'Đèn Bạch Đằng 02',N'Đường Bạch Đằng',CAST(16.0678195 AS DECIMAL(10,7)),CAST(108.2249275 AS DECIMAL(10,7)),120.00,'TCS00001'),
+ ('DEN00003',N'Đèn Bạch Đằng 03',N'Đường Bạch Đằng',CAST(16.0685044 AS DECIMAL(10,7)),CAST(108.2249690 AS DECIMAL(10,7)),100.00,'TCS00002'),
+ ('DEN00004',N'Đèn 2 Tháng 9 01',N'Đường 2 Tháng 9',CAST(16.0423409 AS DECIMAL(10,7)),CAST(108.2231117 AS DECIMAL(10,7)),150.00,'TCS00003'),
+ ('DEN00005',N'Đèn 2 Tháng 9 02',N'Đường 2 Tháng 9',CAST(16.0436751 AS DECIMAL(10,7)),CAST(108.2229448 AS DECIMAL(10,7)),150.00,'TCS00003'),
+ ('DEN00006',N'Đèn Điện Biên Phủ 01',N'Đường Điện Biên Phủ',CAST(16.0657024 AS DECIMAL(10,7)),CAST(108.1937988 AS DECIMAL(10,7)),100.00,'TCS00004'),
+ ('DEN00007',N'Đèn Võ Nguyên Giáp 01',N'Đường Võ Nguyên Giáp',CAST(16.0680336 AS DECIMAL(10,7)),CAST(108.2451573 AS DECIMAL(10,7)),120.00,'TCS00005'),
+ ('DEN00008',N'Đèn Võ Nguyên Giáp 02',N'Đường Võ Nguyên Giáp',CAST(16.0686305 AS DECIMAL(10,7)),CAST(108.2451365 AS DECIMAL(10,7)),120.00,'TCS00005')
 ) v(ma,ten,viTri,viDo,kinhDo,cs,maTuyen)
 WHERE NOT EXISTS (SELECT 1 FROM DiemDen d WHERE d.maDen=v.ma);
 

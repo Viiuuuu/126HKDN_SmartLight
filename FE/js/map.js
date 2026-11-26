@@ -72,6 +72,181 @@ document.addEventListener('DOMContentLoaded', () => {
   const countStatusWarning = document.getElementById('countStatusWarning');
   const countStatusLost = document.getElementById('countStatusLost');
 
+  let leafletMap = null;
+  let leafletMarkerLayer = null;
+  let leafletRouteLayer = null;
+  let roadTileLayer = null;
+  let satelliteTileLayer = null;
+  let leafletCanvasRenderer = null;
+  let isSatellite = false;
+  let roadTileSourceIndex = 0;
+  let roadTileErrorCount = 0;
+  let roadTileLoadCount = 0;
+  let roadTileFallbackTimer = null;
+
+  const roadTileSources = [
+    {
+      url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    },
+    {
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+      attribution: 'Tiles &copy; Esri'
+    },
+    {
+      url: 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
+      subdomains: 'abc',
+      attribution: '&copy; OpenStreetMap contributors, tiles &copy; <a href="https://www.openstreetmap.fr">OpenStreetMap France</a>'
+    }
+  ];
+
+  function activateRoadTileSource(index) {
+    if (!leafletMap) return;
+    if (index >= roadTileSources.length) {
+      showToast('Không kết nối được máy chủ nền bản đồ. Hãy kiểm tra mạng Internet.', 'warning');
+      return;
+    }
+    if (index <= roadTileSourceIndex && roadTileLayer) return;
+
+    if (roadTileFallbackTimer) {
+      window.clearTimeout(roadTileFallbackTimer);
+      roadTileFallbackTimer = null;
+    }
+    if (roadTileLayer) roadTileLayer.remove();
+
+    roadTileSourceIndex = index;
+    roadTileErrorCount = 0;
+    roadTileLoadCount = 0;
+    const source = roadTileSources[index];
+    roadTileLayer = window.L.tileLayer(source.url, {
+      maxZoom: 19,
+      updateWhenIdle: true,
+      keepBuffer: 2,
+      subdomains: source.subdomains || 'abc',
+      attribution: source.attribution
+    });
+
+    roadTileLayer.on('tileload', () => {
+      roadTileLoadCount += 1;
+      if (roadTileFallbackTimer) {
+        window.clearTimeout(roadTileFallbackTimer);
+        roadTileFallbackTimer = null;
+      }
+    });
+    roadTileLayer.on('tileerror', () => {
+      roadTileErrorCount += 1;
+      if (roadTileErrorCount >= 4) activateRoadTileSource(index + 1);
+    });
+    roadTileLayer.addTo(leafletMap);
+
+    // Some network failures never produce a tileerror event. Move to the next
+    // source when the initial viewport has not received even one tile in time.
+    roadTileFallbackTimer = window.setTimeout(() => {
+      if (roadTileLoadCount === 0) activateRoadTileSource(index + 1);
+    }, 8000);
+  }
+
+  function synchronizeMapViewport(force = false) {
+    if (!leafletMap || !mapBgLayer) return;
+
+    const host = mapBgLayer.parentElement;
+    const hostWidth = host?.clientWidth || 0;
+    const hostHeight = host?.clientHeight || 0;
+    if (hostWidth > 1 && hostHeight > 1) {
+      // Percentage dimensions on an absolutely positioned child can briefly
+      // resolve to a stale width during browser fullscreen transitions.
+      // Use the measured stage dimensions so Leaflet and its tile grid always
+      // have the same viewport as the visible map frame.
+      mapBgLayer.style.width = `${hostWidth}px`;
+      mapBgLayer.style.height = `${hostHeight}px`;
+    }
+
+    const { width, height } = mapBgLayer.getBoundingClientRect();
+    if (width < 2 || height < 2) return;
+
+    const mapSize = leafletMap.getSize();
+    const sizeChanged = Math.abs(mapSize.x - Math.round(width)) > 1
+      || Math.abs(mapSize.y - Math.round(height)) > 1;
+
+    if (!force && !sizeChanged) return;
+
+    const center = leafletMap.getCenter();
+    const zoom = leafletMap.getZoom();
+    leafletMap.invalidateSize({ animate: false, pan: false, debounceMoveend: true });
+
+    // A hard view reset makes Leaflet rebuild its tile grid. This is needed
+    // when the page enters or exits browser fullscreen while the map is open:
+    // a plain invalidateSize can retain a grid laid out for the old width.
+    leafletMap.setView(center, zoom, { animate: false, reset: true });
+  }
+
+  function initializeLeafletMap() {
+    if (!window.L || !mapBgLayer) return;
+
+    leafletMap = window.L.map(mapBgLayer, {
+      center: [16.0544, 108.2022],
+      zoom: 13,
+      zoomControl: false,
+      attributionControl: true,
+      preferCanvas: true,
+      updateWhenIdle: true,
+      keepBuffer: 2
+    });
+
+    activateRoadTileSource(0);
+
+    satelliteTileLayer = window.L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri'
+      }
+    );
+
+    leafletMarkerLayer = window.L.layerGroup().addTo(leafletMap);
+    leafletRouteLayer = window.L.layerGroup().addTo(leafletMap);
+    leafletCanvasRenderer = window.L.canvas({ padding: 0.5 });
+
+    [0, 120, 500, 1200].forEach(delay => {
+      window.setTimeout(() => synchronizeMapViewport(true), delay);
+    });
+
+    // The map sits in a responsive dashboard whose width can change after
+    // Leaflet's first layout (sidebar/content sizing and filter panel changes).
+    // If Leaflet keeps that initial, narrower size, tiles stop at a vertical
+    // edge while markers and routes continue across the full map container.
+    if ('ResizeObserver' in window) {
+      let resizeFrame = 0;
+      const mapResizeObserver = new ResizeObserver(() => {
+        cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(() => {
+          synchronizeMapViewport();
+        });
+      });
+      mapResizeObserver.observe(mapBgLayer);
+    }
+
+    leafletMap.on('contextmenu', async event => {
+      const coordinates = `${event.latlng.lat.toFixed(7)}, ${event.latlng.lng.toFixed(7)}`;
+      try {
+        await navigator.clipboard.writeText(coordinates);
+        showToast(`Đã sao chép tọa độ GPS: ${coordinates}`, 'success');
+      } catch (_) {
+        showToast(`Tọa độ GPS: ${coordinates}`, 'info');
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      synchronizeMapViewport(true);
+    });
+
+    document.addEventListener('fullscreenchange', () => {
+      window.setTimeout(() => synchronizeMapViewport(true), 0);
+    });
+  }
+
+  initializeLeafletMap();
+
   // -------------------------------------------------------------------------
   // 2. Real-time Clock Sync
   // -------------------------------------------------------------------------
@@ -207,6 +382,69 @@ document.addEventListener('DOMContentLoaded', () => {
     deviceLayer.replaceChildren();
     mapNodes = [];
 
+    if (leafletMap && leafletMarkerLayer) {
+      leafletMarkerLayer.clearLayers();
+
+      const coordinateMarkers = [];
+      devices.forEach((device) => {
+        let lat = device.lat;
+        let lng = device.lng;
+
+        if (lat === null || lng === null) {
+          return;
+        }
+
+        const isCabinet = device.iconType === 'cabinet';
+        const statusClass = device.statusClass === 'status-warning'
+          ? 'warning'
+          : device.statusClass === 'status-lost'
+            ? 'lost'
+            : 'active';
+        const markerIcon = window.L.divIcon({
+          className: 'smartlight-leaflet-icon',
+          html: isCabinet
+            ? `<span class="device-map-icon cabinet-map-icon status-${statusClass}" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"></rect><path d="M8 7h8M8 10h8M8 13h5M12 16.5h.01"></path></svg></span>`
+            : `<span class="device-map-icon lamp-map-icon status-${statusClass}" aria-hidden="true"><svg viewBox="0 0 24 28"><path d="M12 1.5a9 9 0 0 0-5.8 15.9c1.1.9 1.8 2 2.1 3.1h7.4c.3-1.1 1-2.2 2.1-3.1A9 9 0 0 0 12 1.5Z"></path><path d="M9 23h6M10 26h4M9.5 13.5l2.5-4 2.5 4M12 10v6"></path></svg></span>`,
+          iconSize: isCabinet ? [28, 28] : [26, 32],
+          iconAnchor: isCabinet ? [14, 14] : [13, 30],
+          tooltipAnchor: [0, isCabinet ? -12 : -26]
+        });
+        const marker = window.L.marker([lat, lng], {
+          icon: markerIcon,
+          title: `${isCabinet ? 'Tủ chiếu sáng' : 'Điểm đèn'} ${device.id}`,
+          keyboard: true
+        });
+
+        marker.bindTooltip(`<strong>${device.id}</strong><br>${device.location}`, { direction: 'top' });
+        marker.deviceId = device.id;
+
+        marker.on('click', () => {
+          selectedDevice = device;
+          displayDeviceDetail(device.id);
+          showToast(`Đã chọn thiết bị: ${device.id}`, 'success');
+        });
+
+        leafletMarkerLayer.addLayer(marker);
+        mapNodes.push(marker);
+        coordinateMarkers.push([lat, lng]);
+      });
+
+      if (coordinateMarkers.length) {
+        if (coordinateMarkers.length === 1) {
+          leafletMap.setView(coordinateMarkers[0], 16);
+        } else {
+          leafletMap.fitBounds(window.L.latLngBounds(coordinateMarkers), {
+            padding: [70, 70],
+            maxZoom: 16
+          });
+        }
+        requestAnimationFrame(() => {
+          leafletMap.invalidateSize({ pan: false });
+        });
+      }
+      return;
+    }
+
     if (!devices.length) {
       const empty = document.createElement('div');
       empty.className = 'map-node-empty';
@@ -233,8 +471,63 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function routeGeoJsonLatLngs(route) {
+    const rawGeometry = apiField(route, 'hinhDangGeoJson', 'HinhDangGeoJson');
+    if (!rawGeometry) return [];
+
+    try {
+      const geometry = typeof rawGeometry === 'string' ? JSON.parse(rawGeometry) : rawGeometry;
+      if (geometry?.type !== 'LineString' || !Array.isArray(geometry.coordinates)) return [];
+
+      const points = geometry.coordinates.map(coordinate => {
+        if (!Array.isArray(coordinate) || coordinate.length < 2) return null;
+        const lng = readCoordinate(coordinate[0]);
+        const lat = readCoordinate(coordinate[1]);
+        if (lat === null || lng === null || lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
+        return [lat, lng];
+      });
+
+      return points.length >= 2 && points.every(Boolean) ? points : [];
+    } catch (error) {
+      console.warn('GeoJSON không hợp lệ cho tuyến chiếu sáng.', error);
+      return [];
+    }
+  }
+
+  function renderMapRoutes(routes) {
+    if (!leafletMap || !leafletRouteLayer) return 0;
+
+    leafletRouteLayer.clearLayers();
+    let renderedRoutes = 0;
+
+    routes.forEach(route => {
+      const routeId = String(apiField(route, 'maTuyen', 'MaTuyen') || '').trim();
+      const points = routeGeoJsonLatLngs(route);
+      if (!points.length) return;
+
+      const routeStatus = Number(apiField(route, 'trangThaiHoatDong', 'TrangThaiHoatDong'));
+      const routeColor = routeStatus === 3 ? '#dc2626'
+        : routeStatus === 1 ? '#2563eb'
+          : '#64748b';
+
+      window.L.polyline(points, {
+        renderer: leafletCanvasRenderer,
+        color: routeColor,
+        weight: 4,
+        opacity: 0.85,
+        dashArray: routeStatus === 1 ? null : '8, 8'
+      }).bindTooltip(String(apiField(route, 'tenTuyen', 'TenTuyen') || routeId), {
+        sticky: true
+      }).addTo(leafletRouteLayer);
+      renderedRoutes++;
+    });
+
+    return renderedRoutes;
+  }
+
   function bindNodeEvents() {
     mapNodes.forEach(node => {
+      if (leafletMap && typeof node.on === 'function') return;
       node.addEventListener('click', event => {
         event.stopPropagation();
         const nodeId = node.getAttribute('data-id');
@@ -306,6 +599,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (collapseText) {
         collapseText.textContent = isCollapsed ? 'Mở' : 'Thu gọn';
       }
+      btnToggleFilter.setAttribute('aria-expanded', String(!isCollapsed));
+      btnToggleFilter.setAttribute('aria-label', isCollapsed ? 'Mở bộ lọc' : 'Thu gọn bộ lọc');
+      btnToggleFilter.title = isCollapsed ? 'Mở bộ lọc' : 'Thu gọn bộ lọc';
     });
   }
 
@@ -327,9 +623,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let visibleCount = 0;
 
     mapNodes.forEach(node => {
-      const data = deviceDatabase[node.dataset.id];
+      const nodeId = node.deviceId || node.dataset?.id;
+      const data = deviceDatabase[nodeId];
       if (!data) {
-        node.style.display = 'none';
+        if (leafletMarkerLayer && leafletMap && typeof node.remove === 'function') {
+          leafletMarkerLayer.removeLayer(node);
+        }
+        else node.style.display = 'none';
         return;
       }
 
@@ -346,10 +646,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const matchesSearch = !keyword || searchableText.includes(keyword);
       const visible = matchesDistrict && matchesType && matchesStatus && matchesSearch;
 
-      node.style.display = visible ? '' : 'none';
+      if (leafletMarkerLayer && leafletMap && typeof node.remove === 'function') {
+        if (visible) {
+          if (!leafletMarkerLayer.hasLayer(node)) leafletMarkerLayer.addLayer(node);
+        } else {
+          leafletMarkerLayer.removeLayer(node);
+        }
+      } else {
+        node.style.display = visible ? '' : 'none';
+      }
       if (visible) visibleCount++;
-      if (!visible && node.classList.contains('selected')) {
-        node.classList.remove('selected');
+      if (!visible && (node.classList?.contains('selected') || selectedDevice?.id === nodeId)) {
+        node.classList?.remove('selected');
         selectedDevice = null;
         deviceDetailCard?.classList.add('hidden');
       }
@@ -387,12 +695,6 @@ document.addEventListener('DOMContentLoaded', () => {
   filterSearchInput?.addEventListener('keydown', event => {
     if (event.key === 'Enter') applyMapFilters();
   });
-  document.getElementById('selectDistrict')?.addEventListener('change', () => applyMapFilters(false));
-  document.getElementById('chkCabinet')?.addEventListener('change', () => applyMapFilters(false));
-  document.getElementById('chkLamp')?.addEventListener('change', () => applyMapFilters(false));
-  document.getElementById('chkStatusNormal')?.addEventListener('change', () => applyMapFilters(false));
-  document.getElementById('chkStatusWarning')?.addEventListener('change', () => applyMapFilters(false));
-  document.getElementById('chkStatusLost')?.addEventListener('change', () => applyMapFilters(false));
   applyMapFilters(false);
 
   function formatMetric(value, unit = '', digits = 1) {
@@ -467,13 +769,6 @@ document.addEventListener('DOMContentLoaded', () => {
         : `U ${formatMetric(voltage, ' V', 0)} · I ${formatMetric(current, ' A', 2)}`;
       if (dim !== null && dim !== undefined) {
         device.dim = `${dim}%`;
-      }
-      if (Number(power) > 0 || Number(dim) > 0) {
-        device.status = 'Hoạt động';
-        device.statusClass = 'status-active';
-      } else if (Number(power) === 0 || Number(dim) === 0) {
-        device.status = 'Đang tắt';
-        device.statusClass = 'status-lost';
       }
     } catch (error) {
       console.warn(`Không tải được giám sát đèn ${device.id}.`, error);
@@ -618,7 +913,7 @@ document.addEventListener('DOMContentLoaded', () => {
           route: String(apiField(route, 'tenTuyen', 'TenTuyen') || routeId),
           location: String(apiField(item, 'viTri', 'ViTri') || 'Chưa có vị trí'),
           status: lampSt === 1 ? 'Hoạt động' : lampSt === 2 ? 'Đang tắt' : lampSt === 3 ? 'Sự cố' : 'Chưa xác định',
-          statusClass: lampSt === 1 ? 'status-active' : lampSt === 3 ? 'status-danger' : 'status-lost',
+          statusClass: lampSt === 1 ? 'status-active' : lampSt === 3 ? 'status-warning' : 'status-lost',
           power: power !== null && power !== undefined ? `${power} W` : 'Chưa có dữ liệu',
           dim: dim !== null && dim !== undefined ? `${dim}%` : 'Chưa có dữ liệu',
           iconType: 'lamp',
@@ -632,6 +927,7 @@ document.addEventListener('DOMContentLoaded', () => {
       devices.forEach(device => { deviceDatabase[device.id] = device; });
 
       renderMapNodes(devices);
+      const renderedRoutes = renderMapRoutes(routes);
       bindNodeEvents();
       updateTelemetryCounts(devices);
 
@@ -646,10 +942,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (selectedNode?.dataset.id && deviceDatabase[selectedNode.dataset.id]) {
         displayDeviceDetail(selectedNode.dataset.id);
       }
-      showToast(`Đã tải ${devices.length} thiết bị hạ tầng từ Backend lên bản đồ.`, 'success');
+      console.info(`Đã tải ${devices.length} thiết bị hạ tầng từ Backend lên bản đồ.`);
+      if (routes.length > renderedRoutes) {
+        console.info(`${routes.length - renderedRoutes} tuyến chưa có GeoJSON; cần số hóa tuyến theo tim đường để hiển thị.`);
+      }
     } catch (error) {
       console.warn('Không tải được dữ liệu bản đồ từ API.', error);
-      showToast('Không kết nối được Backend bản đồ; đang hiển thị thiết bị mô phỏng.', 'warning');
+      showToast(`Không tải được dữ liệu bản đồ từ Backend: ${error.message || 'Không xác định lỗi.'}`, 'warning');
     }
   }
 
@@ -658,50 +957,36 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------------------
   // 5. Map Canvas Zoom & Satellite Layer Controls
   // -------------------------------------------------------------------------
-  let currentZoom = 1;
-  let isSatellite = false;
-
-  const normalBg = "https://lh3.googleusercontent.com/aida-public/AB6AXuC1WqKvNqgJQ6bBKeXwhM-w58l7YthgMXJKJKtXgCImfyQHR7x73K22VGM6GBwCg_uQz4z6LvEQZRBV2iWccOF6PwLtsj13n5nMAOsioLEP7JlBEH1-IxT0F4SOZpvUTU_bT822jyxwqAx2sXUz5n3x9RzP9Caun-2AYMnMLY1f-000eXfK4X09LpxL8UbOe0TJIDgv8-kQ_lQOPrvZSvcUgKGP9quU1hwCt16_sZFM6eMowE7ZgYGi";
-  const satBg = "https://lh3.googleusercontent.com/aida-public/AB6AXuDnC9sewjzWyxbaRoOCJIZiPWCjcmqTjiqiwsNCnSqQeHf3SCyHVrgRpD1fQKu4jyOwwXFzbnyPWPIKaID_zgz1-Er0VKYQck5MZc66D41XfhDa27-7O7KUciReBlHMS7qZ9y5bIo9xS9_3hkPDq9Wq4pflBRn3Mif33QNRduSXQRZjxTHPvyBtS0anoBwUaFBxPcbmSQlMOyKebmmhY4ejeY_XsbKvhZTscvv_XIZvNPQeN2m5DbHi";
-
-  function applyZoom() {
-    if (mapBgLayer) {
-      mapBgLayer.style.transform = `scale(${currentZoom})`;
-    }
-  }
-
   if (btnZoomIn) {
     btnZoomIn.addEventListener('click', () => {
-      if (currentZoom < 1.6) {
-        currentZoom += 0.15;
-        applyZoom();
-      }
+      leafletMap?.zoomIn();
     });
   }
 
   if (btnZoomOut) {
     btnZoomOut.addEventListener('click', () => {
-      if (currentZoom > 0.8) {
-        currentZoom -= 0.15;
-        applyZoom();
-      }
+      leafletMap?.zoomOut();
     });
   }
 
   if (btnRecenterGps) {
     btnRecenterGps.addEventListener('click', () => {
-      currentZoom = 1;
-      applyZoom();
+      leafletMap?.setView([16.0544, 108.2022], 13);
       showToast('Đã định vị về trung tâm Đà Nẵng', 'success');
     });
   }
 
   function toggleSatellite() {
+    if (!leafletMap || !roadTileLayer || !satelliteTileLayer) return;
     isSatellite = !isSatellite;
-    if (mapBgLayer) {
-      mapBgLayer.style.backgroundImage = `url('${isSatellite ? satBg : normalBg}')`;
+    if (isSatellite) {
+      roadTileLayer.remove();
+      satelliteTileLayer.addTo(leafletMap);
+    } else {
+      satelliteTileLayer.remove();
+      roadTileLayer.addTo(leafletMap);
     }
-    showToast(isSatellite ? 'Đã kích hoạt lơp bản đồ Vệ tinh' : 'Đã kích hoạt lớp bản đồ Giao thông', 'success');
+    showToast(isSatellite ? 'Đã kích hoạt lớp bản đồ vệ tinh' : 'Đã kích hoạt lớp bản đồ đường', 'success');
   }
 
   if (btnToggleLayers) {
