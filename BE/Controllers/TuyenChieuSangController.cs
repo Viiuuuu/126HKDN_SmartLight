@@ -6,6 +6,17 @@ using BE.Security;
 
 namespace BE.Controllers;
 
+public class UpdateTuyenChieuSangRequest
+{
+    public string? TenTuyen { get; set; }
+    public string? ViTri { get; set; }
+    public byte? TrangThaiHoatDong { get; set; }
+    public string? MoTa { get; set; }
+    public int? ChieuDai { get; set; }
+    public byte? MucSangHienTai { get; set; }
+    public string? MaTu { get; set; }
+}
+
 [ApiController]
 [Route("api/[controller]")]
 public class TuyenChieuSangController : ControllerBase
@@ -107,7 +118,7 @@ public class TuyenChieuSangController : ControllerBase
 
     // PUT: api/TuyenChieuSang/TCS00001 (Admin & Operator)
     [HttpPut("{id}")]
-    public async Task<ActionResult<TuyenChieuSang>> Update(string id, [FromBody] TuyenChieuSang model)
+    public async Task<ActionResult<TuyenChieuSang>> Update(string id, [FromBody] UpdateTuyenChieuSangRequest model)
     {
         var (caller, forbidden) = await RbacHelper.EnforceRolesAsync(
             _context, Request, new[] { RbacHelper.ROLE_ADMIN, RbacHelper.ROLE_OPERATOR }, "Cập nhật thông tin tuyến chiếu sáng");
@@ -121,12 +132,25 @@ public class TuyenChieuSangController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(model.TenTuyen)) item.TenTuyen = model.TenTuyen.Trim();
         if (!string.IsNullOrWhiteSpace(model.ViTri)) item.ViTri = model.ViTri.Trim();
-        if (!string.IsNullOrWhiteSpace(model.MaTu)) item.MaTu = model.MaTu.Trim();
-        NormalizeRouteState(model);
-        item.TrangThaiHoatDong = model.TrangThaiHoatDong;
-        item.ChieuDai = model.ChieuDai ?? item.ChieuDai;
-        item.MucSangHienTai = model.MucSangHienTai ?? item.MucSangHienTai;
-        item.MoTa = model.MoTa;
+        if (!string.IsNullOrWhiteSpace(model.MaTu))
+        {
+            var cabCode = model.MaTu.Trim();
+            var cabExists = await _context.TuChieuSang.AnyAsync(x => x.MaTu == cabCode);
+            if (cabExists)
+            {
+                item.MaTu = cabCode;
+            }
+        }
+        if (model.TrangThaiHoatDong.HasValue)
+        {
+            item.TrangThaiHoatDong = model.TrangThaiHoatDong.Value > 3 ? (byte)3 : model.TrangThaiHoatDong.Value;
+        }
+        if (model.ChieuDai.HasValue) item.ChieuDai = model.ChieuDai;
+        if (model.MucSangHienTai.HasValue)
+        {
+            item.MucSangHienTai = (byte)Math.Clamp((int)model.MucSangHienTai.Value, 0, 100);
+        }
+        if (model.MoTa != null) item.MoTa = model.MoTa.Trim();
         item.NgayCapNhat = DateTime.Now;
 
         await _context.SaveChangesAsync();

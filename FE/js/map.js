@@ -722,17 +722,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const params = new URLSearchParams({
-        id: selectedDevice.id,
-        type: selectedDevice.type,
-        district: selectedDevice.district,
-        route: selectedDevice.route,
-        location: selectedDevice.location,
-        status: selectedDevice.status,
-        power: selectedDevice.power,
-        dim: selectedDevice.dim
-      });
-      window.location.href = `device-detail.html?${params.toString()}`;
+      const isCab = (selectedDevice.type && selectedDevice.type.includes('Tủ')) || /^TC/i.test(selectedDevice.id);
+      if (isCab) {
+        window.location.href = `cabinets-detail.html?id=${encodeURIComponent(selectedDevice.id)}`;
+      } else {
+        window.location.href = `light-detail.html?id=${encodeURIComponent(selectedDevice.id)}`;
+      }
     });
   }
 
@@ -743,17 +738,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const params = new URLSearchParams({
-        id: selectedDevice.id,
-        type: selectedDevice.type,
-        district: selectedDevice.district,
-        route: selectedDevice.route,
-        location: selectedDevice.location,
-        status: selectedDevice.status,
-        power: selectedDevice.power,
-        dim: selectedDevice.dim
-      });
-      window.location.href = `device-detail.html?${params.toString()}`;
+      const isCab = (selectedDevice.type && selectedDevice.type.includes('Tủ')) || /^TC/i.test(selectedDevice.id);
+      if (isCab) {
+        window.location.href = `cabinets-detail.html?id=${encodeURIComponent(selectedDevice.id)}`;
+      } else {
+        window.location.href = `light-detail.html?id=${encodeURIComponent(selectedDevice.id)}`;
+      }
     });
   }
 
